@@ -5,10 +5,10 @@ export const API = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PU
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Script
+      {/* <Script
         src={API}
         strategy="beforeInteractive"
-      />
+      /> */}
       {children}
     </>
   )

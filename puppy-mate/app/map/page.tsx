@@ -1,22 +1,24 @@
 'use client'
 
 import { Map } from "react-kakao-maps-sdk"
-import { useKakaoLoader as useKakaoLoaderOrigin } from "react-kakao-maps-sdk"
-
+import useKakaoLoader from "./components/use-kakao-loader"
 export default function BasicMap() {
-  // const [loading, error] = useKakaoLoaderOrigin({
-  //   appkey: process.env.KAKAO_KEY || "default-app-key",
-  //   libraries: ["clusterer", "drawing", "services"],
-  // })
-
-  // if (!loading) return <div>지도를 불러오는 중...</div>
-  // if (error) return <div>지도를 불러오는 데 실패했습니다.</div>
+  useKakaoLoader()
 
   return (
-    <Map
-      center={{ lat: 33.5563, lng: 126.79581 }}
-      style={{ width: "100%", height: "360px" }}
-      level={3}
+    <Map // 지도를 표시할 Container
+      id="map"
+      center={{
+        // 지도의 중심좌표
+        lat: 33.450701,
+        lng: 126.570667,
+      }}
+      style={{
+        // 지도의 크기
+        width: "100%",
+        height: "350px",
+      }}
+      level={3} // 지도의 확대 레벨
     />
   )
 }

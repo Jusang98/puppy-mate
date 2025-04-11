@@ -1,7 +1,7 @@
 'use client';
 
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import useKakaoLoader from './components/use-kakao-loader';
+import useKakaoLoader from './lib/use-kakao-loader';
 import { useCurrentLocation } from './hooks/useCurrentLocation';
 import { useEffect, useState } from 'react';
 
@@ -38,6 +38,7 @@ export default function BasicMap() {
           position={location} // 현재 위치에 마커 표시
         />
       )}
+
     </Map>
   );
 }

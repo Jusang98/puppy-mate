@@ -13,7 +13,6 @@ export const useCurrentLocation = () => {
       setError('Geolocation is not supported');
       return;
     }
-
     // 현재 위치 가져오기
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
@@ -32,7 +31,7 @@ export const useCurrentLocation = () => {
       {
         enableHighAccuracy: true, // 높은 정확도 요청
         maximumAge: 0, // 캐시된 위치 사용 안 함
-        timeout: 5000, // 위치 요청 타임아웃
+        timeout: 100000, // 위치 요청 타임아웃
       }
     );
 

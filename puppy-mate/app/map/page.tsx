@@ -1,55 +1,43 @@
 'use client';
 
-import { Map, CustomOverlayMap } from 'react-kakao-maps-sdk';
+import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import useKakaoLoader from './components/use-kakao-loader';
 import { useCurrentLocation } from './hooks/useCurrentLocation';
 import { useEffect, useState } from 'react';
+
 export default function BasicMap() {
   useKakaoLoader();
-  const [course, setCourse] = useState<{ lat: number; lng: number }[]>([]);
-  const { location } = useCurrentLocation();
+  const { location, error } = useCurrentLocation();
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({
+    lat: 37.5665,
+    lng: 140.978,
+  });
 
-  useEffect(
-    () => {
-      const interval = setInterval(() => {
-        if (location) {
-          setCourse(prevCourse => [...prevCourse, location]);
-        }
-      }, 5000);
+  useEffect(() => {
+    if (location) {
+      setMapCenter(location); // 위치가 변경될 때마다 지도 중심 업데이트
+    }
+  }, [location]);
 
-      return () => clearInterval(interval);
-    },
-    [location]
-  );
-  useEffect(
-    () => {
-      console.log(course);
-    },
-    [course]
-  );
+  if (error) {
+    return <div>위치 정보를 가져올 수 없습니다: {error}</div>;
+  }
 
   return (
-    <Map // 지도를 표시할 Container
+    <Map
       id="map"
-      center={location || { lat: 37.5665, lng: 126.978 }}
+      center={mapCenter}
       style={{
-        // 지도의 크기
         width: '100%',
-        height: '350px'
+        height: '350px',
       }}
       level={3} // 지도의 확대 레벨
     >
-      <CustomOverlayMap position={location || { lat: 37.5665, lng: 126.978 }}>
-        <div
-          style={{
-            width: '20px',
-            height: '20px',
-            backgroundColor: 'red',
-            borderRadius: '50%',
-            border: '1px solid #000'
-          }}
+      {location && (
+        <MapMarker
+          position={location} // 현재 위치에 마커 표시
         />
-      </CustomOverlayMap>
+      )}
     </Map>
   );
 }

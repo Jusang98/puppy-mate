@@ -13,16 +13,17 @@ export class SbCourseRepository implements CourseRepository {
 
         const query = supabase
             .from('course_coordinates')
-            .select(`
+            .select(
+                `
                 id,
                 route_id,
                 lat,
                 lng,
                 point_order,
-                courses (
-                    *
-                )
-            `)
+                courses (*)
+            `
+            )
+            .filter('courses.is_public', 'eq', true)
             .gte('lat', southWestLat)
             .lte('lat', northEastLat)
             .gte('lng', southWestLng)
@@ -32,7 +33,6 @@ export class SbCourseRepository implements CourseRepository {
         const { data, error } = await query;
 
         if (error) {
-            console.error('Error fetching courses:', error);
             throw new Error('Method not implemented.');
         }
 

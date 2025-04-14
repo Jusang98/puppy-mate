@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
         );
         return NextResponse.json(courseListDto);
     } catch (error) {
+        console.log('Error fetching course list:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

@@ -9,7 +9,7 @@ export interface CourseRepository {
   ): Promise<Course[]>;
   findById(id: number): Promise<Course | null>;
   findAllByUserId(userId: number): Promise<Course[]>;
-  create(course: Course): Promise<Course>;
+  create(course: Course): Promise<{ id: number }>;
   update(course: Course): Promise<Course>;
   delete(id: number): Promise<void>;
 }

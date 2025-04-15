@@ -23,7 +23,7 @@ export const useCurrentLocation = () => {
         setLocation(newLocation);
 
         // 좌표값을 콘솔에 출력
-        console.log('현재 위치:', newLocation);
+        // console.log('현재 위치:', newLocation);
       },
       (err) => {
         setError(err.message);

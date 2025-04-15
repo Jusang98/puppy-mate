@@ -1,26 +1,37 @@
-'use client'
-import  {Map as KakaoMap, MapMarker, Polyline } from 'react-kakao-maps-sdk';
-import useKakaoLoader from '../lib/use-kakao-loader'; 
+'use client';
+import { Map as KakaoMap, MapMarker, Polyline } from 'react-kakao-maps-sdk';
+import useKakaoLoader from '../lib/use-kakao-loader';
 import { useCurrentLocation } from '../hooks/useCurrentLocation';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import useMapStore from '@/store/useMapStore';
-export function Map () {
+import { getDistance } from '../utils/getDistance';
+export function Map() {
+  const { location, error } = useCurrentLocation();
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({
-    lat: 37.5665,
-    lng: 126.978,
+    lat: location?.lat ?? 37.5665,
+    lng: location?.lng ?? 126.978, // 기본 위치 (서울)
   });
-  const [path, setPath] = useState<{ lat: number; lng: number }[]>([]); // 폴리라인 경로
+  const path = useMapStore((state) => state.path); // Zustand에서 경로 가져오기
+  const addPathPoint = useMapStore((state) => state.addPathPoint); // Zustand에서 경로 추가 함수 가져오기
   const isSavingPath = useMapStore((state) => state.isSavingPath); // Zustand에서 경로 저장 여부 가져오기
   const toggleSavingPath = useMapStore((state) => state.toggleSavingPath); // 경로 저장 토글 함수 가져오기
   useKakaoLoader();
 
-  const { location, error } = useCurrentLocation();
   useEffect(() => {
-    if (location) {
-      setMapCenter(location); // 위치가 변경될 때마다 지도 중심 업데이트
-      setPath((prevPath) => [...prevPath, location]); // 경로에 새로운 위치 추가
+    if (isSavingPath && location && path.length > 0) {
+      const lastPosition = path.at(-1);
+      setMapCenter({
+        lat: location?.lat,
+        lng: location?.lng,
+      });
+      if (!lastPosition || getDistance(lastPosition, location) > 1) {
+        addPathPoint(location); // 경로 저장
+        console.log('경로 저장:', path);
+      }
     }
   }, [location]);
+
+  //watchposition하고 clearpostion 해줘야함
 
   if (error) {
     return <div>위치 정보를 가져올 수 없습니다: {error}</div>;
@@ -28,9 +39,11 @@ export function Map () {
 
   return (
     <>
-    <button onClick={toggleSavingPath}>토글 버튼{isSavingPath? 'on':'off'}</button>
+      <button onClick={toggleSavingPath}>
+        토글 버튼{isSavingPath ? 'on' : 'off'}
+      </button>
       <KakaoMap
-        id="map"
+        id='map'
         center={mapCenter}
         style={{
           width: '100%',
@@ -44,13 +57,15 @@ export function Map () {
             <MapMarker position={location} />
 
             {/* 이동 경로를 따라 폴리라인 그리기 */}
-            <Polyline
-              path={path} // 폴리라인 경로
-              strokeWeight={5} // 선 두께
-              strokeColor="#FF0000" // 선 색상
-              strokeOpacity={0.8} // 선 투명도
-              strokeStyle="solid" // 선 스타일
-            />
+            {isSavingPath && (
+              <Polyline
+                path={path} // 폴리라인 경로
+                strokeWeight={5} // 선 두께
+                strokeColor='#FF0000' // 선 색상
+                strokeOpacity={0.8} // 선 투명도
+                strokeStyle='solid' // 선 스타일
+              />
+            )}
           </>
         )}
       </KakaoMap>

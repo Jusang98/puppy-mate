@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       duration,
       coordinates
     } = body;
-    if (!name || !courseImageUrl || !address || !distance || duration) {
+    if (!name || !courseImageUrl || !address || !distance || !duration) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
     const createCourseDto = new CreateCourseDto(

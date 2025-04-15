@@ -18,12 +18,14 @@ export function Map() {
   useKakaoLoader();
 
   useEffect(() => {
-    if (isSavingPath && location) {
-      const lastPosition = path.at(-1);
+    if(location){
       setMapCenter({
         lat: location?.lat,
         lng: location?.lng,
       });
+    }
+    if (isSavingPath && location) {
+      const lastPosition = path.at(-1);
       if (!lastPosition || getDistance(lastPosition, location) > 1) {
         addPathPoint(location); // 경로 저장
         console.log('경로 저장:', path);

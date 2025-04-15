@@ -18,7 +18,7 @@ export function Map() {
   useKakaoLoader();
 
   useEffect(() => {
-    if (isSavingPath && location && path.length > 0) {
+    if (isSavingPath && location) {
       const lastPosition = path.at(-1);
       setMapCenter({
         lat: location?.lat,
@@ -28,7 +28,7 @@ export function Map() {
         addPathPoint(location); // 경로 저장
         console.log('경로 저장:', path);
       }
-    }
+    } 
   }, [location]);
 
   //watchposition하고 clearpostion 해줘야함

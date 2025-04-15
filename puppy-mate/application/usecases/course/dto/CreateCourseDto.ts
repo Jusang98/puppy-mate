@@ -1,4 +1,6 @@
-export class Course {
+import { CoordinateDto } from './CoordinateDto';
+
+export class CreateCourseDto {
   constructor(
     public userId: number,
     public name: string,
@@ -6,9 +8,6 @@ export class Course {
     public address: string,
     public distance: number,
     public duration: number,
-    public id?: number,
-    public isPublic?: boolean,
-    public createdAt?: Date,
-    public updatedAt?: Date
+    public coordinates: CoordinateDto[]
   ) {}
 }

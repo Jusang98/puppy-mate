@@ -31,8 +31,6 @@ export function Map() {
     }
   }, [location, isSavingPath]);
 
-  //watchposition하고 clearpostion 해줘야함
-
   if (error) {
     return <div>위치 정보를 가져올 수 없습니다: {error}</div>;
   }

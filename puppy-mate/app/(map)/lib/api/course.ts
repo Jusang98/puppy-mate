@@ -22,7 +22,7 @@ export async function createCourse(
       address,
       distance,
       duration,
-      path
+      coordinates: path
     })
     .catch(error => {
       console.error('Failed to save course:', error);

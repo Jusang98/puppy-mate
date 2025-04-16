@@ -12,7 +12,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { LatLng } from '@/store/useMapStore';
 
 interface SaveCourseModalProps {
   open: boolean;
@@ -23,10 +22,8 @@ interface SaveCourseModalProps {
       address: string;
       distance: number;
       duration: number;
-      coordinates: LatLng[];
     }
   ) => void;
-  coordinates: LatLng[];
 }
 
 export function SaveCourseModal({ open, onSave }: SaveCourseModalProps) {

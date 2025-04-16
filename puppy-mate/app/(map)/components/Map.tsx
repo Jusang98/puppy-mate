@@ -86,7 +86,6 @@ export function Map() {
       <SaveCourseModal
         open={isCreateCourseModalOpen}
         onSave={handleSaveCourse}
-        coordinates={path}
       />
     </>
   );

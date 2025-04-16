@@ -6,7 +6,13 @@ export interface LatLng {
   lat: number;
   lng: number;
 }
-
+interface ToggleSavingPathParams {
+  name: string;
+  courseImageUrl: string;
+  address: string;
+  distance: number;
+  duration: number;
+}
 const useMapStore = create(
   devtools(
     combine(
@@ -18,18 +24,27 @@ const useMapStore = create(
         const addPathPoint = (point: LatLng) =>
           set(state => ({ path: [...state.path, point] })); // 새로운 좌표 추가
         const clearPath = () => set({ path: [] }); // 경로 초기화
-        const toggleSavingPath = async (
+        
+
+        const toggleSavingPath = async ({
           name,
           courseImageUrl,
           address,
           distance,
           duration,
-          coordinates
-        ) => {
+          
+        }: ToggleSavingPathParams): Promise<void> => {
           const { isSavingPath, path } = get();
           if (!isSavingPath) {
             try {
-              await createCourse(path); // createCourse 호출
+                await createCourse(
+                  name,
+                  courseImageUrl,
+                  address,
+                  distance,
+                  duration,
+                  path
+                ); // createCourse 호출
               console.log('Path saved successfully');
               clearPath(); // path 초기화
             } catch (error) {

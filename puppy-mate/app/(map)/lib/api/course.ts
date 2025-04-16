@@ -1,8 +1,41 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000/api/courses';
-export async function createCourse(): Promise<number> {
-  await axios
-    .post(BASE_URL, { path: state.path })
-    .catch(error => console.error('Failed to save path:', error));
+
+interface Course {
+  name: string;
+  courseImageUrl: string;
+  address: string;
+  distance: number;
+  duration: number;
+  path: string[];
+}
+
+interface CreateCourseResponse {
+  id: number;
+}
+
+export async function createCourse(
+  name: string,
+  courseImageUrl: string,
+  address: string,
+  distance: number,
+  duration: number,
+  path: string[]
+): Promise<number> {
+  const response = await axios
+    .post<CreateCourseResponse>(BASE_URL, {
+      name,
+      courseImageUrl,
+      address,
+      distance,
+      duration,
+      path,
+    })
+    .catch(error => {
+      console.error('Failed to save course:', error);
+      throw error;
+    });
+
+  return response.data.id;
 }

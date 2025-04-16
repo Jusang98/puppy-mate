@@ -24,40 +24,37 @@ const useMapStore = create(
         const addPathPoint = (point: LatLng) =>
           set(state => ({ path: [...state.path, point] })); // 새로운 좌표 추가
         const clearPath = () => set({ path: [] }); // 경로 초기화
-        
-
-        const toggleSavingPath = async ({
+        const startRecordingPath = () => set({ isSavingPath: true });
+        const stopAndSavePath = async ({
           name,
           courseImageUrl,
           address,
           distance,
-          duration,
-          
-        }: ToggleSavingPathParams): Promise<void> => {
-          const { isSavingPath, path } = get();
-          if (!isSavingPath) {
-            try {
-                await createCourse(
-                  name,
-                  courseImageUrl,
-                  address,
-                  distance,
-                  duration,
-                  path
-                ); // createCourse 호출
-              console.log('Path saved successfully');
-              clearPath(); // path 초기화
-            } catch (error) {
-              console.error('Failed to save path:', error);
-            }
+          duration
+        }: ToggleSavingPathParams) => {
+          const { path } = get();
+          try {
+            await createCourse(
+              name,
+              courseImageUrl,
+              address,
+              distance,
+              duration,
+              path
+            );
+            console.log('Path saved');
+            set({ isSavingPath: false });
+            clearPath();
+          } catch (err) {
+            console.error('저장 실패:', err);
           }
-          set(state => ({ isSavingPath: !state.isSavingPath })); // 상태 토글
         };
 
         return {
           addPathPoint,
           clearPath,
-          toggleSavingPath
+          startRecordingPath,
+          stopAndSavePath
         };
       }
     )

@@ -1,15 +1,7 @@
+import { LatLng } from '@/store/useMapStore';
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000/api/courses';
-
-interface Course {
-  name: string;
-  courseImageUrl: string;
-  address: string;
-  distance: number;
-  duration: number;
-  path: string[];
-}
 
 interface CreateCourseResponse {
   id: number;
@@ -21,7 +13,7 @@ export async function createCourse(
   address: string,
   distance: number,
   duration: number,
-  path: string[]
+  path: LatLng[]
 ): Promise<number> {
   const response = await axios
     .post<CreateCourseResponse>(BASE_URL, {
@@ -30,7 +22,7 @@ export async function createCourse(
       address,
       distance,
       duration,
-      path,
+      path
     })
     .catch(error => {
       console.error('Failed to save course:', error);

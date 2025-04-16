@@ -6,55 +6,26 @@ export interface LatLng {
   lat: number;
   lng: number;
 }
-interface ToggleSavingPathParams {
-  name: string;
-  courseImageUrl: string;
-  address: string;
-  distance: number;
-  duration: number;
-}
+
 const useMapStore = create(
   devtools(
     combine(
       {
-        path: [] as LatLng[], // 초기 경로는 빈 배열
-        isSavingPath: false
+        coordinates: [] as LatLng[], // 초기 경로는 빈 배열
+        isSavingCourse: false,
+        startTime: 0,
       },
       (set, get) => {
-        const addPathPoint = (point: LatLng) =>
-          set(state => ({ path: [...state.path, point] })); // 새로운 좌표 추가
-        const clearPath = () => set({ path: [] }); // 경로 초기화
-        const startRecordingPath = () => set({ isSavingPath: true });
-        const stopAndSavePath = async ({
-          name,
-          courseImageUrl,
-          address,
-          distance,
-          duration
-        }: ToggleSavingPathParams) => {
-          const { path } = get();
-          try {
-            await createCourse(
-              name,
-              courseImageUrl,
-              address,
-              distance,
-              duration,
-              path
-            );
-            console.log('Path saved');
-            set({ isSavingPath: false });
-            clearPath();
-          } catch (err) {
-            console.error('저장 실패:', err);
-          }
-        };
+        const addCoursePoint = (point: LatLng) => set((state) => ({ coordinates: [...state.coordinates, point] })); // 새로운 좌표 추가
+        const clearCourse = () => set({ coordinates: [] }); // 경로 초기화
+        const startRecordingCourse = () => set({ isSavingCourse: true, startTime: new Date().getTime() });
+        const stopRecordingCourse = () => set({ isSavingCourse: false });
 
         return {
-          addPathPoint,
-          clearPath,
-          startRecordingPath,
-          stopAndSavePath
+          addCoursePoint,
+          clearCourse,
+          startRecordingCourse,
+          stopRecordingCourse,
         };
       }
     )

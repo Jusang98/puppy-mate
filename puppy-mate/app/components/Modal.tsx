@@ -7,44 +7,31 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogClose
+  DialogClose,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import useMapStore from '@/store/useMapStore';
 
 interface SaveCourseModalProps {
   open: boolean;
-  onSave: (
-    data: {
-      name: string;
-      courseImageUrl: string;
-      address: string;
-      distance: number;
-      duration: number;
-    }
-  ) => void;
+  onSave: (name: string) => void;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function SaveCourseModal({ open, onSave }: SaveCourseModalProps) {
-  const [form, setForm] = useState({
-    name: '',
-    courseImageUrl: '',
-    address: '',
-    distance: 0,
-    duration: 0
-  });
+export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalProps) {
+  const [courseName, setCourseName] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { clearCourse, stopRecordingCourse } = useMapStore();
+
+  const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: name === 'distance' || name === 'duration' ? Number(value) : value
-    }));
+    setCourseName(value);
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>경로 저장</DialogTitle>
@@ -52,36 +39,26 @@ export function SaveCourseModal({ open, onSave }: SaveCourseModalProps) {
         </DialogHeader>
 
         <div className="space-y-3">
-          <Input name="name" placeholder="코스 이름" onChange={handleChange} />
-          <Input
-            name="courseImageUrl"
-            placeholder="이미지 URL"
-            onChange={handleChange}
-          />
-          <Input name="address" placeholder="주소" onChange={handleChange} />
-          <Input
-            name="distance"
-            placeholder="거리 (숫자)"
-            type="number"
-            onChange={handleChange}
-          />
-          <Input
-            name="duration"
-            placeholder="소요시간 (분)"
-            type="number"
-            onChange={handleChange}
-          />
+          <Input name="name" placeholder="코스 이름" onChange={handleNameInputChange} />
         </div>
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="secondary">취소</Button>
+            <Button
+              onClick={() => {
+                clearCourse();
+                onOpenChange(false);
+              }}
+              variant="secondary">
+              경로 초기화
+            </Button>
           </DialogClose>
           <Button
             onClick={() => {
-              onSave(form);
-            }}
-          >
+              stopRecordingCourse();
+              onSave(courseName);
+              onOpenChange(false);
+            }}>
             저장
           </Button>
         </DialogFooter>

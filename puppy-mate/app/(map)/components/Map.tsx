@@ -5,14 +5,12 @@ import { useCurrentLocation } from '../hooks/useCurrentLocation';
 import { useRef, useEffect, useState } from 'react';
 import useMapStore from '@/store/useMapStore';
 import { getDistance } from '../utils/getDistance';
+import { SaveCourseModal } from '@/app/components/Modal';
 export function Map() {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { location, error } = useCurrentLocation();
-
-  const path = useMapStore((state) => state.path); // Zustand에서 경로 가져오기
-  const addPathPoint = useMapStore((state) => state.addPathPoint); // Zustand에서 경로 추가 함수 가져오기
-  const isSavingPath = useMapStore((state) => state.isSavingPath); // Zustand에서 경로 저장 여부 가져오기
-  const toggleSavingPath = useMapStore((state) => state.toggleSavingPath); // 경로 저장 토글 함수 가져오기
+  const { path, addPathPoint,startRecordingPath, stopAndSavePath, isSavingPath } = useMapStore();
+  const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
   useKakaoLoader();
 
   useEffect(() => {
@@ -35,9 +33,27 @@ export function Map() {
     return <div>위치 정보를 가져올 수 없습니다: {error}</div>;
   }
 
+  const handleToggleBtnClick = () => {
+    if (isSavingPath) {
+      setIsCreateCourseModalOpen(true);
+    } else {
+      // 시작
+      startRecordingPath();
+    }
+  }
+
+  const handleSaveCourse = (data: {
+    name: string;
+    courseImageUrl: string;
+    address: string;
+    distance: number;
+    duration: number;}
+) => {
+    stopAndSavePath(data); // 경로 저장
+  };
   return (
     <>
-      <button onClick={toggleSavingPath}>토글 버튼{isSavingPath ? 'on' : 'off'}</button>
+      <button onClick={handleToggleBtnClick}>토글 버튼{isSavingPath ? 'on' : 'off'}</button>
       <KakaoMap
         id="map"
         ref={mapRef}
@@ -66,6 +82,12 @@ export function Map() {
           </>
         )}
       </KakaoMap>
+      {/* Modal 컴포넌트 */}
+      <SaveCourseModal
+        open={isCreateCourseModalOpen}
+        onSave={handleSaveCourse}
+        coordinates={path}
+      />
     </>
   );
 }

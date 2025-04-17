@@ -1,28 +1,16 @@
 'use client';
-import {
-  Map as KakaoMap,
-  MapMarker,
-  Polyline,
-  MapProps,
-} from 'react-kakao-maps-sdk';
+import { Map as KakaoMap, MapMarker, Polyline, MapProps } from 'react-kakao-maps-sdk';
 import useKakaoLoader from '../lib/use-kakao-loader';
 import { useCurrentLocation } from '../hooks/useCurrentLocation';
 import { useRef, useEffect, useState } from 'react';
 import useMapStore from '@/store/useMapStore';
 import { getDistance } from '../utils/getDistance';
-import { SaveCourseModal } from '@/app/components/Modal';
-import { getCenterAndLevel } from '../utils/getCenterAndLevel';
+import SaveCourseModal from '@/app/components/SaveCourseModal';
 
 export function Map() {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { location, error } = useCurrentLocation();
-  const {
-    coordinates,
-    addCoursePoint,
-    startRecordingCourse,
-    isSavingCourse,
-    startTime,
-  } = useMapStore();
+  const { coordinates, addCoursePoint, startRecordingCourse, isSavingCourse, startTime } = useMapStore();
   const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
 
   const [modalMapOption, setModalMapOption] = useState<MapProps>({
@@ -79,8 +67,6 @@ export function Map() {
   const handleToggleBtnClick = async () => {
     if (isSavingCourse) {
       setIsCreateCourseModalOpen(true);
-      const { center, level } = getCenterAndLevel(coordinates);
-      setModalMapOption({ center: center, level: level });
     } else {
       startRecordingCourse(); // 시작
     }
@@ -98,31 +84,25 @@ export function Map() {
       }
     });
 
-    geocoder.coord2Address(
-      coordinates[0].lng,
-      coordinates[0].lat,
-      function (result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-          const addressObject = result[0].address || result[0].road_address;
-          address =
-            addressObject.region_1depth_name +
-            ' ' +
-            addressObject.region_2depth_name +
-            ' ' +
-            addressObject.region_3depth_name;
-          console.log(addressObject);
-        }
+    geocoder.coord2Address(coordinates[0].lng, coordinates[0].lat, function (result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        const addressObject = result[0].address || result[0].road_address;
+        address =
+          addressObject.region_1depth_name +
+          ' ' +
+          addressObject.region_2depth_name +
+          ' ' +
+          addressObject.region_3depth_name;
+        console.log(addressObject);
       }
-    );
+    });
   };
 
   return (
     <>
-      <button onClick={handleToggleBtnClick}>
-        토글 버튼{isSavingCourse ? 'on' : 'off'}
-      </button>
+      <button onClick={handleToggleBtnClick}>토글 버튼{isSavingCourse ? 'on' : 'off'}</button>
       <KakaoMap
-        id='map'
+        id="map"
         ref={mapRef}
         center={{ lat: 37.566535, lng: 126.977125 }}
         style={{
@@ -141,21 +121,16 @@ export function Map() {
               <Polyline
                 path={coordinates} // 폴리라인 경로
                 strokeWeight={5} // 선 두께
-                strokeColor='#FF0000' // 선 색상
+                strokeColor="#FF0000" // 선 색상
                 strokeOpacity={0.8} // 선 투명도
-                strokeStyle='solid' // 선 스타일
+                strokeStyle="solid" // 선 스타일
               />
             )}
           </>
         )}
       </KakaoMap>
       {/* Modal 컴포넌트 */}
-      <SaveCourseModal
-        open={isCreateCourseModalOpen}
-        onSave={handleSaveCourse}
-        onOpenChange={onModalOpenChange}
-        modalMapOption={modalMapOption}
-      />
+      <SaveCourseModal open={isCreateCourseModalOpen} onSave={handleSaveCourse} onOpenChange={onModalOpenChange} />
     </>
   );
 }

@@ -79,27 +79,29 @@ export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalP
         </div>
 
         {mapCenter && mapLevel ? (
-          <Map
-            className="w-full h-[300px] bg-gray-100 rounded"
-            center={mapCenter}
-            level={mapLevel}
-            draggable={false}
-            zoomable={false}
-            disableDoubleClick={true}
-            disableDoubleClickZoom={true}>
-            {!isStaticMapLoaded && (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-gray-500">지도를 불러오는 중...</p>
-              </div>
-            )}
-            <Polyline
-              path={coordinates} // 폴리라인 경로
-              strokeWeight={5} // 선 두께
-              strokeColor="#FF0000" // 선 색상
-              strokeOpacity={0.8} // 선 투명도
-              strokeStyle="solid" // 선 스타일
-            />
-          </Map>
+          <div className="w-[300px] h-[300px] overflow-auto mx-auto">
+            <Map
+              className="w-full h-full bg-gray-100 rounded"
+              center={mapCenter}
+              level={mapLevel}
+              draggable={false}
+              zoomable={false}
+              disableDoubleClick={true}
+              disableDoubleClickZoom={true}>
+              {!isStaticMapLoaded && (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500">지도를 불러오는 중...</p>
+                </div>
+              )}
+              <Polyline
+                path={coordinates} // 폴리라인 경로
+                strokeWeight={5} // 선 두께
+                strokeColor="#FF0000" // 선 색상
+                strokeOpacity={0.8} // 선 투명도
+                strokeStyle="solid" // 선 스타일
+              />
+            </Map>
+          </div>
         ) : (
           <div className="w-full h-[300px] bg-gray-100 rounded flex items-center justify-center">
             <p className="text-gray-500">좌표 데이터를 준비하는 중...</p>

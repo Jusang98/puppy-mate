@@ -6,11 +6,16 @@ import { useRef, useEffect, useState } from 'react';
 import useMapStore from '@/store/useMapStore';
 import { getDistance } from '../utils/getDistance';
 import { SaveCourseModal } from '@/app/components/Modal';
+import html2canvas from 'html2canvas';
+
 export function Map() {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { location, error } = useCurrentLocation();
   const { coordinates, addCoursePoint, startRecordingCourse, isSavingCourse, startTime } = useMapStore();
   const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
+  const captureRef = useRef<HTMLDivElement | null>(null);
+  const [capturedImg, setCapturedImg] = useState<string | null>(null);
+
   useKakaoLoader();
 
   useEffect(() => {
@@ -36,9 +41,18 @@ export function Map() {
     setIsCreateCourseModalOpen(open);
   };
 
-  const handleToggleBtnClick = () => {
+  const handleToggleBtnClick = async () => {
     if (isSavingCourse) {
       setIsCreateCourseModalOpen(true);
+      if (!captureRef.current) return;
+    const canvas = await html2canvas(captureRef.current, {
+      useCORS: true,
+      backgroundColor: null,
+      scale: 2,
+    });
+
+    const image = canvas.toDataURL('image/png');
+    setCapturedImg(image); // 이미지 상태에 저장
     } else {
       startRecordingCourse(); // 시작
     }
@@ -77,6 +91,15 @@ export function Map() {
   return (
     <>
       <button onClick={handleToggleBtnClick}>토글 버튼{isSavingCourse ? 'on' : 'off'}</button>
+      <div
+        ref={captureRef}
+        style={{
+          width: '300px',
+          height: '200px',
+          backgroundColor: '#eee',
+          border: '1px solid #ccc',
+        }}
+      ></div>
       <KakaoMap
         id="map"
         ref={mapRef}

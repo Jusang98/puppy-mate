@@ -30,7 +30,7 @@ export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalP
     setCourseName(value);
   };
 
-  return (
+  return (  
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>

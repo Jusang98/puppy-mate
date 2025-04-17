@@ -101,6 +101,7 @@ export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalP
             <Button
               onClick={() => {
                 clearCourse();
+                stopRecordingCourse();
                 onOpenChange(false);
               }}
               variant="secondary">

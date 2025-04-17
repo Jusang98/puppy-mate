@@ -9,7 +9,6 @@ interface CreateCourseResponse {
 
 export async function createCourse(
   name: string,
-  courseImageUrl: string,
   address: string,
   distance: number,
   duration: number,
@@ -18,7 +17,6 @@ export async function createCourse(
   const response = await axios
     .post<CreateCourseResponse>(BASE_URL, {
       name,
-      courseImageUrl,
       address,
       distance,
       duration,

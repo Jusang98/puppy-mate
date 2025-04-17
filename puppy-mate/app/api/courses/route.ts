@@ -40,19 +40,17 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       name,
-      courseImageUrl,
       address,
       distance,
       duration,
       coordinates
     } = body;
-    if (!name || !courseImageUrl || !address || !distance || !duration) {
+    if (!name  || !address || !distance || !duration) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
     const createCourseDto = new CreateCourseDto(
       1,
       name,
-      courseImageUrl,
       address,
       distance,
       duration,

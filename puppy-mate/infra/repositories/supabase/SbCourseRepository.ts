@@ -40,7 +40,6 @@ export class SbCourseRepository implements CourseRepository {
       id: row.id,
       userId: row.user_id,
       name: row.name,
-      courseImageUrl: row.course_image_url,
       address: row.address,
       isPublic: row.is_public,
       distance: row.distance,
@@ -74,7 +73,6 @@ export class SbCourseRepository implements CourseRepository {
         .insert({
           user_id: course.userId,
           name: course.name,
-          course_image_url: course.courseImageUrl,
           address: course.address,
           is_public: course.isPublic,
           distance: course.distance,

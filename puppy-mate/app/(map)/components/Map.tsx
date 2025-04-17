@@ -1,5 +1,5 @@
 'use client';
-import { Map as KakaoMap, MapMarker, Polyline, MapProps } from 'react-kakao-maps-sdk';
+import { Map as KakaoMap, MapMarker, Polyline } from 'react-kakao-maps-sdk';
 import useKakaoLoader from '../lib/use-kakao-loader';
 import { useCurrentLocation } from '../hooks/useCurrentLocation';
 import { useRef, useEffect, useState } from 'react';
@@ -12,11 +12,6 @@ export function Map() {
   const { location, error } = useCurrentLocation();
   const { coordinates, addCoursePoint, startRecordingCourse, isSavingCourse, startTime } = useMapStore();
   const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
-
-  const [modalMapOption, setModalMapOption] = useState<MapProps>({
-    center: { lat: 37.566535, lng: 126.977125 },
-    level: 3,
-  });
 
   // 테스트를 위한 더미 데이터
   const dummyPath = [
@@ -41,6 +36,7 @@ export function Map() {
 
   useKakaoLoader();
 
+  // 현재 위치 바뀔때 마다 지도 중심 이동
   useEffect(() => {
     if (!mapRef.current) return;
 
@@ -48,7 +44,10 @@ export function Map() {
       const center = new kakao.maps.LatLng(location.lat, location.lng);
       mapRef.current.setCenter(center);
     }
+  }, [location]);
 
+  // 현재 위치 바뀔때 마다 경로 추가
+  useEffect(() => {
     if (isSavingCourse && location) {
       const lastPosition = coordinates.at(-1);
       if (!lastPosition || getDistance(lastPosition, location) > 1) {

@@ -6,6 +6,8 @@ import { useRef, useEffect, useState } from 'react';
 import useMapStore from '@/store/useMapStore';
 import { getDistance } from '../utils/getDistance';
 import SaveCourseModal from '@/app/components/SaveCourseModal';
+import { createCourse } from '../lib/api/course';
+import { getAddress } from '../utils/getCoordinateAddress';
 
 export function Map() {
   const mapRef = useRef<kakao.maps.Map | null>(null);
@@ -77,8 +79,7 @@ export function Map() {
     }
   };
 
-  const handleSaveCourse = (name: string) => {
-    const geocoder = new kakao.maps.services.Geocoder();
+  const handleSaveCourse = async (name: string) => {
     const duration = new Date().getTime() - startTime;
     let totalDistance = 0;
     let address = '';
@@ -89,22 +90,24 @@ export function Map() {
       }
     });
 
-    geocoder.coord2Address(
-      coordinates[0].lng,
-      coordinates[0].lat,
-      function (result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-          const addressObject = result[0].address || result[0].road_address;
-          address =
-            addressObject.region_1depth_name +
-            ' ' +
-            addressObject.region_2depth_name +
-            ' ' +
-            addressObject.region_3depth_name;
-          console.log(addressObject);
-        }
-      }
-    );
+    try {
+      address = await getAddress(coordinates[0].lng, coordinates[0].lat);
+    } catch (error) {
+      console.error('Error fetching address:', error);
+    }
+    try {
+      // createCourse 호출
+      const courseId = await createCourse(
+        name,
+        address,
+        totalDistance,
+        duration,
+        coordinates
+      );
+      console.log(`Course saved successfully with ID: ${courseId}`);
+    } catch (error) {
+      console.error('Failed to save course:', error);
+    }
   };
 
   return (

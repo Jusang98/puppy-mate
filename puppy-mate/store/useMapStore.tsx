@@ -1,4 +1,3 @@
-import { createCourse } from '@/app/(map)/lib/api/course';
 import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 

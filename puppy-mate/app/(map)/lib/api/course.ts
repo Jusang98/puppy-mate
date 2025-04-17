@@ -12,7 +12,7 @@ export async function createCourse(
   address: string,
   distance: number,
   duration: number,
-  path: LatLng[]
+  coordinates: LatLng[]
 ): Promise<number> {
   const response = await axios
     .post<CreateCourseResponse>(BASE_URL, {
@@ -20,9 +20,9 @@ export async function createCourse(
       address,
       distance,
       duration,
-      coordinates: path
+      coordinates,
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('Failed to save course:', error);
       throw error;
     });

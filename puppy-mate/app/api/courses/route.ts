@@ -38,14 +38,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const {
-      name,
-      address,
-      distance,
-      duration,
-      coordinates
-    } = body;
-    if (!name  || !address || !distance || !duration) {
+    const { name, address, distance, duration, coordinates } = body;
+    if (!name || address === undefined || !distance || !duration) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
     const createCourseDto = new CreateCourseDto(

@@ -18,13 +18,18 @@ export const getCenterAndLevel = (coords: { lat: number; lng: number }[]) => {
   const lngDiff = maxLng - minLng;
   const maxDiff = Math.max(latDiff, lngDiff);
 
-  let level = 3;
-  if (maxDiff > 0.1) level = 5;
-  if (maxDiff > 0.2) level = 7;
-  if (maxDiff > 0.5) level = 9;
+  let level = 3; // 기본 레벨
+  if (maxDiff > 0.001) level = 4; // 약 100m
+  if (maxDiff > 0.002) level = 5; // 약 200m
+  if (maxDiff > 0.005) level = 6; // 약 500m
+  if (maxDiff > 0.01) level = 7; // 약 1km
+  if (maxDiff > 0.02) level = 8; // 약 2km
+  if (maxDiff > 0.05) level = 9; // 약 5km
+  if (maxDiff > 0.1) level = 10; // 약 10km
+  if (maxDiff > 0.2) level = 11; // 약 20km
 
   return {
     center: new window.kakao.maps.LatLng(centerLat, centerLng),
-    level,
+    level
   };
 };

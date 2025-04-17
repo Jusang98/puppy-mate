@@ -1,17 +1,23 @@
 'use client';
-import { Map as KakaoMap, MapMarker, Polyline } from 'react-kakao-maps-sdk';
+import { Map as KakaoMap, MapMarker, Polyline, MapProps } from 'react-kakao-maps-sdk';
 import useKakaoLoader from '../lib/use-kakao-loader';
 import { useCurrentLocation } from '../hooks/useCurrentLocation';
 import { useRef, useEffect, useState } from 'react';
 import useMapStore from '@/store/useMapStore';
 import { getDistance } from '../utils/getDistance';
 import { SaveCourseModal } from '@/app/components/Modal';
+import { getCenterAndLevel } from '../utils/getCenterAndLevel';
 
 export function Map() {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { location, error } = useCurrentLocation();
   const { coordinates, addCoursePoint, startRecordingCourse, isSavingCourse, startTime } = useMapStore();
   const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
+
+  const [modalMapOption, setModalMapOption] = useState<MapProps>({
+    center: { lat: 37.566535, lng: 126.977125 },
+    level: 3,
+  });
 
   // 테스트를 위한 더미 데이터
   const dummyPath = [
@@ -56,7 +62,15 @@ export function Map() {
     return <div>위치 정보를 가져올 수 없습니다: {error}</div>;
   }
   const onModalOpenChange = (open: boolean) => {
+    if (open && coordinates.length > 0) {
+      // 센터와 줌 레벨 계산
+      console.log('센터와 줌 레벨 계산');
+      const { center, level } = getCenterAndLevel(coordinates);
+      setModalMapOption({ center: center, level: level });
+      console.log('modalMapOption', modalMapOption);
+    }
     setIsCreateCourseModalOpen(open);
+    console.log('modalMapOption', modalMapOption);
   };
 
   const handleToggleBtnClick = async () => {
@@ -125,7 +139,12 @@ export function Map() {
         )}
       </KakaoMap>
       {/* Modal 컴포넌트 */}
-      <SaveCourseModal open={isCreateCourseModalOpen} onSave={handleSaveCourse} onOpenChange={onModalOpenChange} />
+      <SaveCourseModal
+        open={isCreateCourseModalOpen}
+        onSave={handleSaveCourse}
+        onOpenChange={onModalOpenChange}
+        modalMapOption={modalMapOption}
+      />
     </>
   );
 }

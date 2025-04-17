@@ -30,6 +30,6 @@ export const getCenterAndLevel = (coords: { lat: number; lng: number }[]) => {
 
   return {
     center: new window.kakao.maps.LatLng(centerLat, centerLng),
-    level
+    level,
   };
 };

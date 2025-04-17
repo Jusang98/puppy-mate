@@ -30,7 +30,6 @@ export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalP
   // 리액트 카카오맵용 상태
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [mapLevel, setMapLevel] = useState<number | null>(null);
-  const [mapPath, setMapPath] = useState<any[] | null>(null);
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,17 +47,6 @@ export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalP
         // 리액트 카카오맵에서 사용할 형식으로 변환
         setMapCenter({ lat: center.getLat(), lng: center.getLng() });
         setMapLevel(level);
-
-        // path 설정
-        const pathPoints = coordinates.map((coord) => ({ lat: coord.lat, lng: coord.lng }));
-        setMapPath([
-          {
-            points: pathPoints,
-            strokeWeight: 4,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-          },
-        ]);
 
         setIsStaticMapLoaded(true);
       } catch (error) {

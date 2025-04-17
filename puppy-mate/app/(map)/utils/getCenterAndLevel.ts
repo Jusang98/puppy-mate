@@ -29,7 +29,7 @@ export const getCenterAndLevel = (coords: { lat: number; lng: number }[]) => {
   if (maxDiff > 0.2) level = 11; // 약 20km
 
   return {
-    center: new window.kakao.maps.LatLng(centerLat, centerLng),
+    center: { lat: centerLat, lng: centerLng },
     level,
   };
 };

@@ -62,20 +62,14 @@ export function Map() {
     return <div>위치 정보를 가져올 수 없습니다: {error}</div>;
   }
   const onModalOpenChange = (open: boolean) => {
-    if (open && coordinates.length > 0) {
-      // 센터와 줌 레벨 계산
-      console.log('센터와 줌 레벨 계산');
-      const { center, level } = getCenterAndLevel(coordinates);
-      setModalMapOption({ center: center, level: level });
-      console.log('modalMapOption', modalMapOption);
-    }
     setIsCreateCourseModalOpen(open);
-    console.log('modalMapOption', modalMapOption);
   };
 
   const handleToggleBtnClick = async () => {
     if (isSavingCourse) {
       setIsCreateCourseModalOpen(true);
+      const { center, level } = getCenterAndLevel(coordinates);
+      setModalMapOption({ center: center, level: level });
     } else {
       startRecordingCourse(); // 시작
     }

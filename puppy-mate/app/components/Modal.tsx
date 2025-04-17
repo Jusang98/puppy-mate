@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import useMapStore from '@/store/useMapStore';
 import { getCenterAndLevel } from '@/app/(map)/utils/getCenterAndLevel';
+import { Map, Polyline } from 'react-kakao-maps-sdk';
 
 interface SaveCourseModalProps {
   open: boolean;
@@ -24,10 +25,12 @@ interface SaveCourseModalProps {
 export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalProps) {
   const [courseName, setCourseName] = useState('');
   const { clearCourse, stopRecordingCourse, coordinates } = useMapStore();
+  const [isStaticMapLoaded, setIsStaticMapLoaded] = useState(false);
 
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const staticKakaoMapRef = useRef<kakao.maps.StaticMap | null>(null);
-  const [capturedImg, setCapturedImg] = useState<string | null>(null);
+  // 리액트 카카오맵용 상태
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapLevel, setMapLevel] = useState<number | null>(null);
+  const [mapPath, setMapPath] = useState<any[] | null>(null);
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,39 +38,34 @@ export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalP
   };
 
   useEffect(() => {
-    if (open && mapContainerRef.current && coordinates.length > 0 && window.kakao?.maps) {
-      // Get center and level for the map
-      const { center, level } = getCenterAndLevel(coordinates);
+    if (!open) return;
 
-      // Convert to Kakao LatLng objects
-      const courseCoords = coordinates.map((coord) => new window.kakao.maps.LatLng(coord.lat, coord.lng));
+    if (coordinates.length > 0) {
+      try {
+        // 센터와 줌 레벨 계산
+        const { center, level } = getCenterAndLevel(coordinates);
 
-      const staticMapOption = {
-        center,
-        level,
-        marker: false,
-        path: [
+        // 리액트 카카오맵에서 사용할 형식으로 변환
+        setMapCenter({ lat: center.getLat(), lng: center.getLng() });
+        setMapLevel(level);
+
+        // path 설정
+        const pathPoints = coordinates.map((coord) => ({ lat: coord.lat, lng: coord.lng }));
+        setMapPath([
           {
-            points: courseCoords,
+            points: pathPoints,
             strokeWeight: 4,
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
           },
-        ],
-      };
+        ]);
 
-      // Clear any existing map
-      if (staticKakaoMapRef.current) {
-        // No direct way to destroy StaticMap, so we clear the element content
-        if (mapContainerRef.current) {
-          mapContainerRef.current.innerHTML = '';
-        }
+        setIsStaticMapLoaded(true);
+      } catch (error) {
+        console.error('지도 데이터 준비 오류:', error);
       }
-
-      // Create new map instance
-      staticKakaoMapRef.current = new window.kakao.maps.StaticMap(mapContainerRef.current, staticMapOption);
     }
-  }, [coordinates, open]);
+  }, [open, coordinates]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -79,7 +77,34 @@ export function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalP
         <div className="space-y-3">
           <Input name="name" placeholder="코스 이름" onChange={handleNameInputChange} />
         </div>
-        <div className="w-full h-[300px] bg-gray-100 rounded" ref={mapContainerRef}></div>
+
+        {mapCenter && mapLevel ? (
+          <Map
+            className="w-full h-[300px] bg-gray-100 rounded"
+            center={mapCenter}
+            level={mapLevel}
+            draggable={false}
+            zoomable={false}
+            disableDoubleClick={true}
+            disableDoubleClickZoom={true}>
+            {!isStaticMapLoaded && (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500">지도를 불러오는 중...</p>
+              </div>
+            )}
+            <Polyline
+              path={coordinates} // 폴리라인 경로
+              strokeWeight={5} // 선 두께
+              strokeColor="#FF0000" // 선 색상
+              strokeOpacity={0.8} // 선 투명도
+              strokeStyle="solid" // 선 스타일
+            />
+          </Map>
+        ) : (
+          <div className="w-full h-[300px] bg-gray-100 rounded flex items-center justify-center">
+            <p className="text-gray-500">좌표 데이터를 준비하는 중...</p>
+          </div>
+        )}
 
         <DialogFooter>
           <DialogClose asChild>

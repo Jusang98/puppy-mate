@@ -10,7 +10,13 @@ import SaveCourseModal from '@/app/components/SaveCourseModal';
 export function Map() {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { location, error } = useCurrentLocation();
-  const { coordinates, addCoursePoint, startRecordingCourse, isSavingCourse, startTime } = useMapStore();
+  const {
+    coordinates,
+    addCoursePoint,
+    startRecordingCourse,
+    isSavingCourse,
+    startTime,
+  } = useMapStore();
   const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
 
   // 테스트를 위한 더미 데이터
@@ -83,25 +89,31 @@ export function Map() {
       }
     });
 
-    geocoder.coord2Address(coordinates[0].lng, coordinates[0].lat, function (result, status) {
-      if (status === kakao.maps.services.Status.OK) {
-        const addressObject = result[0].address || result[0].road_address;
-        address =
-          addressObject.region_1depth_name +
-          ' ' +
-          addressObject.region_2depth_name +
-          ' ' +
-          addressObject.region_3depth_name;
-        console.log(addressObject);
+    geocoder.coord2Address(
+      coordinates[0].lng,
+      coordinates[0].lat,
+      function (result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+          const addressObject = result[0].address || result[0].road_address;
+          address =
+            addressObject.region_1depth_name +
+            ' ' +
+            addressObject.region_2depth_name +
+            ' ' +
+            addressObject.region_3depth_name;
+          console.log(addressObject);
+        }
       }
-    });
+    );
   };
 
   return (
     <>
-      <button onClick={handleToggleBtnClick}>토글 버튼{isSavingCourse ? 'on' : 'off'}</button>
+      <button onClick={handleToggleBtnClick}>
+        토글 버튼{isSavingCourse ? 'on' : 'off'}
+      </button>
       <KakaoMap
-        id="map"
+        id='map'
         ref={mapRef}
         center={{ lat: 37.566535, lng: 126.977125 }}
         style={{
@@ -120,16 +132,20 @@ export function Map() {
               <Polyline
                 path={coordinates} // 폴리라인 경로
                 strokeWeight={5} // 선 두께
-                strokeColor="#FF0000" // 선 색상
+                strokeColor='#FF0000' // 선 색상
                 strokeOpacity={0.8} // 선 투명도
-                strokeStyle="solid" // 선 스타일
+                strokeStyle='solid' // 선 스타일
               />
             )}
           </>
         )}
       </KakaoMap>
       {/* Modal 컴포넌트 */}
-      <SaveCourseModal open={isCreateCourseModalOpen} onSave={handleSaveCourse} onOpenChange={onModalOpenChange} />
+      <SaveCourseModal
+        open={isCreateCourseModalOpen}
+        onSave={handleSaveCourse}
+        onOpenChange={onModalOpenChange}
+      />
     </>
   );
 }

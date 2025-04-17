@@ -11,7 +11,10 @@ export default function SnapShotMap({
   const { center, level } = getCenterAndLevel(coordinates);
 
   return (
-    <div className={`w-[${size}px] h-[${size}px] overflow-auto mx-auto`}>
+    <div
+      style={{ width: `${size}px`, height: `${size}px` }}
+      className="overflow-auto mx-auto"
+    >
       <Map
         className="w-full h-full bg-gray-100 rounded"
         center={center}

@@ -53,11 +53,78 @@ export class SbCourseRepository implements CourseRepository {
     })) as Course[];
   }
 
-  async findById(id: number): Promise<Course | null> {
-    // Implementation for finding a course by ID
-    throw new Error('Method not implemented.');
-  }
+  async findByIsPublic(): Promise<{ id: number; startPoint: { lat: number; lng: number } }[]> {
+    const supabase = await createClient();
 
+    const { data, error } = await supabase
+      .from('courses')
+      .select(
+        `
+          id,
+          course_coordinates (
+            lat,
+            lng
+          )
+        `
+      )
+      .eq('is_public', true);
+
+    if (error) {
+      console.error('Error finding public courses:', error);
+      throw new Error('Failed to find public courses.');
+    }
+
+    return data.map((course: any) => {
+      const startPoint = course.course_coordinates?.[0]; // Assuming the first coordinate is the start point
+      return {
+        id: course.id,
+        startPoint: {
+          lat: startPoint?.lat,
+          lng: startPoint?.lng,
+        },
+      };
+    });
+  }
+  async findById(id: number): Promise<Course | null> {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('courses')
+      .select(
+        `
+                id,
+                user_id,
+                name,
+                address,
+                is_public,
+                distance,
+                duration,
+                created_at,
+                updated_at
+            `
+      )
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Error finding course by ID:', error);
+      return null;
+    }
+
+    if (!data) return null;
+
+    return new Course(
+      data.id,
+      data.user_id,
+      data.name,
+      data.address,
+      data.is_public,
+      data.distance,
+      data.duration,
+      new Date(data.created_at),
+      new Date(data.updated_at)
+    );
+  }
   async findAllByUserId(userId: number): Promise<Course[]> {
     // Implementation for finding all courses by user ID
     throw new Error('Method not implemented.');

@@ -12,4 +12,7 @@ export interface CourseRepository {
   create(course: Course): Promise<{ id: number }>;
   update(course: Course): Promise<Course>;
   delete(id: number): Promise<void>;
+  findByIsPublic(): Promise<
+    { id: number; startPoint: { lat: number; lng: number } }[]
+  >;
 }

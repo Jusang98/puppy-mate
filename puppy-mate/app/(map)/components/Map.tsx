@@ -13,13 +13,7 @@ import { useCourseQuery } from '@/queries/Course';
 export function Map() {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { location, error } = useCurrentLocation();
-  const {
-    coordinates,
-    addCoursePoint,
-    startRecordingCourse,
-    isSavingCourse,
-    startTime,
-  } = useMapStore();
+  const { coordinates, addCoursePoint, startRecordingCourse, isSavingCourse, startTime } = useMapStore();
   const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
   const { coursesQuery } = useCourseQuery();
   const { isLoading, data: courses } = coursesQuery;
@@ -100,13 +94,7 @@ export function Map() {
     }
     try {
       // createCourse 호출
-      const courseId = await createCourse(
-        name,
-        address,
-        totalDistance,
-        duration,
-        coordinates
-      );
+      const courseId = await createCourse(name, address, totalDistance, duration, coordinates);
       console.log(`Course saved successfully with ID: ${courseId}`);
     } catch (error) {
       console.error('Failed to save course:', error);
@@ -121,11 +109,9 @@ export function Map() {
   //   });
   return (
     <>
-      <button onClick={handleToggleBtnClick}>
-        토글 버튼{isSavingCourse ? 'on' : 'off'}
-      </button>
+      <button onClick={handleToggleBtnClick}>토글 버튼{isSavingCourse ? 'on' : 'off'}</button>
       <KakaoMap
-        id='map'
+        id="map"
         ref={mapRef}
         center={{ lat: 37.566535, lng: 126.977125 }}
         style={{
@@ -144,44 +130,40 @@ export function Map() {
               <Polyline
                 path={coordinates} // 폴리라인 경로
                 strokeWeight={5} // 선 두께
-                strokeColor='#FF0000' // 선 색상
+                strokeColor="#FF0000" // 선 색상
                 strokeOpacity={0.8} // 선 투명도
-                strokeStyle='solid' // 선 스타일
+                strokeStyle="solid" // 선 스타일
               />
             )}
           </>
         )}
         {courses && (
           <MarkerClusterer
-          averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-          minLevel={10} // 클러스터 할 최소 지도 레벨
-          disableClickZoom={true} // 클러스터 마커를 클릭했을 때 지도가 확대되지 않도록 설정한다
-          // 마커 클러스터러에 클릭이벤트를 등록합니다
-          // 마커 클러스터러를 생성할 때 disableClickZoom을 true로 설정하지 않은 경우
-          // 이벤트 헨들러로 cluster 객체가 넘어오지 않을 수도 있습니다
-          onClusterclick={onClusterclick}
-        >
-          {courses.map((pos, i) => (
-            <MapMarker
-              key={`${pos.startPoint.lat}-${pos.startPoint.lng}`}
-              position={{
-                lat: pos.startPoint.lat,
-                lng: pos.startPoint.lng,
-              }}
-              onCreate={(marker) => {
-                (marker as kakao.maps.Marker & { courseId?: number }).courseId = pos.id; // ✅ 각 marker 객체에 id 직접 부여
-              }}
-            />
-          ))}
-        </MarkerClusterer>
+            averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+            minLevel={10} // 클러스터 할 최소 지도 레벨
+            disableClickZoom={true} // 클러스터 마커를 클릭했을 때 지도가 확대되지 않도록 설정한다
+            // 마커 클러스터러에 클릭이벤트를 등록합니다
+            // 마커 클러스터러를 생성할 때 disableClickZoom을 true로 설정하지 않은 경우
+            // 이벤트 헨들러로 cluster 객체가 넘어오지 않을 수도 있습니다
+            // onClusterclick={onClusterclick}
+          >
+            {courses.map((pos, i) => (
+              <MapMarker
+                key={`${pos.startPoint.lat}-${pos.startPoint.lng}`}
+                position={{
+                  lat: pos.startPoint.lat,
+                  lng: pos.startPoint.lng,
+                }}
+                onCreate={(marker) => {
+                  (marker as kakao.maps.Marker & { courseId?: number }).courseId = pos.id; // ✅ 각 marker 객체에 id 직접 부여
+                }}
+              />
+            ))}
+          </MarkerClusterer>
         )}
       </KakaoMap>
       {/* Modal 컴포넌트 */}
-      <SaveCourseModal
-        open={isCreateCourseModalOpen}
-        onSave={handleSaveCourse}
-        onOpenChange={onModalOpenChange}
-      />
+      <SaveCourseModal open={isCreateCourseModalOpen} onSave={handleSaveCourse} onOpenChange={onModalOpenChange} />
     </>
   );
 }

@@ -140,16 +140,16 @@ export function Map() {
         {courses && (
           <MarkerClusterer
             averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-            minLevel={10} // 클러스터 할 최소 지도 레벨
+            minLevel={5} // 클러스터 할 최소 지도 레벨
             disableClickZoom={true} // 클러스터 마커를 클릭했을 때 지도가 확대되지 않도록 설정한다
             // 마커 클러스터러에 클릭이벤트를 등록합니다
             // 마커 클러스터러를 생성할 때 disableClickZoom을 true로 설정하지 않은 경우
             // 이벤트 헨들러로 cluster 객체가 넘어오지 않을 수도 있습니다
             // onClusterclick={onClusterclick}
           >
-            {courses.map((pos, i) => (
+            {courses.map((pos) => (
               <MapMarker
-                key={`${pos.startPoint.lat}-${pos.startPoint.lng}`}
+                key={pos.id}
                 position={{
                   lat: pos.startPoint.lat,
                   lng: pos.startPoint.lng,

@@ -1,13 +1,13 @@
 'use client';
 import { Map as KakaoMap, MapMarker, Polyline } from 'react-kakao-maps-sdk';
-import useKakaoLoader from '../lib/use-kakao-loader';
-import { useCurrentLocation } from '../hooks/useCurrentLocation';
+import useKakaoLoader from '../../../lib/use-kakao-loader';
+import { useCurrentLocation } from '../../../hooks/useCurrentLocation';
 import { useRef, useEffect, useState } from 'react';
 import useMapStore from '@/store/useMapStore';
-import { getDistance } from '../utils/getDistance';
+import { getDistance } from '../../../utils/getDistance';
 import SaveCourseModal from '@/app/components/SaveCourseModal';
-import { createCourse } from '../lib/api/course';
-import { getAddress } from '../utils/getCoordinateAddress';
+import { createCourse } from '../../../api/course';
+import { getAddress } from '../../../utils/getCoordinateAddress';
 
 export function Map() {
   const mapRef = useRef<kakao.maps.Map | null>(null);

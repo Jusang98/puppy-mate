@@ -1,13 +1,11 @@
-import { Course } from './Course';
-
 export class Post {
-  id: number;
   userId: number;
   courseId: number;
   title: string;
-  content?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  id?: number;
+  content?: string | undefined;
+  createdAt?: Date;
+  updatedAt?: Date;
 
   constructor(
     id: number,

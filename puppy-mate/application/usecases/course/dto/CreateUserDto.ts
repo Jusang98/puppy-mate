@@ -1,12 +1,11 @@
-// User 클래스
-export class User {
+export class CreateUserDto {
   constructor(
     public email: string,
     public password: string,
     public nickname: string,
     public profileImageUrl?: string,
-    public id?: number,
-    public createdAt?: Date,
+    public id?: number, // 선택적으로 설정
+    public createdAt?: Date, // 선택적으로 설정
     public updatedAt?: Date
   ) {}
 }

@@ -8,19 +8,11 @@ export class SbUserRepository implements UserRepository {
     const supabase = await createClient();
 
     try {
-      // 비밀번호 해싱
-      const hashedPassword = await bcrypt
-        .hash(user.password, 10)
-        .catch((error) => {
-          console.error('Error hashing password:', error);
-          throw new Error('Failed to hash password.');
-        });
-
       const { data, error } = await supabase
         .from('users')
         .insert({
           email: user.email,
-          password: hashedPassword, // 해싱된 비밀번호 저장
+          password: user.password, // 해싱된 비밀번호 저장
           nickname: user.nickname,
           profile_image_url: user.profile_image_url,
         })

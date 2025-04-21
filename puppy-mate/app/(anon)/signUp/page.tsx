@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { createUser } from '@/api/user';
 import { z } from 'zod';
 
-// 🔐 Zod 스키마
+// Zod 스키마
 const signupSchema = z.object({
   email: z.string().email({ message: '유효한 이메일을 입력해주세요.' }),
   password: z
@@ -28,46 +28,26 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [profileImageUrl, setProfileImageUrl] = useState('');
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const handleSignup = async () => {
     setErrorMessage('');
-
-    // ✅ 입력값 유효성 검사
-    const result = signupSchema.safeParse({
-      email,
-      password,
-      nickname,
-      profileImageUrl,
-    });
-
-    if (!result.success) {
-      const firstError = Object.values(
-        result.error.flatten().fieldErrors
-      )[0]?.[0];
-      setErrorMessage(firstError || '입력값을 확인해주세요.');
-      return;
-    }
 
     try {
       const userId = await createUser(
         email,
         password,
         nickname,
-        profileImageUrl
+        profileImageFile ?? undefined
       );
       console.log('User created with ID:', userId);
       router.push('/login');
     } catch (error) {
       setErrorMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
     }
-  };
-
-  const handleBackToLogin = () => {
-    router.push('/login');
   };
 
   return (
@@ -84,39 +64,47 @@ export default function SignupPage() {
           placeholder='Email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className='w-full'
         />
         <Input
           type='password'
           placeholder='Password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className='w-full'
         />
         <Input
           type='text'
           placeholder='Nickname'
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
-          className='w-full'
         />
-        <Input
-          type='text'
-          placeholder='Profile Image URL (optional)'
-          value={profileImageUrl}
-          onChange={(e) => setProfileImageUrl(e.target.value)}
-          className='w-full'
-        />
+
+        {/* 파일 업로드 버튼 (수정된 부분) */}
+        <div className='space-y-1'>
+          <label htmlFor='profile_image'></label>
+          <input
+            id='profile_image'
+            ref={fileInputRef}
+            type='file'
+            accept='image/*'
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                setProfileImageFile(e.target.files[0]);
+              }
+            }}
+            className='hidden'
+          />
+          <Button
+            variant='outline'
+            type='button'
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {profileImageFile ? profileImageFile.name : '프로필 이미지 선택'}
+          </Button>
+        </div>
 
         <Button onClick={handleSignup} className='w-full'>
           Create Account
         </Button>
-
-        <div className='flex justify-between'>
-          <Button onClick={handleBackToLogin} variant='ghost'>
-            Back to Login
-          </Button>
-        </div>
       </div>
     </div>
   );

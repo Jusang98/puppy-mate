@@ -165,6 +165,25 @@ export class SbCourseRepository implements CourseRepository {
     throw new Error('Method not implemented.');
   }
 
+  async updatePublic(id: number, flag: boolean): Promise<void> {
+    const supabase = await createClient();
+    try {
+      const { error } = await supabase
+        .from('courses')
+        .update({ is_public: flag })
+        .eq('id', id)
+        .select('id');
+
+      if (error) {
+        console.error('Error updating is_public flag in supabase:', error);
+        throw new Error('Failed to update is_public flag.');
+      }
+    } catch (error){
+      console.error('Error updating is_public course:', error);
+      throw new Error('Failed to create course.');
+    }
+  }
+
   async delete(id: number): Promise<void> {
     // Implementation for deleting a course
     throw new Error('Method not implemented.');

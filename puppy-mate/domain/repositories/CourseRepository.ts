@@ -11,6 +11,7 @@ export interface CourseRepository {
   findAllByUserId(userId: number): Promise<Course[]>;
   create(course: Course): Promise<{ id: number }>;
   update(course: Course): Promise<Course>;
+  updatePublic(id: number, flag: boolean): Promise<void>;
   delete(id: number): Promise<void>;
   findByIsPublic(): Promise<
     { id: number; startPoint: { lat: number; lng: number } }[]

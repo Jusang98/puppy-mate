@@ -22,7 +22,7 @@ export class SbUserRepository implements UserRepository {
           email: user.email,
           password: hashedPassword, // 해싱된 비밀번호 저장
           nickname: user.nickname,
-          profile_Image_Url: user.profile_Image_Url,
+          profile_image_url: user.profile_image_url,
         })
         .select('id')
         .single();
@@ -153,7 +153,7 @@ export class SbUserRepository implements UserRepository {
         email: updatedUser.email,
         password: updatedUser.password, // 비밀번호는 해싱된 상태로 업데이트해야 합니다.
         nickname: updatedUser.nickname,
-        profileImageUrl: updatedUser.profile_Image_Url,
+        profileImageUrl: updatedUser.profile_image_url,
       })
       .eq('id', id);
 

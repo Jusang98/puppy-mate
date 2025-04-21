@@ -24,17 +24,15 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-
+    console.log('유저 이메일:', email);
+    console.log('유저 비밀번호:', password);
     const token = jwt.sign(
       { userId: user.userId, email }, // payload
       process.env.JWT_SECRET!, // 시크릿 키 (환경 변수)
       { expiresIn: '3h' } // 토큰 만료 시간
     );
 
-    return NextResponse.json(
-      { message: 'Login successful', token },
-      { status: 200 }
-    );
+    return NextResponse.json({ userId: user.userId, token }, { status: 200 });
   } catch (error) {
     console.error('Error processing POST request:', error);
     return NextResponse.json({ message: 'Failed to login' }, { status: 500 });

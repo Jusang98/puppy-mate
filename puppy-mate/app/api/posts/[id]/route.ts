@@ -19,7 +19,7 @@ export async function PATCH(request: NextRequest) {
     );
     return NextResponse.json(
       {
-        message: 'Post created successfully',
+        message: '게시물이 수정되었습니다.',
         postId: postId,
         isSuccess: isSuccess
       },
@@ -44,7 +44,7 @@ export async function DELETE({ params }: { params: { id: string } }) {
     const { isSuccess } = await deletePostUsecase.execute(id);
     return NextResponse.json(
       {
-        message: 'Post deleted successfully',
+        message: '게시물이 삭제되었습니다.',
         isSuccess: isSuccess
       },
       { status: 201 }

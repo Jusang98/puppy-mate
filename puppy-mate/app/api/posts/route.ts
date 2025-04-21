@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     );
     const newPostId = await createPostUsecase.execute(createPostDto);
     return NextResponse.json(
-      { message: 'Post created successfully', newPostId },
+      { message: '게시물 작성이 완료되었습니다.', newPostId },
       { status: 201 }
     );
   } catch (error) {

@@ -7,21 +7,31 @@ export async function createUser(
   email: string,
   password: string,
   nickname: string,
-  profileImageUrl?: string
+  profileImage?: File
 ): Promise<number> {
-  const response = await axios
-    .post<{ userId: number }>(`${BASE_URL}/signup`, {
-      email,
-      password,
-      nickname,
-      profileImageUrl,
-    })
-    .catch((error) => {
-      console.error('Failed to create user:', error);
-      throw error;
-    });
+  const formData = new FormData();
+  formData.append('email', email);
+  formData.append('password', password);
+  formData.append('nickname', nickname);
+  if (profileImage) {
+    formData.append('profile_image', profileImage);
+  }
 
-  return response.data.userId;
+  try {
+    const response = await axios.post<{ userId: number }>(
+      `${BASE_URL}/signup`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data.userId;
+  } catch (error) {
+    console.error('Failed to create user:', error);
+    throw error;
+  }
 }
 
 // 로그인 처리

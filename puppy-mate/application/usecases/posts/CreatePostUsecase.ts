@@ -12,7 +12,6 @@ export default class CreatePostUsecase {
   ) {
     this.postRepository = postRepository;
     this.courseRepository = courseRepository;
-    console.log('CourseRepository:', this.courseRepository);
   }
 
   async execute(createPostDto: CreatePostDto): Promise<{ postId: number }> {

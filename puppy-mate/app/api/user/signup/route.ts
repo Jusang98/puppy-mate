@@ -2,12 +2,13 @@ import { CreateUserDto } from '@/application/usecases/user/dto/CreateUserDto';
 import CreateUserUsecase from '@/application/usecases/user/CreateUserUsecase';
 
 import { SbUserRepository } from '@/infra/repositories/supabase/SbUserRepository';
+import { SbProfileStorageRepository } from '@/infra/repositories/supabase/SbProfileStorageRepository';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, nickname, profileImageUrl } = body;
+    const { email, password, nickname, profile_image } = body;
 
     if (!email || !password || !nickname) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
@@ -17,12 +18,12 @@ export async function POST(request: Request) {
       email: email,
       password: password,
       nickname: nickname,
-      profileImageUrl: profileImageUrl || '',
+      profile_image: body.image as File | undefined,
     };
 
     const createUserUsecase = new CreateUserUsecase(
       new SbUserRepository(),
-      createUserDto
+      new SbProfileStorageRepository()
     );
     const newUser = await createUserUsecase.execute(createUserDto);
 

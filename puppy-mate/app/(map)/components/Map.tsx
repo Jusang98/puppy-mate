@@ -1,19 +1,22 @@
 'use client';
-import { Map as KakaoMap, MapMarker, MarkerClusterer, Polyline } from 'react-kakao-maps-sdk';
+import { Map as KakaoMap, MapMarker, MarkerClusterer, Polyline, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import { useRef, useEffect } from 'react';
 import useMapStore from '@/store/useMapStore';
 import { getDistance } from '@/utils/getDistance';
 import { CourseListIsPublicDto } from '@/application/usecases/course/dto/CourseListIsPublicDto';
 import { Location, CourseMarker } from '@/types/Map';
+import { CurrentLocationIcon } from '@/app/components/GPSIcon';
 
 export function Map({
   currentLocation,
   courses,
   onClusterclick,
+  mapCenterPosition,
 }: {
   currentLocation: Location | null;
   courses: CourseListIsPublicDto[] | undefined;
   onClusterclick: (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => void;
+  mapCenterPosition: Location;
 }) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { coordinates, addCoursePoint, isSavingCourse } = useMapStore();
@@ -39,15 +42,23 @@ export function Map({
   //   coordinates.push(...dummyPath);
   // }, []);
 
-  // 현재 위치 바뀔때 마다 지도 중심 이동
+  // 현재 위치 바뀔때 마다 맵 중심 위치 설정
   useEffect(() => {
     if (!mapRef.current) return;
 
     if (currentLocation) {
-      const center = new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng);
-      mapRef.current.setCenter(center);
+      mapRef.current.setCenter(new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
     }
   }, [currentLocation]);
+
+  // mapCenterPosition 바뀔때 마다 맵 중심 위치 설정
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    if (mapCenterPosition) {
+      mapRef.current.setCenter(new kakao.maps.LatLng(mapCenterPosition.lat, mapCenterPosition.lng));
+    }
+  }, [mapCenterPosition]);
 
   // 현재 위치 바뀔때 마다 경로 추가
   useEffect(() => {
@@ -65,14 +76,15 @@ export function Map({
         id="map"
         className="w-full h-full"
         ref={mapRef}
-        center={{ lat: 37.566535, lng: 126.977125 }}
+        center={mapCenterPosition}
         level={3} // 지도의 확대 레벨
       >
         {currentLocation && (
           <>
-            {/* 현재 위치에 마커 표시 */}
-            <MapMarker position={currentLocation} />
-
+            <CustomOverlayMap position={currentLocation}>
+              <CurrentLocationIcon heading={currentLocation.heading || null} />
+              {/* 현재 위치에 마커 표시 */}
+            </CustomOverlayMap>
             {/* 이동 경로를 따라 폴리라인 그리기 */}
             {isSavingCourse && (
               <Polyline

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import useKakaoLoader from '@/lib/use-kakao-loader';
 import { Map } from '@/app/(map)/components/Map';
@@ -8,14 +8,27 @@ import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 import { useCourseSave } from '@/hooks/useCourseSave';
 import SaveCourseModal from '@/app/components/SaveCourseModal';
 import useMapStore from '@/store/useMapStore';
-import { CourseMarker } from '@/types/Map';
+import { CourseMarker, Location } from '@/types/Map';
+
+// icons
+import { BottomGPSButton } from '@/app/components/GPSIcon';
 
 export default function MapPage() {
   const { coursesQuery } = useCourseQuery();
   const { location, error } = useCurrentLocation();
+  const [mapCenterPosition, setMapCenterPosition] = useState<Location>({ lat: 37.566535, lng: 126.977125 });
+  const initialLocationSetRef = useRef(false);
 
   const { isLoading, data: courses } = coursesQuery;
   useKakaoLoader();
+
+  // 초기 위치 설정
+  useEffect(() => {
+    if (location && !initialLocationSetRef.current) {
+      setMapCenterPosition({ lat: location.lat, lng: location.lng });
+      initialLocationSetRef.current = true;
+    }
+  }, [location]);
 
   // 토긃버튼 클릭 상태 관리
   const { isSavingCourse, startRecordingCourse } = useMapStore();
@@ -51,7 +64,19 @@ export default function MapPage() {
       {isLoading ? (
         <div> 로딩중</div>
       ) : (
-        <Map currentLocation={location} courses={courses} onClusterclick={onClusterclick} />
+        <>
+          <Map
+            currentLocation={location}
+            courses={courses}
+            onClusterclick={onClusterclick}
+            mapCenterPosition={mapCenterPosition}
+          />
+          <BottomGPSButton
+            onClick={() => {
+              setMapCenterPosition({ lat: location?.lat || 0, lng: location?.lng || 0 });
+            }}
+          />
+        </>
       )}
       {/* Modal 컴포넌트 */}
       <SaveCourseModal open={isCreateCourseModalOpen} onSave={useCourseSave} onOpenChange={onModalOpenChange} />

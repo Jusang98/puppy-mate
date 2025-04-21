@@ -1,4 +1,4 @@
-import { CreatePostDto } from '@/application/usecases/course/dto/CreatePostDto';
+import { CreatePostDto } from '@/application/usecases/posts/dto/CreatePostDto';
 import CreatePostUsecase from '@/application/usecases/posts/CreatePostUsecase';
 import { SbCourseRepository } from '@/infra/repositories/supabase/SbCourseRepository';
 import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository';

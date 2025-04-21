@@ -4,8 +4,8 @@ export class CreateUserDto {
     public password: string,
     public nickname: string,
     public profileImageUrl?: string,
-    public id?: number, // 선택적으로 설정
-    public createdAt?: Date, // 선택적으로 설정
+    public id?: number, 
+    public createdAt?: Date,
     public updatedAt?: Date
   ) {}
 }

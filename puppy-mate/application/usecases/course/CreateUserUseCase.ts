@@ -10,7 +10,7 @@ export default class CreateUserUsecase {
     this.createUserDto = createUserDto;
   }
 
-  async execute(): Promise<{ userId: number }> {
+  async execute(createUserDto: CreateUserDto): Promise<{ userId: number }> {
     // userRepository.create는 숫자를 반환하므로 userId를 그대로 반환
     const userId = await this.userRepository.create(this.createUserDto);
     return { userId }; // userId를 객체로 감싸서 반환

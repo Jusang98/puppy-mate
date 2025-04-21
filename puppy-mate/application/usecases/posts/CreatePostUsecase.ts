@@ -1,5 +1,5 @@
 import { PostRepository } from '@/domain/repositories/PostRepository';
-import { CreatePostDto } from '../course/dto/CreatePostDto';
+import { CreatePostDto } from './dto/CreatePostDto';
 import { CourseRepository } from '@/domain/repositories/CourseRepository';
 
 export default class CreatePostUsecase {

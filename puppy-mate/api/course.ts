@@ -20,9 +20,9 @@ export async function createCourse(
       address,
       distance,
       duration,
-      coordinates
+      coordinates,
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('Failed to save course:', error);
       throw error;
     });
@@ -31,7 +31,7 @@ export async function createCourse(
 }
 
 export async function getPublicCourses() {
-  const response = await axios.get(BASE_URL).catch(error => {
+  const response = await axios.get(BASE_URL).catch((error) => {
     console.error('Failed to fetch public courses:', error);
     throw error;
   });

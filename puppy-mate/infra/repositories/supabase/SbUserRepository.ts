@@ -9,7 +9,12 @@ export class SbUserRepository implements UserRepository {
 
     try {
       // 비밀번호 해싱
-      const hashedPassword = await bcrypt.hash(user.password, 10);
+      const hashedPassword = await bcrypt
+        .hash(user.password, 10)
+        .catch((error) => {
+          console.error('Error hashing password:', error);
+          throw new Error('Failed to hash password.');
+        });
 
       const { data, error } = await supabase
         .from('users')
@@ -17,13 +22,13 @@ export class SbUserRepository implements UserRepository {
           email: user.email,
           password: hashedPassword, // 해싱된 비밀번호 저장
           nickname: user.nickname,
-          profileImageUrl: user.profileImageUrl,
+          profile_Image_Url: user.profile_Image_Url,
         })
         .select('id')
         .single();
 
       if (error) {
-        console.error('Error creating user:', error);
+        console.error('Error creating user:', error.message);
         throw new Error('Failed to create user.');
       }
 
@@ -90,7 +95,7 @@ export class SbUserRepository implements UserRepository {
       new Date(data.updated_at)
     );
   }
-  
+
   async findByEmail(email: string): Promise<User | null> {
     const supabase = await createClient();
 
@@ -148,7 +153,7 @@ export class SbUserRepository implements UserRepository {
         email: updatedUser.email,
         password: updatedUser.password, // 비밀번호는 해싱된 상태로 업데이트해야 합니다.
         nickname: updatedUser.nickname,
-        profileImageUrl: updatedUser.profileImageUrl,
+        profileImageUrl: updatedUser.profile_Image_Url,
       })
       .eq('id', id);
 

@@ -20,7 +20,7 @@ export default function MapPage() {
   const [mapCenterPosition, setMapCenterPosition] = useState<Location>({ lat: 37.566535, lng: 126.977125 });
   const initialLocationSetRef = useRef(false);
 
-  const { isLoading, data: courses } = coursesQuery;
+  const { isLoading, data: courses, isError, error: coursesError } = coursesQuery;
   useKakaoLoader();
 
   // 초기 위치 설정
@@ -59,41 +59,22 @@ export default function MapPage() {
 
   return (
     <div className="relative w-screen h-screen">
-      {/* 나중에 토스트로 변경 */}
-      {error && <div> 에러 발생 {error}</div>}
-      {/* 만약 기존 코스들을 가져오지 못한다면 어떻게 할까 */}
-      {isLoading ? (
-        <div className="w-full h-full">
-          {/* Skeleton for the map */}
-          <div className="absolute inset-0 bg-gray-100">
-            <div className="flex items-center gap-2 absolute top-4 left-4 z-20">
-              <div className="w-16 h-8 rounded-full">
-                <Skeleton className="w-full h-full" />
-              </div>
-            </div>
-            <div className="absolute bottom-8 right-8 z-20">
-              <Skeleton className="w-12 h-12 rounded-full" />
-            </div>
-          </div>
+      <>
+        <div className="flex items-center gap-2 absolute top-4 left-4 z-20">
+          <WalkStateToggle onToggle={handleToggleBtnClick} />
         </div>
-      ) : (
-        <>
-          <div className="flex items-center gap-2 absolute top-4 left-4 z-20">
-            <WalkStateToggle onToggle={handleToggleBtnClick} />
-          </div>
-          <Map
-            currentLocation={location}
-            courses={courses}
-            onClusterclick={onClusterclick}
-            mapCenterPosition={mapCenterPosition}
-          />
-          <BottomGPSButton
-            onClick={() => {
-              setMapCenterPosition({ lat: location?.lat || 0, lng: location?.lng || 0 });
-            }}
-          />
-        </>
-      )}
+        <Map
+          currentLocation={location}
+          courses={courses}
+          onClusterclick={onClusterclick}
+          mapCenterPosition={mapCenterPosition}
+        />
+        <BottomGPSButton
+          onClick={() => {
+            setMapCenterPosition({ lat: location?.lat || 0, lng: location?.lng || 0 });
+          }}
+        />
+      </>
       {/* Modal 컴포넌트 */}
       <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
     </div>

@@ -1,8 +1,36 @@
-import DeletePostUsecase from '@/application/usecases/posts/DeletePostUsecase';
-import { UpdatePostDto } from '@/application/usecases/posts/dto/UpdatePostDto';
-import UpdatePostUsecase from '@/application/usecases/posts/UpdatePostUsecase';
+import DeletePostUsecase from '@/application/usecases/post/DeletePostUsecase';
+import { UpdatePostDto } from '@/application/usecases/post/dto/UpdatePostDto';
+import GetPostUsecase from '@/application/usecases/post/GetPostUsecase';
+import UpdatePostUsecase from '@/application/usecases/post/UpdatePostUsecase';
+import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordinatesRepository';
 import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository';
 import { NextRequest, NextResponse } from 'next/server';
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = parseInt(params.id);
+    if (!id) {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
+    }
+    const getPostUsecase = new GetPostUsecase(
+      new SbPostRepository(),
+      new SbCoordinatesRepository()
+    );
+    const postDto = await getPostUsecase.execute(id);
+    if (!postDto) {
+      return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    }
+    return NextResponse.json({ data: postDto }, { status: 200 });
+  } catch (error) {
+    console.log('Error read Post:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PATCH(request: NextRequest) {
   try {
@@ -23,7 +51,7 @@ export async function PATCH(request: NextRequest) {
         postId: postId,
         isSuccess: isSuccess
       },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
     console.log('Error create Post:', error);
@@ -47,7 +75,7 @@ export async function DELETE({ params }: { params: { id: string } }) {
         message: '게시물이 삭제되었습니다.',
         isSuccess: isSuccess
       },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
     console.log('Error delete Post:', error);

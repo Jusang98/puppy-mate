@@ -1,3 +1,4 @@
+'use client';
 import { CiLocationArrow1 } from 'react-icons/ci';
 import { useEffect } from 'react';
 

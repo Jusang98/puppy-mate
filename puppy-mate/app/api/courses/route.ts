@@ -9,18 +9,13 @@ import { CourseListIsPublicDto } from '@/application/usecases/course/dto/CourseL
 
 export async function GET() {
   try {
-    const courseListUsecase = new CourseListIsPublicUsecase(
-      new SbCourseRepository()
-    );
+    const courseListUsecase = new CourseListIsPublicUsecase(new SbCourseRepository());
 
     const courseListIsPublicDto: CourseListIsPublicDto[] = await courseListUsecase.execute();
     return NextResponse.json(courseListIsPublicDto);
   } catch (error) {
     console.log('Error fetching course list:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -31,30 +26,14 @@ export async function POST(request: NextRequest) {
     if (!name || address === undefined || !distance || !duration) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
-    const createCourseDto = new CreateCourseDto(
-      1,
-      name,
-      address,
-      distance,
-      duration,
-      coordinates
-    );
-    const createCourseUsecase = new CreateCourseUsecase(
-      new SbCourseRepository(),
-      new SbCoordinatesRepository()
-    );
+    const createCourseDto = new CreateCourseDto(1, name, address, distance, duration, coordinates);
+    const createCourseUsecase = new CreateCourseUsecase(new SbCourseRepository(), new SbCoordinatesRepository());
     const newCourse = await createCourseUsecase.execute(createCourseDto);
 
-    return NextResponse.json(
-      { message: 'Course created successfully', newCourse },
-      { status: 201 }
-    );
+    return NextResponse.json({ message: 'Course created successfully', newCourse }, { status: 201 });
   } catch (error) {
     console.log('Error create course:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 

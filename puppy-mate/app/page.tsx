@@ -5,13 +5,14 @@ import useKakaoLoader from '@/lib/use-kakao-loader';
 import { Map } from '@/app/(map)/components/Map';
 import { useCourseQuery } from '@/queries/Course';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
-import { useCourseSave } from '@/hooks/useCourseSave';
-import SaveCourseModal from '@/app/components/SaveCourseModal';
+import SaveCourseModal from '@/app/components/map/SaveCourseModal';
 import useMapStore from '@/store/useMapStore';
 import { CourseMarker, Location } from '@/types/Map';
 
-// icons
-import { BottomGPSButton } from '@/app/components/GPSIcon';
+// icons, buttons
+import { BottomGPSButton } from '@/app/components/map/GPSIcon';
+import { WalkStateToggle } from '@/app/(map)/components/WalkStateToggle';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MapPage() {
   const { coursesQuery } = useCourseQuery();
@@ -62,9 +63,24 @@ export default function MapPage() {
       {error && <div> 에러 발생 {error}</div>}
       {/* 만약 기존 코스들을 가져오지 못한다면 어떻게 할까 */}
       {isLoading ? (
-        <div> 로딩중</div>
+        <div className="w-full h-full">
+          {/* Skeleton for the map */}
+          <div className="absolute inset-0 bg-gray-100">
+            <div className="flex items-center gap-2 absolute top-4 left-4 z-20">
+              <div className="w-16 h-8 rounded-full">
+                <Skeleton className="w-full h-full" />
+              </div>
+            </div>
+            <div className="absolute bottom-8 right-8 z-20">
+              <Skeleton className="w-12 h-12 rounded-full" />
+            </div>
+          </div>
+        </div>
       ) : (
         <>
+          <div className="flex items-center gap-2 absolute top-4 left-4 z-20">
+            <WalkStateToggle onToggle={handleToggleBtnClick} />
+          </div>
           <Map
             currentLocation={location}
             courses={courses}
@@ -79,7 +95,7 @@ export default function MapPage() {
         </>
       )}
       {/* Modal 컴포넌트 */}
-      <SaveCourseModal open={isCreateCourseModalOpen} onSave={useCourseSave} onOpenChange={onModalOpenChange} />
+      <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
     </div>
   );
 }

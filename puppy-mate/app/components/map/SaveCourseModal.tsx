@@ -13,14 +13,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import useMapStore from '@/store/useMapStore';
-import SnapShotMap from './SnapShotMap';
+import SnapShotMap from '@/app/components/map/SnapShotMap';
+import { saveCourse } from '@/lib/saveCourse';
+
 interface SaveCourseModalProps {
   open: boolean;
-  onSave: (name: string) => void;
   onOpenChange: (open: boolean) => void;
 }
 
-export default function SaveCourseModal({ open, onSave, onOpenChange }: SaveCourseModalProps) {
+export default function SaveCourseModal({ open, onOpenChange }: SaveCourseModalProps) {
   const [courseName, setCourseName] = useState('');
   const { clearCourse, stopRecordingCourse, coordinates } = useMapStore();
 
@@ -55,8 +56,10 @@ export default function SaveCourseModal({ open, onSave, onOpenChange }: SaveCour
           <Button
             onClick={async () => {
               stopRecordingCourse();
-              onSave(courseName);
-              onOpenChange(false);
+              const courseId = await saveCourse(courseName);
+              if (courseId) {
+                onOpenChange(false);
+              }
             }}>
             저장
           </Button>

@@ -2,10 +2,10 @@
 import { Map as KakaoMap, MapMarker, MarkerClusterer, Polyline, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import { useRef, useEffect } from 'react';
 import useMapStore from '@/store/useMapStore';
-import { getDistance } from '@/utils/getDistance';
+import { getDistance } from '@/utils/map/getDistance';
 import { CourseListIsPublicDto } from '@/application/usecases/course/dto/CourseListIsPublicDto';
 import { Location, CourseMarker } from '@/types/Map';
-import { CurrentLocationIcon } from '@/app/components/GPSIcon';
+import { CurrentLocationIcon } from '@/app/components/map/GPSIcon';
 
 export function Map({
   currentLocation,

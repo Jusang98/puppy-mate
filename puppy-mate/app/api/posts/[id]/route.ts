@@ -1,3 +1,4 @@
+import DeletePostUsecase from '@/application/usecases/posts/DeletePostUsecase';
 import { UpdatePostDto } from '@/application/usecases/posts/dto/UpdatePostDto';
 import UpdatePostUsecase from '@/application/usecases/posts/UpdatePostUsecase';
 import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository';
@@ -26,6 +27,30 @@ export async function PATCH(request: NextRequest) {
     );
   } catch (error) {
     console.log('Error create Post:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE({ params }: { params: { id: string } }) {
+  try {
+    const id = parseInt(params.id);
+    if (!id) {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
+    }
+    const deletePostUsecase = new DeletePostUsecase(new SbPostRepository());
+    const { isSuccess } = await deletePostUsecase.execute(id);
+    return NextResponse.json(
+      {
+        message: 'Post deleted successfully',
+        isSuccess: isSuccess
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.log('Error delete Post:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

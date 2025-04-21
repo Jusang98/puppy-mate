@@ -7,18 +7,22 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { email, password, nickname, profile_image } = body;
+    const formData = await request.formData();
+
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const nickname = formData.get('nickname') as string;
+    const image = formData.get('profile_image') as File | null;
 
     if (!email || !password || !nickname) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
 
     const createUserDto: CreateUserDto = {
-      email: email,
-      password: password,
-      nickname: nickname,
-      profile_image: body.image as File | undefined,
+      email,
+      password,
+      nickname,
+      profile_image: image || undefined,
     };
 
     const createUserUsecase = new CreateUserUsecase(
@@ -27,7 +31,6 @@ export async function POST(request: Request) {
     );
     const newUser = await createUserUsecase.execute(createUserDto);
 
-    // 새로운 사용자가 생성된 후, 'userId' 반환
     return NextResponse.json(
       { message: 'Member created successfully', data: { userId: newUser } },
       { status: 201 }

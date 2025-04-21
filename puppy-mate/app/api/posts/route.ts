@@ -1,5 +1,5 @@
-import { CreatePostDto } from '@/application/usecases/posts/dto/CreatePostDto';
-import CreatePostUsecase from '@/application/usecases/posts/CreatePostUsecase';
+import { CreatePostDto } from '@/application/usecases/post/dto/CreatePostDto';
+import CreatePostUsecase from '@/application/usecases/post/CreatePostUsecase';
 import { SbCourseRepository } from '@/infra/repositories/supabase/SbCourseRepository';
 import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository';
 import { NextRequest, NextResponse } from 'next/server';

@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-type Location = { lat: number; lng: number };
+import { Location } from '@/types/Map';
 
 export const useCurrentLocation = () => {
   const [location, setLocation] = useState<Location | null>(null);

@@ -1,129 +1,77 @@
 'use client';
 import { Map as KakaoMap, MapMarker, MarkerClusterer, Polyline } from 'react-kakao-maps-sdk';
-import useKakaoLoader from '../../../lib/use-kakao-loader';
-import { useCurrentLocation } from '../../../hooks/useCurrentLocation';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import useMapStore from '@/store/useMapStore';
-import { getDistance } from '../../../utils/getDistance';
-import SaveCourseModal from '@/app/components/SaveCourseModal';
-import { createCourse } from '../../../api/course';
-import { getAddress } from '../../../utils/getCoordinateAddress';
-import { useCourseQuery } from '@/queries/Course';
+import { getDistance } from '@/utils/getDistance';
+import { CourseListIsPublicDto } from '@/application/usecases/course/dto/CourseListIsPublicDto';
+import { Location, CourseMarker } from '@/types/Map';
 
-export function Map() {
+export function Map({
+  currentLocation,
+  courses,
+  onClusterclick,
+}: {
+  currentLocation: Location | null;
+  courses: CourseListIsPublicDto[] | undefined;
+  onClusterclick: (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => void;
+}) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
-  const { location, error } = useCurrentLocation();
-  const { coordinates, addCoursePoint, startRecordingCourse, isSavingCourse, startTime } = useMapStore();
-  const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
-  const { coursesQuery } = useCourseQuery();
-  const { isLoading, data: courses } = coursesQuery;
+  const { coordinates, addCoursePoint, isSavingCourse } = useMapStore();
 
   // 테스트를 위한 더미 데이터
-  const dummyPath = [
-    { lat: 37.56421035025637, lng: 127.00767976641002 },
-    { lat: 37.56431035025637, lng: 127.00777976641002 },
-    { lat: 37.56441035025637, lng: 127.00787976641002 },
-    { lat: 37.56451035025637, lng: 127.00797976641002 },
-    { lat: 37.56461035025637, lng: 127.00807976641002 },
-    { lat: 37.56471035025637, lng: 127.00817976641002 },
-    { lat: 37.56481035025637, lng: 127.00827976641002 },
-    { lat: 37.56491035025637, lng: 127.00837976641002 },
-    { lat: 37.56501035025637, lng: 127.00847976641002 },
-    { lat: 37.56511035025637, lng: 127.00857976641002 },
-  ];
+  // const dummyPath = [
+  //   { lat: 37.56421035025637, lng: 127.00767976641002 },
+  //   { lat: 37.56431035025637, lng: 127.00777976641002 },
+  //   { lat: 37.56441035025637, lng: 127.00787976641002 },
+  //   { lat: 37.56451035025637, lng: 127.00797976641002 },
+  //   { lat: 37.56461035025637, lng: 127.00807976641002 },
+  //   { lat: 37.56471035025637, lng: 127.00817976641002 },
+  //   { lat: 37.56481035025637, lng: 127.00827976641002 },
+  //   { lat: 37.56491035025637, lng: 127.00837976641002 },
+  //   { lat: 37.56501035025637, lng: 127.00847976641002 },
+  //   { lat: 37.56511035025637, lng: 127.00857976641002 },
+  // ];
   // dummyPath.forEach((point) => {
   //   addCoursePoint(point);
   // });
 
-  useEffect(() => {
-    coordinates.push(...dummyPath);
-  }, []);
-
-  useKakaoLoader();
+  // useEffect(() => {
+  //   coordinates.push(...dummyPath);
+  // }, []);
 
   // 현재 위치 바뀔때 마다 지도 중심 이동
   useEffect(() => {
     if (!mapRef.current) return;
 
-    if (location) {
-      const center = new kakao.maps.LatLng(location.lat, location.lng);
+    if (currentLocation) {
+      const center = new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng);
       mapRef.current.setCenter(center);
     }
-  }, [location]);
+  }, [currentLocation]);
 
   // 현재 위치 바뀔때 마다 경로 추가
   useEffect(() => {
-    if (isSavingCourse && location) {
+    if (isSavingCourse && currentLocation) {
       const lastPosition = coordinates.at(-1);
-      if (!lastPosition || getDistance(lastPosition, location) > 1) {
-        addCoursePoint(location); // 경로 저장
+      if (!lastPosition || getDistance(lastPosition, currentLocation) > 1) {
+        addCoursePoint(currentLocation); // 경로 저장
       }
     }
-  }, [location, isSavingCourse]);
+  }, [currentLocation, isSavingCourse]);
 
-  if (error) {
-    return <div>위치 정보를 가져올 수 없습니다: {error}</div>;
-  }
-  const onModalOpenChange = (open: boolean) => {
-    setIsCreateCourseModalOpen(open);
-  };
-
-  const handleToggleBtnClick = async () => {
-    if (isSavingCourse) {
-      setIsCreateCourseModalOpen(true);
-    } else {
-      startRecordingCourse(); // 시작
-    }
-  };
-
-  const handleSaveCourse = async (name: string) => {
-    const duration = new Date().getTime() - startTime;
-    let totalDistance = 0;
-    let address = '';
-    // 도로 좌표 {lat: 37.56423690189401, lng: 127.00764941529607}
-    coordinates.forEach((coord, index) => {
-      if (index > 0) {
-        totalDistance += getDistance(coordinates[index - 1], coord);
-      }
-    });
-
-    try {
-      address = await getAddress(coordinates[0].lng, coordinates[0].lat);
-    } catch (error) {
-      console.error('Error fetching address:', error);
-    }
-    try {
-      // createCourse 호출
-      const courseId = await createCourse(name, address, totalDistance, duration, coordinates);
-      console.log(`Course saved successfully with ID: ${courseId}`);
-    } catch (error) {
-      console.error('Failed to save course:', error);
-    }
-  };
-  // const onClusterclick = (target, cluster) => {
-  //   console.log(cluster);
-  //      const markers = cluster.getMarkers();
-  //   console.log("클러스터 안의 마커 ID 목록:");
-  //   markers.forEach((marker) => {
-  //     console.log(marker.courseId); // ✅ 여기서 id 출력
-  //   });
   return (
-    <>
-      <button onClick={handleToggleBtnClick}>토글 버튼{isSavingCourse ? 'on' : 'off'}</button>
+    <div className="h-full w-full">
       <KakaoMap
         id="map"
+        className="w-full h-full"
         ref={mapRef}
         center={{ lat: 37.566535, lng: 126.977125 }}
-        style={{
-          width: '100%',
-          height: '350px',
-        }}
         level={3} // 지도의 확대 레벨
       >
-        {location && (
+        {currentLocation && (
           <>
             {/* 현재 위치에 마커 표시 */}
-            <MapMarker position={location} />
+            <MapMarker position={currentLocation} />
 
             {/* 이동 경로를 따라 폴리라인 그리기 */}
             {isSavingCourse && (
@@ -145,8 +93,7 @@ export function Map() {
             // 마커 클러스터러에 클릭이벤트를 등록합니다
             // 마커 클러스터러를 생성할 때 disableClickZoom을 true로 설정하지 않은 경우
             // 이벤트 헨들러로 cluster 객체가 넘어오지 않을 수도 있습니다
-            // onClusterclick={onClusterclick}
-          >
+            onClusterclick={onClusterclick}>
             {courses.map((pos) => (
               <MapMarker
                 key={pos.id}
@@ -155,15 +102,13 @@ export function Map() {
                   lng: pos.startPoint.lng,
                 }}
                 onCreate={(marker) => {
-                  (marker as kakao.maps.Marker & { courseId?: number }).courseId = pos.id; // ✅ 각 marker 객체에 id 직접 부여
+                  (marker as CourseMarker).courseId = pos.id; // ✅ 각 marker 객체에 id 직접 부여
                 }}
               />
             ))}
           </MarkerClusterer>
         )}
       </KakaoMap>
-      {/* Modal 컴포넌트 */}
-      <SaveCourseModal open={isCreateCourseModalOpen} onSave={handleSaveCourse} onOpenChange={onModalOpenChange} />
-    </>
+    </div>
   );
 }

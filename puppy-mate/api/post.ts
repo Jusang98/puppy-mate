@@ -9,18 +9,23 @@ export async function createPost(
   content: string,
   images: File[]
 ): Promise<number> {
-  const response = await axios
-    .post<{ postId: number }>(BASE_URL, {
-      userId,
-      courseId,
-      title,
-      content,
-      images
-    })
-    .catch(error => {
-      console.error('Failed to save course:', error);
-      throw error;
-    });
+  const formData = new FormData();
+
+  formData.append('userId', userId.toString());
+  formData.append('courseId', courseId.toString());
+  formData.append('title', title);
+  formData.append('content', content);
+
+  // 이미지 파일들을 FormData에 추가
+  images.forEach(image => {
+    formData.append('images', image);
+  });
+
+  const response = await axios.post<{ postId: number }>(BASE_URL, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
 
   return response.data.postId;
 }

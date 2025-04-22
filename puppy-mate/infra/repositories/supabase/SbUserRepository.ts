@@ -169,4 +169,5 @@ export class SbUserRepository implements UserRepository {
 
     return true;
   }
+  
 }

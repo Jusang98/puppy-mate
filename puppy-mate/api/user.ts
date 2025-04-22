@@ -79,3 +79,21 @@ export async function fetchData() {
     throw error;
   }
 }
+
+export async function getUserProfile() {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) throw new Error('No auth token found');
+
+    const response = await axios.get(`${BASE_URL}/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data; // 유저 정보 객체 반환
+  } catch (error) {
+    console.error('Failed to fetch user profile:', error);
+    throw error;
+  }
+}

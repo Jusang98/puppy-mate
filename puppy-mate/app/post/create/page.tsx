@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/carousel';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { createPost } from '@/api/post';
 
 export default function PostForm() {
   const [images, setImages] = useState<File[]>([]);
@@ -27,8 +28,8 @@ export default function PostForm() {
   };
 
   const handleSaveBtnClick = () => {
-    
-  }
+    createPost(1, 29, title, content, images);
+  };
   return (
     <div className="w-full max-w-md mx-auto p-4 space-y-4">
       <div className="text-center space-y-1">
@@ -86,7 +87,7 @@ export default function PostForm() {
 
       <div className="flex justify-between">
         <Button variant="ghost">← 이전</Button>
-        <Button>등록</Button>
+        <Button onClick={handleSaveBtnClick}>등록</Button>
       </div>
     </div>
   );

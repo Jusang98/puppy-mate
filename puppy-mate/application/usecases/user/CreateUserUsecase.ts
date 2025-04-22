@@ -1,5 +1,5 @@
 import { UserRepository } from '@/domain/repositories/UserRepository';
-import { ProfileImageRepository } from '@/domain/repositories/ProfileStorageRepository';
+import { StorageRepository } from '@/domain/repositories/StorageRepository';
 import { CreateUserDto } from './dto/CreateUserDto';
 import bcrypt from 'bcrypt';
 import { User } from '@/domain/entities/User';
@@ -7,7 +7,7 @@ import { User } from '@/domain/entities/User';
 export default class CreateUserUsecase {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly profileImageRepository: ProfileImageRepository
+    private readonly storageRepository: StorageRepository
   ) {}
 
   async execute(createUserDto: CreateUserDto): Promise<{ userId: number }> {
@@ -17,7 +17,7 @@ export default class CreateUserUsecase {
 
     // 1. 이미지 파일이 있다면 Supabase에 저장
     if (profile_image) {
-      fileName = await this.profileImageRepository.save(profile_image as File);
+      fileName = await this.storageRepository.save(profile_image as File);
     }
 
     // 2. 비밀번호 해싱

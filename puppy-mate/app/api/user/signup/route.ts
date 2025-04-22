@@ -2,7 +2,7 @@ import { CreateUserDto } from '@/application/usecases/user/dto/CreateUserDto';
 import CreateUserUsecase from '@/application/usecases/user/CreateUserUsecase';
 
 import { SbUserRepository } from '@/infra/repositories/supabase/SbUserRepository';
-import { SbProfileStorageRepository } from '@/infra/repositories/supabase/SbProfileStorageRepository';
+import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepository';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     const createUserUsecase = new CreateUserUsecase(
       new SbUserRepository(),
-      new SbProfileStorageRepository()
+      new SbStorageRepository()
     );
     const newUser = await createUserUsecase.execute(createUserDto);
 

@@ -50,4 +50,9 @@ export interface UserRepository {
    * @returns 삭제 성공 여부
    */
   delete(id: number): Promise<boolean>;
+  /**
+   * 사용자 ID로 프로필 이미지 URL 조회
+   * @param id - 사용자 ID
+   * @returns 프로필 이미지 URL 문자열 또는 null
+   */
 }

@@ -1,10 +1,8 @@
-import { Post } from './Post';
-
 export class PostImage {
-  id: number;
   postId: number;
   imageUrl: string;
   orderIndex: number | null;
+  id?: number;
 
   constructor(
     id: number,

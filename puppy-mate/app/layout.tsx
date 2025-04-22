@@ -1,6 +1,6 @@
 import './globals.css';
 import QueryProvider from './QueryProvider';
-
+import { Toaster } from '@/components/ui/sonner';
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -9,7 +9,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          {children}
+          <Toaster />
+        </QueryProvider>
       </body>
     </html>
   );

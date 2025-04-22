@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-type Location = { lat: number; lng: number };
+import { Location } from '@/types/Map';
 
 export const useCurrentLocation = () => {
   const [location, setLocation] = useState<Location | null>(null);
@@ -19,11 +18,9 @@ export const useCurrentLocation = () => {
         const newLocation = {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
+          heading: pos.coords.heading,
         };
         setLocation(newLocation);
-
-        // 좌표값을 콘솔에 출력
-        // console.log('현재 위치:', newLocation);
       },
       (err) => {
         setError(err.message);

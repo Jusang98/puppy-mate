@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 import useKakaoLoader from '@/lib/use-kakao-loader';
-import { Map } from '@/app/(map)/components/Map';
+import { Map } from '@/app/components/map/Map';
 import { useCourseQuery } from '@/queries/Course';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 import SaveCourseModal from '@/app/components/map/SaveCourseModal';
@@ -11,7 +11,7 @@ import { CourseMarker, Location } from '@/types/Map';
 
 // icons, buttons
 import { BottomGPSButton } from '@/app/components/map/GPSIcon';
-import { WalkStateToggle } from '@/app/(map)/components/WalkStateToggle';
+import { WalkStateToggle } from '@/app/components/map/WalkStateToggle';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MapPage() {

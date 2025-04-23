@@ -1,6 +1,6 @@
 import { UserRepository } from '@/domain/repositories/UserRepository';
 import { StorageRepository } from '@/domain/repositories/StorageRepository';
-import { User } from '@/domain/entities/User';
+import { GetUserDto } from './dto/GetUserDto';
 
 export default class GetUserUsecase {
   constructor(
@@ -8,15 +8,30 @@ export default class GetUserUsecase {
     private readonly storageRepository: StorageRepository
   ) {}
 
-  async execute(userId: number): Promise<User | null> {
+  // GetUserUsecase.ts 수정
+  async execute(userId: number): Promise<GetUserDto | null> {
+    // 1. User 도메인 객체 조회
     const user = await this.userRepository.findById(userId);
     if (!user) return null;
-    if (user.profile_image_url) {
+
+    // 2. User → GetUserDto 변환
+    const getUserDto = new GetUserDto(
+      user.email,
+      user.nickname,
+      user.profileImageUrl, // profileImageUrl → profileImage로 매핑
+      user.id,
+      user.createdAt,
+      user.updatedAt
+    );
+
+    // 3. 프로필 이미지 URL 처리
+    if (getUserDto.profileImage) {
       const publicUrl = await this.storageRepository.getPublicUrl(
-        user.profile_image_url
+        getUserDto.profileImage
       );
-      user.profile_image_url = publicUrl;
+      getUserDto.profileImage = publicUrl;
     }
-    return user;
+
+    return getUserDto;
   }
 }

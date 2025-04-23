@@ -8,26 +8,42 @@ export class SbUserRepository implements UserRepository {
     const supabase = await createClient();
 
     try {
+      // 1. 이메일 중복 확인
+      const { data: existingUser, error: fetchError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', user.email)
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error('Error checking email duplication:', fetchError.message);
+        throw new Error('Failed to check email duplication.');
+      }
+
+      if (existingUser) {
+        throw new Error('이미 사용 중인 이메일입니다.');
+      }
+
+      // 2. 사용자 생성
       const { data, error } = await supabase
         .from('users')
         .insert({
           email: user.email,
           password: user.password, // 해싱된 비밀번호 저장
           nickname: user.nickname,
-          profile_image_url: user.profile_image_url,
+          profileImageUrl: user.profileImageUrl,
         })
-        .select('id')
+        .select()
         .single();
-
+      console.log('🔍 Supabase insert result:', data); // ✅ 여기!!
       if (error) {
         console.error('Error creating user:', error.message);
         throw new Error('Failed to create user.');
       }
-
       return data.id;
     } catch (error) {
       console.error('Error creating user:', error);
-      throw new Error('Failed to create user.');
+      throw error;
     }
   }
 
@@ -36,7 +52,7 @@ export class SbUserRepository implements UserRepository {
 
     const { data, error } = await supabase
       .from('users')
-      .select('*')
+      .select()
       .eq('email', email)
       .single();
 
@@ -51,16 +67,7 @@ export class SbUserRepository implements UserRepository {
       console.error('Invalid password.');
       return null;
     }
-
-    return new User(
-      data.id,
-      data.email,
-      data.password, // 해싱된 비밀번호를 반환
-      data.nickname,
-      data.profileImageUrl,
-      new Date(data.created_at),
-      new Date(data.updated_at)
-    );
+    return data;
   }
 
   async findById(id: number): Promise<User | null> {
@@ -129,7 +136,7 @@ export class SbUserRepository implements UserRepository {
         row.email,
         row.password,
         row.nickname,
-        row.profileImageUrl,
+        row.profile_image_rl,
         new Date(row.created_at),
         new Date(row.updated_at)
       );
@@ -145,7 +152,7 @@ export class SbUserRepository implements UserRepository {
         email: updatedUser.email,
         password: updatedUser.password, // 비밀번호는 해싱된 상태로 업데이트해야 합니다.
         nickname: updatedUser.nickname,
-        profileImageUrl: updatedUser.profile_image_url,
+        profileImageUrl: updatedUser.profileImageUrl,
       })
       .eq('id', id);
 
@@ -169,5 +176,4 @@ export class SbUserRepository implements UserRepository {
 
     return true;
   }
-  
 }

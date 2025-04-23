@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const nickname = formData.get('nickname') as string;
-    const image = formData.get('profile_image') as File | null;
+    const image = formData.get('profileImage') as File | null;
 
     if (!email || !password || !nickname) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       email,
       password,
       nickname,
-      profile_image: image || undefined,
+      profileImage: image || undefined,
     };
 
     const createUserUsecase = new CreateUserUsecase(
@@ -31,10 +31,7 @@ export async function POST(request: Request) {
     );
     const newUser = await createUserUsecase.execute(createUserDto);
 
-    return NextResponse.json(
-      { message: 'Member created successfully', data: { userId: newUser } },
-      { status: 201 }
-    );
+    return NextResponse.json({ userId: newUser.userId }, { status: 201 });
   } catch (error) {
     console.error('Error processing POST request:', error);
     return NextResponse.json(

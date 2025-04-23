@@ -16,9 +16,9 @@ export default function LoginPage() {
 
     try {
       // 로그인 API 호출
-      const userId = await loginUser(email, password);
-
-      if (userId) {
+      const user = await loginUser(email, password);
+      console.log('토큰값과 아이디', user); 
+      if (user) {
         // 로그인 성공 시 홈 페이지로 리다이렉트
         router.push('/');
       } else {

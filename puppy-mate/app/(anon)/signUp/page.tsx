@@ -14,14 +14,6 @@ const signupSchema = z.object({
     .string()
     .min(8, { message: '비밀번호는 최소 8자 이상이어야 합니다.' }),
   nickname: z.string().min(1, { message: '닉네임을 입력해주세요.' }),
-  profileImageUrl: z
-    .string()
-    .trim()
-    .transform((val) => (val === '' ? undefined : val)) // 빈 문자열 → undefined
-    .optional()
-    .refine((val) => !val || z.string().url().safeParse(val).success, {
-      message: '유효한 URL 형식이 아닙니다.',
-    }),
 });
 
 export default function SignupPage() {
@@ -35,6 +27,17 @@ export default function SignupPage() {
 
   const handleSignup = async () => {
     setErrorMessage('');
+
+    // Zod 유효성 검사
+    const result = signupSchema.safeParse({ email, password, nickname });
+
+    if (!result.success) {
+      const firstError = Object.values(
+        result.error.flatten().fieldErrors
+      )[0]?.[0];
+      setErrorMessage(firstError || '입력값을 확인해주세요.');
+      return;
+    }
 
     try {
       const userId = await createUser(
@@ -78,11 +81,9 @@ export default function SignupPage() {
           onChange={(e) => setNickname(e.target.value)}
         />
 
-        {/* 파일 업로드 버튼 (수정된 부분) */}
         <div className='space-y-1'>
-          <label htmlFor='profile_image'></label>
           <input
-            id='profile_image'
+            id='profileImage'
             ref={fileInputRef}
             type='file'
             accept='image/*'

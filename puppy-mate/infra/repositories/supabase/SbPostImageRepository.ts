@@ -29,4 +29,29 @@ export class SbPostImageRepository implements PostImageRepository {
       throw error;
     }
   }
+  async findByPostId(postId: number): Promise<PostImage[]> {
+    const supabase = await createClient();
+
+    try {
+      const { data, error } = await supabase
+        .from('post_images')
+        .select('*')
+        .eq('post_id', postId)
+        .order('order_index');
+
+      if (error) {
+        console.error('Error fetching post images:', error);
+        throw new Error('Failed to fetch post images');
+      }
+
+      if (!data) return [];
+
+      return data.map(
+        item => new PostImage(item.id, postId, item.image_url, item.order_index)
+      );
+    } catch (error) {
+      console.error('Error in findByPostId:', error);
+      throw error;
+    }
+  }
 }

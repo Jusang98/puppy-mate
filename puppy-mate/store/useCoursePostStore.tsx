@@ -9,10 +9,14 @@ const useCoursePostStore = create(
         posts: null as CoursePost[] | null,
       },
       (set, get) => {
-        const setCoursePosts = (posts: CoursePost[]) => set({ posts });
+        const appendCoursePosts = (posts: CoursePost[] | null) => {
+          if (posts && posts.length > 0 && get().posts !== null) {
+            set((state) => ({ posts: [...(state.posts || []), ...posts] }));
+          }
+        };
         const clearCoursePosts = () => set({ posts: null });
         return {
-          setCoursePosts,
+          appendCoursePosts,
           clearCoursePosts,
         };
       }

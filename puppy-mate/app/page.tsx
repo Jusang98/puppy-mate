@@ -7,6 +7,7 @@ import { useCourseQuery } from '@/queries/Course';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 import SaveCourseModal from '@/app/components/map/SaveCourseModal';
 import useRecordingMapStore from '@/store/useRecordingMapStore';
+
 import { CourseMarker, Location } from '@/types/Map';
 
 // icons, buttons
@@ -15,6 +16,11 @@ import { WalkStateToggle } from '@/app/components/map/WalkStateToggle';
 
 // course list drawer
 import CourseListDrawer from '@/app/components/map/CourseListDrawer';
+import useCoursePostStore from '@/store/useCoursePostStore';
+import { usePostQuery } from '@/queries/Post';
+
+// toast
+import { toast } from 'sonner';
 
 export default function MapPage() {
   const { coursesQuery } = useCourseQuery();
@@ -22,7 +28,7 @@ export default function MapPage() {
   const [mapCenterPosition, setMapCenterPosition] = useState<Location>({ lat: 37.566535, lng: 126.977125 });
   const initialLocationSetRef = useRef(false);
 
-  const { isLoading, data: courses, isError, error: coursesError } = coursesQuery;
+  const { isLoading: isCoursesLoading, data: courses, isError: isCoursesError, error: coursesError } = coursesQuery;
   useKakaoLoader();
 
   // 초기 위치 설정
@@ -49,14 +55,39 @@ export default function MapPage() {
     setIsCreateCourseModalOpen(open);
   };
 
-  // 클러스터 클릭 이벤트 핸들러
+  // 클러스터 클릭 했을때 사용할 스토어
+  const { appendCoursePosts, clearCoursePosts } = useCoursePostStore();
+
+  // 바텀 시트에 표시될 게시물들의 코스 아이디 목록
+  const [courseIds, setCourseIds] = useState<number[]>([]);
+
+  const {
+    posts,
+    isLoading: isPostsLoading,
+    isError: isPostsError,
+    errors: postsErrors,
+    isSuccess: isPostsSuccess,
+  } = usePostQuery(courseIds);
+
+  useEffect(() => {
+    if (isPostsSuccess) {
+      appendCoursePosts(posts);
+    }
+  }, [isPostsSuccess, posts]);
+
   const onClusterclick = (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => {
-    console.log(cluster);
     const markers = cluster.getMarkers();
-    console.log('클러스터 안의 마커 ID 목록:');
+    const newCourseIds: number[] = [];
     markers.forEach((marker) => {
-      console.log((marker as CourseMarker).courseId); // ✅ 여기서 id 출력
+      // 클러스터안의 마커들의 courseId를 가져옴
+      const courseId = (marker as CourseMarker).courseId;
+      if (courseId) {
+        newCourseIds.push(courseId);
+      }
     });
+    // Filter out duplicate courseIds
+    const uniqueCourseIds = Array.from(new Set(newCourseIds));
+    setCourseIds(uniqueCourseIds);
   };
 
   return (

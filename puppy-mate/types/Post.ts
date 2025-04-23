@@ -1,3 +1,5 @@
+import { LatLng } from '@/types/Map';
+
 type CoursePost = {
   id: string;
   title: string;
@@ -6,6 +8,7 @@ type CoursePost = {
   username: string;
   createdAt: string;
   likes: number;
+  coordinates: LatLng[];
 };
 
 export type { CoursePost };

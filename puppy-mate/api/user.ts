@@ -60,6 +60,10 @@ export async function loginUser(
   }
 }
 
+export function logoutUser() {
+  localStorage.removeItem('authToken');
+}
+
 // 이후 인증이 필요한 API 요청에 대한 예시
 export async function fetchData() {
   try {
@@ -97,3 +101,4 @@ export async function getUserProfile() {
     throw error;
   }
 }
+

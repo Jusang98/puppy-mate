@@ -12,13 +12,22 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { createPost } from '@/api/post';
+import { useCoordinatesQuery } from '@/queries/Coordinate';
+import SnapShotMap from '@/app/components/map/SnapShotMap';
+import useKakaoLoader from '@/lib/use-kakao-loader';
 
 export default function PostForm() {
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
+  const id = '29';
+  const { coordinatesQuery } = useCoordinatesQuery(id);
+  useKakaoLoader();;
+  
 
+  if (coordinatesQuery.isLoading) return <div>Loading...</div>;
+  if (coordinatesQuery.error) return <div>Error loading coordinates</div>;
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     setImages(prev => [...prev, ...files]);
@@ -28,7 +37,12 @@ export default function PostForm() {
   };
 
   const handleSaveBtnClick = () => {
-    createPost(1, 29, title, content, images);
+    const postId = createPost(1, 29, title, content, images);
+    postId.then(id => {
+      window.location.href = `/post/${id}`;
+    }).catch(error => {
+      console.error('Failed to create post:', error);
+    });
   };
   return (
     <div className="w-full max-w-md mx-auto p-4 space-y-4">
@@ -40,6 +54,8 @@ export default function PostForm() {
           onChange={e => setTitle(e.target.value)}
         />
       </div>
+      {coordinatesQuery.data &&
+        <SnapShotMap coordinates={coordinatesQuery?.data.coordinates} size={300} />}
 
       {/* Carousel for images */}
       <Carousel className="w-full">

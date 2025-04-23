@@ -21,11 +21,10 @@ export async function createPost(
     formData.append('images', image);
   });
 
-  const response = await axios.post<{ postId: number }>(BASE_URL, formData, {
+  const response = await axios.post<{ newPostId: number }>(BASE_URL, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
   });
-
-  return response.data.postId;
+  return response.data.newPostId;
 }

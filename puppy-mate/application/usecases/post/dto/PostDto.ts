@@ -10,8 +10,9 @@ export class PostDto {
   createdAt?: Date;
   updatedAt?: Date;
   coordinates: CoordinateDto[];
+  images?: string[];
 
-  constructor(post: Post, coordinates: CourseCoordinate[]) {
+  constructor(post: Post, coordinates: CourseCoordinate[], images: string[]) {
     this.id = post.id;
     this.userId = post.userId;
     this.courseId = post.courseId;
@@ -22,5 +23,6 @@ export class PostDto {
     this.coordinates = coordinates.map(
       coordinate => new CoordinateDto(coordinate.lat, coordinate.lng)
     );
+    this.images = images;
   }
 }

@@ -7,6 +7,12 @@ export interface PostImageRepository {
    * @returns 생성된 이미지 ID 배열
    */
   createMany(postImages: PostImage[]): Promise<number[]>;
+  /**
+   * 해당 게시물의 이미지 조회
+   * @param postId - 게시물 ID
+   * @returns 해당 게시물의 이미지 리스트
+   */
+  findByPostId(postId: number): Promise<PostImage[]>;
   // /**
   //  * 게시물 이미지 생성
   //  * @param postImage - 생성할 게시물 이미지 객체

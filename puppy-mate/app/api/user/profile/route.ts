@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import GetUserUsecase from '@/application/usecases/user/GetUserUsecase';
 import { SbUserRepository } from '@/infra/repositories/supabase/SbUserRepository';
 import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepository';
+import { GetUserDto } from '@/application/usecases/user/dto/GetUserDto';
 import jwt from 'jsonwebtoken';
 
 export async function GET(request: NextRequest) {
@@ -31,14 +32,13 @@ export async function GET(request: NextRequest) {
       new SbUserRepository(),
       new SbStorageRepository()
     );
-    const user = await getUserUsecase.execute(userId);
-
-    if (!user) {
+    const getUserDto = await getUserUsecase.execute(userId);
+    if (!getUserDto) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
-
+    console.log('여기 확인', getUserDto);
     // 4. 유저 정보 응답
-    return NextResponse.json(user, { status: 200 });
+    return NextResponse.json(getUserDto, { status: 200 });
   } catch (error) {
     console.error('Failed to fetch user profile:', error);
     return NextResponse.json(

@@ -1,8 +1,8 @@
-export class CreateUserDto {
+export class GetUserDto {
   constructor(
     public email: string,
     public nickname: string,
-    public profile_image?: File,
+    public profileImage?: string,
     public id?: number,
     public createdAt?: Date,
     public updatedAt?: Date

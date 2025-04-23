@@ -14,7 +14,7 @@ export async function createUser(
   formData.append('password', password);
   formData.append('nickname', nickname);
   if (profileImage) {
-    formData.append('profile_image', profileImage);
+    formData.append('profileImage', profileImage);
   }
 
   try {
@@ -48,6 +48,7 @@ export async function loginUser(
       }
     );
     const { userId, token } = response.data;
+
     // JWT 토큰을 로컬 스토리지에 저장
     localStorage.setItem('authToken', token);
 
@@ -90,7 +91,6 @@ export async function getUserProfile() {
         Authorization: `Bearer ${token}`,
       },
     });
-
     return response.data; // 유저 정보 객체 반환
   } catch (error) {
     console.error('Failed to fetch user profile:', error);

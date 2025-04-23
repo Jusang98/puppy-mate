@@ -8,9 +8,7 @@ export default class LoginUserUsecase {
     this.userRepository = userRepository;
   }
 
-  async execute(
-    loginUserDto: LoginUserDto
-  ): Promise<{ userId: number } | null> {
+  async execute(loginUserDto: LoginUserDto): Promise<{ id: number } | null> {
     const user = await this.userRepository.login(
       loginUserDto.email,
       loginUserDto.password
@@ -19,7 +17,6 @@ export default class LoginUserUsecase {
     if (!user) {
       return null; // 로그인 실패 시 null 반환
     }
-
-    return { userId: user.id! }; // 성공 시 userId 반환
+    return { id: user.id! }; // 성공 시 userId 반환
   }
 }

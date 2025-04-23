@@ -11,13 +11,13 @@ export default class CreateUserUsecase {
   ) {}
 
   async execute(createUserDto: CreateUserDto): Promise<{ userId: number }> {
-    const { email, password, nickname, profile_image } = createUserDto;
+    const { email, password, nickname, profileImage } = createUserDto;
 
     let fileName: string | undefined;
 
     // 1. 이미지 파일이 있다면 Supabase에 저장
-    if (profile_image) {
-      fileName = await this.storageRepository.save(profile_image as File);
+    if (profileImage) {
+      fileName = await this.storageRepository.save(profileImage as File);
     }
 
     // 2. 비밀번호 해싱
@@ -28,11 +28,12 @@ export default class CreateUserUsecase {
       email,
       password: hashedPassword,
       nickname,
-      profile_image_url: fileName,
+      profileImageUrl: fileName,
     };
 
     // 4. DB에 저장하고 userId 반환
     const userId = await this.userRepository.create(user);
+    console.log('User created with ID:', userId);
     return { userId };
   }
 }

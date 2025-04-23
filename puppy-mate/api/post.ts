@@ -1,3 +1,4 @@
+import { PostDto } from '@/application/usecases/post/dto/PostDto';
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000/api/posts';
@@ -27,4 +28,15 @@ export async function createPost(
     }
   });
   return response.data.newPostId;
+}
+
+// API 호출 함수
+export async function getPost(postId: string) {
+  try {
+    const response = await axios<{ data: PostDto }>(`${BASE_URL}/${postId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch post:', error);
+    throw error;
+  }
 }

@@ -53,7 +53,9 @@ export class SbCourseRepository implements CourseRepository {
     })) as Course[];
   }
 
-  async findByIsPublic(): Promise<{ id: number; startPoint: { lat: number; lng: number } }[]> {
+  async findByIsPublic(): Promise<
+    { id: number; startPoint: { lat: number; lng: number } }[]
+  > {
     const supabase = await createClient();
 
     const { data, error } = await supabase
@@ -126,8 +128,32 @@ export class SbCourseRepository implements CourseRepository {
     );
   }
   async findAllByUserId(userId: number): Promise<Course[]> {
-    // Implementation for finding all courses by user ID
-    throw new Error('Method not implemented.');
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('courses')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Failed to fetch courses:', error);
+      return [];
+    }
+
+    // data가 null일 수 있으니 기본값 처리
+    return (data ?? []).map(
+      (row: any) =>
+        new Course(
+          row.user_id, // userId
+          row.name, // name
+          row.address, // address
+          row.distance, // distance
+          row.duration, // duration
+          row.id, // id (optional)
+          row.is_public, // isPublic (optional)
+          row.created_at ? new Date(row.created_at) : undefined, // createdAt (optional)
+          row.updated_at ? new Date(row.updated_at) : undefined // updatedAt (optional)
+        )
+    );
   }
 
   async create(course: Course): Promise<{ id: number }> {
@@ -178,7 +204,7 @@ export class SbCourseRepository implements CourseRepository {
         console.error('Error updating is_public flag in supabase:', error);
         throw new Error('Failed to update is_public flag.');
       }
-    } catch (error){
+    } catch (error) {
       console.error('Error updating is_public course:', error);
       throw new Error('Failed to create course.');
     }

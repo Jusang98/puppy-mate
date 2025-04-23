@@ -31,7 +31,7 @@ export class SbUserRepository implements UserRepository {
           email: user.email,
           password: user.password, // 해싱된 비밀번호 저장
           nickname: user.nickname,
-          profileImageUrl: user.profileImageUrl,
+          profile_image_url: user.profileImageUrl,
         })
         .select()
         .single();
@@ -85,13 +85,13 @@ export class SbUserRepository implements UserRepository {
     }
 
     return new User(
-      data.id,
-      data.email,
-      data.password,
-      data.nickname,
-      data.profileImageUrl,
-      new Date(data.created_at),
-      new Date(data.updated_at)
+      data.email, // email
+      data.password, // password
+      data.nickname, // nickname
+      data.profile_image_url, // profileImageUrl
+      data.id, // id
+      new Date(data.created_at), // createdAt
+      new Date(data.updated_at) // updatedAt
     );
   }
 

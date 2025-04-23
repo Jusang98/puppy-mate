@@ -4,21 +4,15 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getUserProfile } from '@/api/user'; // 작성한 getUserProfile API
+import { getUserProfile, logoutUser } from '@/api/user'; // logoutUser 추가
 import { useRouter } from 'next/navigation';
-
-type UserProfile = {
-  id: number;
-  email: string;
-  nickname: string;
-  profileImageUrl: string;
-};
+import { GetUserDto } from '@/application/usecases/user/dto/GetUserDto';
 
 export default function MyPage() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<GetUserDto | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
+  console.log('dd', profile?.profileImage);
   useEffect(() => {
     async function fetchProfile() {
       try {
@@ -33,6 +27,12 @@ export default function MyPage() {
 
     fetchProfile();
   }, []);
+
+  // 로그아웃 핸들러
+  const handleLogout = () => {
+    logoutUser();
+    router.push('/login'); // 로그아웃 후 로그인 페이지로 이동
+  };
 
   if (loading) {
     return (
@@ -50,27 +50,31 @@ export default function MyPage() {
 
   return (
     <div className='p-6 space-y-6'>
-      {/* 프로필 섹션 */}
-      <div className='flex items-center gap-4'>
-        <div className='relative w-24 h-24'>
-          <Image
-            src={
-              profile?.profileImageUrl
-                ? `${process.env.SUPABASE_URL}/storage/v1/object/public/images/profile/${profile.profileImageUrl}`
-                : '/default-profile.png'
-            }
-            alt='Profile'
-            fill
-            className='rounded-full object-cover'
-          />
+      {/* 상단: 프로필 + 로그아웃 버튼 */}
+      <div className='flex items-center justify-between'>
+        <div className='flex items-center gap-4'>
+          <div className='relative w-24 h-24'>
+            <Image
+              src={profile?.profileImage || '/default-profile.png'}
+              alt='Profile'
+              fill
+              className='rounded-full object-cover'
+            />
+          </div>
+          <div className='text-xl font-semibold'>{profile?.nickname}</div>
         </div>
-        <div className='text-xl font-semibold'>{profile?.nickname}</div>
+        <button
+          onClick={handleLogout}
+          className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition'
+        >
+          로그아웃
+        </button>
       </div>
 
-      {/* 관리 카드들 */}
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+      {/* 관리 카드들: 한 줄에 하나씩(세로 배치) */}
+      <div className='grid grid-cols-1 gap-4'>
         <Card
-          onClick={() => router.push('/my/walks')}
+          onClick={() => router.push('/mypage/courses')}
           className='cursor-pointer hover:shadow-md transition'
         >
           <CardContent className='p-6 text-center text-lg font-medium'>
@@ -78,7 +82,7 @@ export default function MyPage() {
           </CardContent>
         </Card>
         <Card
-          onClick={() => router.push('/my/favorites')}
+          onClick={() => router.push('/mypage/likes')}
           className='cursor-pointer hover:shadow-md transition'
         >
           <CardContent className='p-6 text-center text-lg font-medium'>
@@ -86,7 +90,7 @@ export default function MyPage() {
           </CardContent>
         </Card>
         <Card
-          onClick={() => router.push('/my/posts')}
+          onClick={() => router.push('/mypage/posts')}
           className='cursor-pointer hover:shadow-md transition'
         >
           <CardContent className='p-6 text-center text-lg font-medium'>

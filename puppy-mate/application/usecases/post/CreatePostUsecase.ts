@@ -21,8 +21,7 @@ export default class CreatePostUsecase {
     this.postImageRepository = postImageRepository;
     this.storageRepository = storageRepository;
   }
-
-  async execute(createPostDto: CreatePostDto): Promise<{ postId: number }> {
+  async execute(createPostDto: CreatePostDto): Promise<number> {
     try {
       // 1. 게시물 생성
       const postId = await this.postRepository.create(createPostDto);
@@ -48,7 +47,7 @@ export default class CreatePostUsecase {
       // 3. 해당 코스 is_public true로 변경
       await this.courseRepository.updatePublic(createPostDto.courseId, true);
 
-      return { postId };
+      return postId;
     } catch (error) {
       console.error('Error in CreatePostUsecase:', error);
       throw new Error('Failed to create post with images');

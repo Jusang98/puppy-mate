@@ -3,6 +3,7 @@ export class CreatePostDto {
     public userId: number,
     public courseId: number,
     public title: string,
-    public content?: string | undefined
+    public content?: string | undefined,
+    public images?: File[] | null
   ) {}
 }

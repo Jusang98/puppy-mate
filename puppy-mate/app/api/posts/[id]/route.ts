@@ -3,7 +3,9 @@ import { UpdatePostDto } from '@/application/usecases/post/dto/UpdatePostDto';
 import GetPostUsecase from '@/application/usecases/post/GetPostUsecase';
 import UpdatePostUsecase from '@/application/usecases/post/UpdatePostUsecase';
 import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordinatesRepository';
+import { SbPostImageRepository } from '@/infra/repositories/supabase/SbPostImageRepository';
 import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository';
+import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepository';
 import { NextRequest, NextResponse } from 'next/server';
 export async function GET(
   request: NextRequest,
@@ -16,7 +18,9 @@ export async function GET(
     }
     const getPostUsecase = new GetPostUsecase(
       new SbPostRepository(),
-      new SbCoordinatesRepository()
+      new SbCoordinatesRepository(),
+      new SbPostImageRepository(),
+      new SbStorageRepository()
     );
     const postDto = await getPostUsecase.execute(id);
     if (!postDto) {

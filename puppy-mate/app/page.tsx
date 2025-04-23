@@ -6,13 +6,15 @@ import { Map } from '@/app/components/map/Map';
 import { useCourseQuery } from '@/queries/Course';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 import SaveCourseModal from '@/app/components/map/SaveCourseModal';
-import useMapStore from '@/store/useMapStore';
+import useRecordingMapStore from '@/store/useRecordingMapStore';
 import { CourseMarker, Location } from '@/types/Map';
 
 // icons, buttons
 import { BottomGPSButton } from '@/app/components/map/GPSIcon';
 import { WalkStateToggle } from '@/app/components/map/WalkStateToggle';
-import { Skeleton } from '@/components/ui/skeleton';
+
+// course list drawer
+import CourseListDrawer from '@/app/components/map/CourseListDrawer';
 
 export default function MapPage() {
   const { coursesQuery } = useCourseQuery();
@@ -32,7 +34,7 @@ export default function MapPage() {
   }, [location]);
 
   // 토긃버튼 클릭 상태 관리
-  const { isSavingCourse, startRecordingCourse } = useMapStore();
+  const { isSavingCourse, startRecordingCourse } = useRecordingMapStore();
   const handleToggleBtnClick = async () => {
     if (isSavingCourse) {
       setIsCreateCourseModalOpen(true);
@@ -69,14 +71,18 @@ export default function MapPage() {
           onClusterclick={onClusterclick}
           mapCenterPosition={mapCenterPosition}
         />
-        <BottomGPSButton
-          onClick={() => {
-            setMapCenterPosition({ lat: location?.lat || 0, lng: location?.lng || 0 });
-          }}
-        />
       </>
+      <BottomGPSButton
+        onClick={() => {
+          setMapCenterPosition({ lat: location?.lat || 0, lng: location?.lng || 0 });
+        }}
+      />
       {/* Modal 컴포넌트 */}
       <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
+      {/* Course List Drawer */}
+      <div>
+        <CourseListDrawer />
+      </div>
     </div>
   );
 }

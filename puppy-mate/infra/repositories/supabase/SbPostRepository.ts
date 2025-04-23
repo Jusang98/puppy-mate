@@ -67,13 +67,34 @@ export class SbPostRepository implements PostRepository {
     );
   }
 
+  async findByCourseId(courseId: number): Promise<Post[]> {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.from('posts').select('*').eq('course_id', courseId);
+
+    if (error) {
+      console.error('Error finding posts by course ID:', error);
+      throw new Error('Failed to fetch posts.');
+    }
+
+    return data.map((row: any) => {
+      return new Post(
+        row.id,
+        row.user_id,
+        row.course_id,
+        row.title,
+        row.content,
+        new Date(row.created_at),
+        new Date(row.updated_at)
+      );
+    });
+  }
+
   async findAll(): Promise<Post[]> {
     const supabase = await createClient();
 
-    const { data, error } = await supabase
-      .from('posts')
-      .select(
-        `
+    const { data, error } = await supabase.from('posts').select(
+      `
         id,
         user_id,
         course_id,
@@ -82,7 +103,7 @@ export class SbPostRepository implements PostRepository {
         created_at,
         updated_at
       `
-      );
+    );
 
     if (error) {
       console.error('Error finding all posts:', error);

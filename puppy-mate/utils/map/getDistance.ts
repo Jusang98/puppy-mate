@@ -1,5 +1,5 @@
 // utils/getDistance.ts
-import { LatLng } from '@/store/useMapStore';
+import { LatLng } from '@/store/useRecordingMapStore';
 export function getDistance(prePostion: LatLng, currentPostion: LatLng): number {
   const R = 6371000; // Earth radius in meters
   const toRad = (deg: number) => deg * (Math.PI / 180);

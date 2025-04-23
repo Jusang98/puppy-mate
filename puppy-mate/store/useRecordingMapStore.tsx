@@ -1,12 +1,8 @@
 import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
+import { LatLng } from '@/types/Map';
 
-export interface LatLng {
-  lat: number;
-  lng: number;
-}
-
-const useMapStore = create(
+const useRecordingMapStore = create(
   devtools(
     combine(
       {
@@ -31,4 +27,4 @@ const useMapStore = create(
   )
 );
 
-export default useMapStore;
+export default useRecordingMapStore;

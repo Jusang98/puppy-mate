@@ -1,6 +1,6 @@
 'use client';
 import { Switch } from '@/components/ui/switch';
-import useMapStore from '@/store/useMapStore';
+import useMapStore from '@/store/useRecordingMapStore';
 
 export function WalkStateToggle({ onToggle }: { onToggle: () => void }) {
   const { isSavingCourse } = useMapStore();

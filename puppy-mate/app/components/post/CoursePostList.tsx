@@ -20,11 +20,10 @@ const CoursePostList = ({ posts }: { posts: CoursePost[] }) => {
               key={post.id}
               title={post.title}
               createdAt={post.createdAt}
-              content={post.content}
               totalDistance={post.distance}
               duration={post.duration}
               address={post.address}
-              onViewRoute={() => {}}
+              coordinates={post.coordinates}
             />
           );
         })

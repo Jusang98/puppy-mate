@@ -1,18 +1,18 @@
 'use client';
 
 import { Heart, MapPin, Calendar } from 'lucide-react';
-
+import SnapShotMap from '../map/SnapShotMap';
+import { LatLng } from 'leaflet';
 interface CoursePostItemProps {
   id: number;
   likes: number;
   title: string;
   createdAt: string;
-  content: string;
   totalDistance: number;
   duration: number;
   username: string;
   address: string;
-  onViewRoute?: (id: number) => void;
+  coordinates: LatLng[];
 }
 
 const CoursePostItem = ({
@@ -20,13 +20,14 @@ const CoursePostItem = ({
   likes,
   title,
   createdAt,
-  content,
   totalDistance,
   duration,
   username,
   address,
-  onViewRoute,
+  coordinates,
 }: CoursePostItemProps) => {
+  // Format totalDistance to display only up to 2 decimal places
+  const formattedDistance = totalDistance.toFixed(1);
   const formattedDate = new Date(createdAt).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'short',
@@ -45,11 +46,13 @@ const CoursePostItem = ({
       <div className="flex gap-2 text-sm text-gray-600">
         <div className="flex items-center gap-1">
           <MapPin size={14} />
-          <span>{totalDistance}km</span>
+          <span>{formattedDistance}km</span>
         </div>
         {duration && <span>· {duration}분</span>}
       </div>
-      (<div className="relative h-32 w-full rounded-md overflow-hidden">경로 맵 컴포넌트</div>)
+
+      <SnapShotMap coordinates={coordinates} size={300} />
+
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-2">
           <span className="font-medium">{username}</span>
@@ -58,7 +61,7 @@ const CoursePostItem = ({
             <span>{formattedDate}</span>
           </div>
         </div>
-        <button onClick={() => onViewRoute?.(id)} className="px-3 py-1.5 bg-black text-white text-sm rounded-md">
+        <button onClick={() => {}} className="px-3 py-1.5 bg-black text-white text-sm rounded-md">
           경로 보기
         </button>
       </div>

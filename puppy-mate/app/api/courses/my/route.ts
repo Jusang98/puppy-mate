@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserIdFromRequest } from '@/utils/auth';
 import { SbCourseRepository } from '@/infra/repositories/supabase/SbCourseRepository';
 import GetMyCoursesUsecase from '@/application/usecases/course/GetMyCoursesUsecase';
+import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordinatesRepository';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +12,8 @@ export async function GET(request: NextRequest) {
     }
 
     const getMyCoursesUsecase = new GetMyCoursesUsecase(
-      new SbCourseRepository()
+      new SbCourseRepository(),
+      new SbCoordinatesRepository()
     );
     const myCourses = await getMyCoursesUsecase.execute(userId);
 

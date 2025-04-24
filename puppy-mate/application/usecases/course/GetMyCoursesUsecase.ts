@@ -37,7 +37,7 @@ export default class GetMyCoursesUsecase {
         course.name,
         course.address,
         course.distance,
-        course.duration,
+        Math.floor(course.duration / 60),
         coords,
         course.isPublic,
         course.createdAt

@@ -3,15 +3,6 @@ import { useQueries } from '@tanstack/react-query';
 
 // 코스 아이디로 게시물 조회
 export const useCourseIdPostQuery = (courseIds: number[]) => {
-  if (courseIds.length === 0) {
-    return {
-      results: [],
-      posts: [],
-      isLoading: false,
-      isError: false,
-      isSuccess: true,
-    };
-  }
   const results = useQueries({
     queries: courseIds.map((id) => ({
       queryKey: ['post', id],

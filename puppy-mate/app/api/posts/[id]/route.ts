@@ -6,6 +6,7 @@ import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordin
 import { SbPostImageRepository } from '@/infra/repositories/supabase/SbPostImageRepository';
 import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository';
 import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepository';
+import { getUserIdFromRequest } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
 export async function GET(
   request: NextRequest,
@@ -13,9 +14,12 @@ export async function GET(
 ) {
   try {
     const id = parseInt(params.id);
+    const userId = getUserIdFromRequest(request);
+    let isWriter = false;
     if (!id) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
+
     const getPostUsecase = new GetPostUsecase(
       new SbPostRepository(),
       new SbCoordinatesRepository(),
@@ -26,7 +30,15 @@ export async function GET(
     if (!postDto) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
-    return NextResponse.json({ data: postDto }, { status: 200 });
+    console.log(postDto.userId, 'reaquest', request, userId);
+    if (userId && postDto.userId === userId) {
+      isWriter = true;
+    }
+
+    return NextResponse.json(
+      { data: { ...postDto, isWriter } },
+      { status: 200 }
+    );
   } catch (error) {
     console.log('Error read Post:', error);
     return NextResponse.json(
@@ -39,8 +51,10 @@ export async function GET(
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId = 1, id, title, content } = body;
+    const { id, title, content } = body;
+    const userId = getUserIdFromRequest(request);
     if (!userId || !id || !title) {
+      console.log(userId, id, title);
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
     const createPostDto = new UpdatePostDto(title, content);
@@ -66,7 +80,10 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-export async function DELETE({ params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const id = parseInt(params.id);
     if (!id) {

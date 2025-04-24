@@ -30,10 +30,14 @@ export async function createPost(
   return response.data.newPostId;
 }
 
-// API 호출 함수
 export async function getPost(postId: string) {
   try {
-    const response = await axios<{ data: PostDto }>(`${BASE_URL}/${postId}`);
+    const token = localStorage.getItem('authToken');
+    const response = await axios<{ data: PostDto }>(`${BASE_URL}/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}` // 토큰을 Authorization 헤더에 추가
+      }
+    });
     return response.data.data;
   } catch (error) {
     console.error('Failed to fetch post:', error);
@@ -48,4 +52,48 @@ export async function getPostsByCourseId(courseId: number): Promise<CoursePost[]
   });
 
   return response.data;
+}
+
+export async function deletePost(
+  postId: string
+): Promise<{ isSuccess: boolean; message: string }> {
+  try {
+    const token = localStorage.getItem('authToken');
+
+    const response = await axios.delete(`${BASE_URL}/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete post:', error);
+    throw error;
+  }
+}
+export async function updatePost(
+  postId: string,
+    title: string,
+    content: string,
+) {
+  try {
+    const token = localStorage.getItem('authToken');
+    const response = await axios.patch(`${BASE_URL}/${postId}`, {
+      id: postId,
+      title,
+      content,
+   }, {
+      headers: {
+        Authorization: `Bearer ${token}` // 토큰을 Authorization 헤더에 추가
+      }
+   });
+
+    return response.data; 
+  } catch (error: any) {
+    console.error('게시글 수정 실패:', error);
+    throw new Error(
+      error.response?.data?.error || '게시글 수정 중 오류가 발생했습니다.'
+    );
+  }
 }

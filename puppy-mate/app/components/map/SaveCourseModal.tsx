@@ -55,10 +55,10 @@ export default function SaveCourseModal({ open, onOpenChange }: SaveCourseModalP
           </DialogClose>
           <Button
             onClick={async () => {
-              stopRecordingCourse();
               const courseId = await saveCourse(courseName);
               if (courseId) {
                 onOpenChange(false);
+                stopRecordingCourse();
               }
             }}>
             저장

@@ -64,27 +64,6 @@ export function logoutUser() {
   localStorage.removeItem('authToken');
 }
 
-// 이후 인증이 필요한 API 요청에 대한 예시
-export async function fetchData() {
-  try {
-    const token = localStorage.getItem('authToken'); // 로컬 스토리지에서 토큰 가져오기
-
-    const response = await axios.get(
-      'http://localhost:3000/api/some-protected-route',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // 토큰을 Authorization 헤더에 추가
-        },
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch data:', error);
-    throw error;
-  }
-}
-
 export async function getUserProfile() {
   try {
     const token = localStorage.getItem('authToken');
@@ -101,4 +80,3 @@ export async function getUserProfile() {
     throw error;
   }
 }
-

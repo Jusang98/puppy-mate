@@ -7,6 +7,8 @@ import { CourseListIsPublicDto } from '@/application/usecases/course/dto/CourseL
 import { Location, CourseMarker } from '@/types/Map';
 import { CurrentLocationIcon } from '@/app/components/map/GPSIcon';
 import useCoursesMapStore from '@/store/useCoursesMapStore';
+import { getCenterAndLevel } from '@/utils/map/getCenterAndLevel';
+
 export function Map({
   currentLocation,
   courses,
@@ -22,7 +24,6 @@ export function Map({
 }) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { coordinates, addCoursePoint, isSavingCourse } = useMapStore();
-  const { addCourseId, clearCourseIds } = useCoursesMapStore();
 
   // 현재 위치 바뀔때 마다 맵 중심 위치 설정
   useEffect(() => {
@@ -52,6 +53,18 @@ export function Map({
     }
   }, [currentLocation, isSavingCourse]);
 
+  // 경로 상세 보기 누를때 맵 중심 위치 설정
+  const { courseCoordinates } = useCoursesMapStore();
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    if (courseCoordinates.length > 0) {
+      const { center, level } = getCenterAndLevel(courseCoordinates);
+      mapRef.current.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
+      mapRef.current.setLevel(level);
+    }
+  }, [courseCoordinates]);
+
   return (
     <div className="absolute inset-0 z-0">
       <KakaoMap
@@ -75,6 +88,14 @@ export function Map({
                 strokeColor="#FF0000" // 선 색상
                 strokeOpacity={0.8} // 선 투명도
                 strokeStyle="solid" // 선 스타일
+              />
+            )}
+            {courseCoordinates.length > 0 && (
+              <Polyline
+                path={courseCoordinates} // 폴리라인 경로
+                strokeWeight={5} // 선 두께
+                strokeColor="#4F46E5" // 선 색상 (인디고 색상으로 변경)
+                strokeOpacity={0.8} // 선 투명도
               />
             )}
           </>

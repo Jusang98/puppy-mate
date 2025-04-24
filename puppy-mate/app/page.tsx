@@ -93,6 +93,13 @@ export default function MapPage() {
     setSnapPoint(snapPoints[1]);
   };
 
+  const { courseCoordinates } = useCoursesMapStore();
+  useEffect(() => {
+    if (courseCoordinates.length > 0) {
+      setSnapPoint(snapPoints[0]);
+    }
+  }, [courseCoordinates]);
+
   return (
     <div className="relative w-screen h-screen">
       <>

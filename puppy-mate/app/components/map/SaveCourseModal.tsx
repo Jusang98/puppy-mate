@@ -12,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import useMapStore from '@/store/useMapStore';
+import useRecordingMapStore from '@/store/useRecordingMapStore';
 import SnapShotMap from '@/app/components/map/SnapShotMap';
 import { saveCourse } from '@/lib/saveCourse';
 
@@ -23,7 +23,7 @@ interface SaveCourseModalProps {
 
 export default function SaveCourseModal({ open, onOpenChange }: SaveCourseModalProps) {
   const [courseName, setCourseName] = useState('');
-  const { clearCourse, stopRecordingCourse, coordinates } = useMapStore();
+  const { clearCourse, stopRecordingCourse, coordinates } = useRecordingMapStore();
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

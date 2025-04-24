@@ -1,4 +1,4 @@
-import { LatLng } from '@/store/useMapStore';
+import { LatLng } from '@/store/useRecordingMapStore';
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000/api/courses';

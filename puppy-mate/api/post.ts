@@ -1,6 +1,6 @@
 import { PostDto } from '@/application/usecases/post/dto/PostDto';
 import axios from 'axios';
-
+import { CoursePost } from '@/types/Post';
 const BASE_URL = 'http://localhost:3000/api/posts';
 
 export async function createPost(
@@ -18,14 +18,14 @@ export async function createPost(
   formData.append('content', content);
 
   // 이미지 파일들을 FormData에 추가
-  images.forEach(image => {
+  images.forEach((image) => {
     formData.append('images', image);
   });
 
   const response = await axios.post<{ newPostId: number }>(BASE_URL, formData, {
     headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+      'Content-Type': 'multipart/form-data',
+    },
   });
   return response.data.newPostId;
 }
@@ -39,4 +39,13 @@ export async function getPost(postId: string) {
     console.error('Failed to fetch post:', error);
     throw error;
   }
+}
+
+export async function getPostsByCourseId(courseId: number): Promise<CoursePost[]> {
+  const response = await axios.get<CoursePost[]>(`${BASE_URL}?courseId=${courseId}`).catch((error) => {
+    console.error('Failed to get posts by course id:', error);
+    throw error;
+  });
+
+  return response.data;
 }

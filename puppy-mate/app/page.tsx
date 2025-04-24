@@ -2,25 +2,34 @@
 import { useState, useEffect, useRef } from 'react';
 
 import useKakaoLoader from '@/lib/use-kakao-loader';
-import { Map } from '@/app/(map)/components/Map';
+import { Map } from '@/app/components/map/Map';
 import { useCourseQuery } from '@/queries/Course';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 import SaveCourseModal from '@/app/components/map/SaveCourseModal';
-import useMapStore from '@/store/useMapStore';
+import useRecordingMapStore from '@/store/useRecordingMapStore';
+
 import { CourseMarker, Location } from '@/types/Map';
 
 // icons, buttons
 import { BottomGPSButton } from '@/app/components/map/GPSIcon';
-import { WalkStateToggle } from '@/app/(map)/components/WalkStateToggle';
-import { Skeleton } from '@/components/ui/skeleton';
+import { WalkStateToggle } from '@/app/components/map/WalkStateToggle';
+
+// course list drawer
+import CourseListDrawer from '@/app/components/map/CourseListDrawer';
+
+// store
+import useCoursesMapStore from '@/store/useCoursesMapStore';
 
 export default function MapPage() {
+  // 마커, 클러스터 표시할 코스들 가져오기
   const { coursesQuery } = useCourseQuery();
+  // 현재 위치 가져오기
   const { location, error } = useCurrentLocation();
+  // 맵 중앙 위치 설정
   const [mapCenterPosition, setMapCenterPosition] = useState<Location>({ lat: 37.566535, lng: 126.977125 });
   const initialLocationSetRef = useRef(false);
 
-  const { isLoading, data: courses, isError, error: coursesError } = coursesQuery;
+  const { isLoading: isCoursesLoading, data: courses, isError: isCoursesError, error: coursesError } = coursesQuery;
   useKakaoLoader();
 
   // 초기 위치 설정
@@ -32,7 +41,7 @@ export default function MapPage() {
   }, [location]);
 
   // 토긃버튼 클릭 상태 관리
-  const { isSavingCourse, startRecordingCourse } = useMapStore();
+  const { isSavingCourse, startRecordingCourse } = useRecordingMapStore();
   const handleToggleBtnClick = async () => {
     if (isSavingCourse) {
       setIsCreateCourseModalOpen(true);
@@ -47,14 +56,29 @@ export default function MapPage() {
     setIsCreateCourseModalOpen(open);
   };
 
-  // 클러스터 클릭 이벤트 핸들러
+  const { appendCourseIds } = useCoursesMapStore();
+
+  // 클러스터 클릭혹은 바깥 클릭시 바텀 시트 스냅 포인트 변경
+  const snapPoints = [0.3, 0.7, 1];
+  const [snapPoint, setSnapPoint] = useState<number | string | null>(snapPoints[0]);
+  const onSnapPointChange = (snapPoint: number | string | null) => {
+    setSnapPoint(snapPoint);
+  };
+
+  // 클러스터 클릭시 바텀 시트에 표시될 게시물들의 코스 아이디 목록 설정
   const onClusterclick = (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => {
-    console.log(cluster);
     const markers = cluster.getMarkers();
-    console.log('클러스터 안의 마커 ID 목록:');
+    const newCourseIds: number[] = [];
     markers.forEach((marker) => {
-      console.log((marker as CourseMarker).courseId); // ✅ 여기서 id 출력
+      // 클러스터안의 마커들의 courseId를 가져옴
+      const courseId = (marker as CourseMarker).courseId;
+      if (courseId) {
+        newCourseIds.push(courseId);
+      }
     });
+    // Filter out duplicate courseIds
+    const uniqueCourseIds = Array.from(new Set(newCourseIds));
+    appendCourseIds(uniqueCourseIds);
   };
 
   return (
@@ -69,14 +93,18 @@ export default function MapPage() {
           onClusterclick={onClusterclick}
           mapCenterPosition={mapCenterPosition}
         />
-        <BottomGPSButton
-          onClick={() => {
-            setMapCenterPosition({ lat: location?.lat || 0, lng: location?.lng || 0 });
-          }}
-        />
       </>
+      <BottomGPSButton
+        onClick={() => {
+          setMapCenterPosition({ lat: location?.lat || 0, lng: location?.lng || 0 });
+        }}
+      />
       {/* Modal 컴포넌트 */}
       <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
+      {/* Course List Drawer */}
+      <div>
+        <CourseListDrawer snapPoints={snapPoints} snapPoint={snapPoint} onSnapPointChange={onSnapPointChange} />
+      </div>
     </div>
   );
 }

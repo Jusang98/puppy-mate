@@ -14,7 +14,7 @@ export interface PostRepository {
    * @returns 게시물 객체 또는 null
    */
   findById(id: number): Promise<Post | null>;
-
+  findByCourseId(courseId: number): Promise<Post[]>;
   /**
    * 모든 게시물 조회
    * @returns 게시물 리스트

@@ -1,5 +1,5 @@
 'use client';
-import useMapStore from '@/store/useMapStore';
+import useMapStore from '@/store/useRecordingMapStore';
 import { getDistance } from '@/utils/map/getDistance';
 import { getCoordinateAddress } from '@/utils/map/getCoordinateAddress';
 import { createCourse } from '@/api/course';

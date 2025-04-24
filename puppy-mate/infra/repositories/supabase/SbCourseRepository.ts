@@ -1,7 +1,7 @@
 import { Course } from '@/domain/entities/Course';
 import { CourseRepository } from '@/domain/repositories/CourseRepository';
 import { createClient } from '@/utils/supabase/server';
-
+import { CourseView } from '@/domain/entities/CourseView';
 export class SbCourseRepository implements CourseRepository {
   async findInBounds(
     southWestLat: number,
@@ -87,7 +87,7 @@ export class SbCourseRepository implements CourseRepository {
       };
     });
   }
-  async findById(id: number): Promise<Course | null> {
+  async findById(id: number): Promise<CourseView> {
     const supabase = await createClient();
 
     const { data, error } = await supabase
@@ -109,20 +109,21 @@ export class SbCourseRepository implements CourseRepository {
       .single();
 
     if (error) {
-      console.error('Error finding course by ID:', error);
-      return null;
+      throw new Error('Failed to find course by ID.' + error);
     }
 
-    if (!data) return null;
+    if (!data) {
+      throw new Error('Course not found');
+    }
 
-    return new Course(
-      data.id,
+    return new CourseView(
       data.user_id,
       data.name,
       data.address,
-      data.is_public,
       data.distance,
       data.duration,
+      data.id,
+      data.is_public,
       new Date(data.created_at),
       new Date(data.updated_at)
     );
@@ -194,11 +195,7 @@ export class SbCourseRepository implements CourseRepository {
   async updatePublic(id: number, flag: boolean): Promise<void> {
     const supabase = await createClient();
     try {
-      const { error } = await supabase
-        .from('courses')
-        .update({ is_public: flag })
-        .eq('id', id)
-        .select('id');
+      const { error } = await supabase.from('courses').update({ is_public: flag }).eq('id', id).select('id');
 
       if (error) {
         console.error('Error updating is_public flag in supabase:', error);

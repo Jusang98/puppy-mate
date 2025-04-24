@@ -1,7 +1,7 @@
 'use client';
 import { Map as KakaoMap, MapMarker, MarkerClusterer, Polyline, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import { useRef, useEffect } from 'react';
-import useMapStore from '@/store/useMapStore';
+import useMapStore from '@/store/useRecordingMapStore';
 import { getDistance } from '@/utils/map/getDistance';
 import { CourseListIsPublicDto } from '@/application/usecases/course/dto/CourseListIsPublicDto';
 import { Location, CourseMarker } from '@/types/Map';
@@ -71,7 +71,7 @@ export function Map({
   }, [currentLocation, isSavingCourse]);
 
   return (
-    <div className="h-full w-full">
+    <div className="absolute inset-0 z-0">
       <KakaoMap
         id="map"
         className="w-full h-full"

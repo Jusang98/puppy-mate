@@ -1,43 +1,43 @@
 'use client';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerPortal,
-} from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerPortal } from '@/components/ui/drawer';
 import CoursePostList from '@/app/components/post/CoursePostList';
 import useCoursesMapStore from '@/store/useCoursesMapStore';
 import { useCourseIdPostQuery } from '@/queries/CourseIdPost';
+import { useRef, useEffect } from 'react';
 interface CourseListDrawerProps {
   snapPoints: number[];
   snapPoint: number | string | null;
   onSnapPointChange: (snapPoint: number | string | null) => void;
 }
 
-function CourseListDrawer({
-  snapPoints,
-  snapPoint,
-  onSnapPointChange,
-}: CourseListDrawerProps) {
+function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseListDrawerProps) {
   const { courseIds } = useCoursesMapStore();
   const { posts } = useCourseIdPostQuery(courseIds);
+
+  // 바텀 시트 바깥 클릭시 스냅 포인트 변경
+  const drawerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (drawerRef.current && !drawerRef.current.contains(event.target as Node)) {
+        onSnapPointChange(snapPoints[0]);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <Drawer
       open={true}
       modal={false}
-      direction='bottom'
+      direction="bottom"
       snapPoints={snapPoints}
       activeSnapPoint={snapPoint}
-      setActiveSnapPoint={onSnapPointChange}
-    >
+      setActiveSnapPoint={onSnapPointChange}>
       <DrawerPortal>
-        <DrawerContent className='!bottom-16 h-[calc(100vh-64px)] overflow-y-auto'>
-          <DrawerHeader className='text-center'>
-            <DrawerTitle className='text-md font-medium'>
-              내 주변 산책로 {(posts || []).length}개
-            </DrawerTitle>
+        <DrawerContent ref={drawerRef} className="h-full">
+          <DrawerHeader className="text-center">
+            <DrawerTitle className="text-md font-medium">코스 {(posts || []).length}개</DrawerTitle>
           </DrawerHeader>
           <CoursePostList posts={posts} />
           {/* <div className="px-4 flex-1 overflow-y-auto">

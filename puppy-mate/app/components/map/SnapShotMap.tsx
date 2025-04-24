@@ -2,6 +2,7 @@
 import { Map, Polyline, MapProps } from 'react-kakao-maps-sdk';
 import { getCenterAndLevel } from '@/utils/map/getCenterAndLevel';
 import { useEffect, useRef } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function SnapShotMap({
   coordinates = [{ lat: 37.566535, lng: 126.977125 }],
@@ -42,3 +43,11 @@ export default function SnapShotMap({
     </div>
   );
 }
+
+export const SnapShotMapSkeleton = ({ size = 300 }: { size?: number }) => {
+  return (
+    <div style={{ width: `${size}px`, height: `${size}px` }} className="overflow-auto mx-auto">
+      <Skeleton className="w-full h-full rounded" />
+    </div>
+  );
+};

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { getPost } from '@/api/post';
 import { PostDto } from '@/application/usecases/post/dto/PostDto';
 import { useQuery } from '@tanstack/react-query';
@@ -18,8 +19,10 @@ export const usePostQuery = (postId: string) => {
     error: postQuery.error
 =======
 import { CoursePost } from '@/types/Post';
+=======
+>>>>>>> bd7aa63 (fix: CourseListDrawer 에서 post 가져올때 생기는 에러 해결)
 import { getPostsByCourseId } from '@/api/post';
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 
 // 코스 아이디로 게시물 조회
 export const usePostQuery = (courseIds: number[]) => {

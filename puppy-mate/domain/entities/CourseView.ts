@@ -1,28 +1,23 @@
-import { Course } from './Course';
-
-export class CourseView extends Course {
+export class CourseView {
   constructor(
-    userId: number,
-    name: string,
-    address: string,
-    distance: number,
-    duration: number,
-    public coordinates: { lat: number; lng: number }[], // 좌표 데이터
-    id?: number,
-    isPublic?: boolean,
-    createdAt?: Date,
-    updatedAt?: Date
+    public userId: number,
+    public name: string,
+    public address: string,
+    public distance: number,
+    public duration: number,
+    public id: number,
+    public isPublic: boolean,
+    public createdAt: Date,
+    public updatedAt: Date
   ) {
-    super(
-      userId,
-      name,
-      address,
-      distance,
-      duration,
-      id,
-      isPublic,
-      createdAt,
-      updatedAt
-    );
+    this.userId = userId;
+    this.name = name;
+    this.address = address;
+    this.distance = distance;
+    this.duration = duration;
+    this.id = id;
+    this.isPublic = isPublic;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 }

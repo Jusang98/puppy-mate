@@ -16,15 +16,16 @@ import { WalkStateToggle } from '@/app/components/map/WalkStateToggle';
 
 // course list drawer
 import CourseListDrawer from '@/app/components/map/CourseListDrawer';
-import useCoursePostStore from '@/store/useCoursePostStore';
-import { usePostQuery } from '@/queries/Post';
 
-// toast
-import { toast } from 'sonner';
+// store
+import useCoursesMapStore from '@/store/useCoursesMapStore';
 
 export default function MapPage() {
+  // 마커, 클러스터 표시할 코스들 가져오기
   const { coursesQuery } = useCourseQuery();
+  // 현재 위치 가져오기
   const { location, error } = useCurrentLocation();
+  // 맵 중앙 위치 설정
   const [mapCenterPosition, setMapCenterPosition] = useState<Location>({ lat: 37.566535, lng: 126.977125 });
   const initialLocationSetRef = useRef(false);
 
@@ -55,26 +56,16 @@ export default function MapPage() {
     setIsCreateCourseModalOpen(open);
   };
 
-  // 클러스터 클릭 했을때 사용할 스토어
-  const { appendCoursePosts, clearCoursePosts } = useCoursePostStore();
+  const { appendCourseIds } = useCoursesMapStore();
 
-  // 바텀 시트에 표시될 게시물들의 코스 아이디 목록
-  const [courseIds, setCourseIds] = useState<number[]>([]);
+  // 클러스터 클릭혹은 바깥 클릭시 바텀 시트 스냅 포인트 변경
+  const snapPoints = [0.3, 0.7, 1];
+  const [snapPoint, setSnapPoint] = useState<number | string | null>(snapPoints[0]);
+  const onSnapPointChange = (snapPoint: number | string | null) => {
+    setSnapPoint(snapPoint);
+  };
 
-  const {
-    posts,
-    isLoading: isPostsLoading,
-    isError: isPostsError,
-    errors: postsErrors,
-    isSuccess: isPostsSuccess,
-  } = usePostQuery(courseIds);
-
-  useEffect(() => {
-    if (isPostsSuccess) {
-      appendCoursePosts(posts);
-    }
-  }, [isPostsSuccess, posts]);
-
+  // 클러스터 클릭시 바텀 시트에 표시될 게시물들의 코스 아이디 목록 설정
   const onClusterclick = (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => {
     const markers = cluster.getMarkers();
     const newCourseIds: number[] = [];
@@ -87,7 +78,7 @@ export default function MapPage() {
     });
     // Filter out duplicate courseIds
     const uniqueCourseIds = Array.from(new Set(newCourseIds));
-    setCourseIds(uniqueCourseIds);
+    appendCourseIds(uniqueCourseIds);
   };
 
   return (
@@ -112,7 +103,7 @@ export default function MapPage() {
       <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
       {/* Course List Drawer */}
       <div>
-        <CourseListDrawer />
+        <CourseListDrawer snapPoints={snapPoints} snapPoint={snapPoint} onSnapPointChange={onSnapPointChange} />
       </div>
     </div>
   );

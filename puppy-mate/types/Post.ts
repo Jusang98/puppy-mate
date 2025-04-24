@@ -1,13 +1,15 @@
 import { LatLng } from '@/types/Map';
 
 type CoursePost = {
-  id: string;
+  id: number;
   title: string;
-  totalDistance: number;
-  duration?: number;
-  username: string;
+  content: string;
   createdAt: string;
-  likes: number;
+  updatedAt: string;
+  userId: number;
+  duration: number;
+  distance: number;
+  address: string;
   coordinates: LatLng[];
 };
 

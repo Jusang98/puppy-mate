@@ -46,5 +46,6 @@ export async function getPostsByCourseId(courseId: number): Promise<CoursePost[]
     console.error('Failed to get posts by course id:', error);
     throw error;
   });
+
   return response.data;
 }

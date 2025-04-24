@@ -27,15 +27,16 @@ export async function GET(request: NextRequest) {
 
     const getPostsByCourseIdUsecase = new GetPostsByCourseIdUsecase(
       new SbPostRepository(),
+      new SbCourseRepository(),
       new SbCoordinatesRepository()
     );
     const posts = await getPostsByCourseIdUsecase.execute(courseId);
 
     if (!posts || posts.length === 0) {
-      return NextResponse.json({ data: [] }, { status: 200 });
+      return NextResponse.json(posts, { status: 200 });
     }
 
-    return NextResponse.json({ data: posts }, { status: 200 });
+    return NextResponse.json(posts, { status: 200 });
   } catch (error) {
     console.error('Error getting posts by course ID:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

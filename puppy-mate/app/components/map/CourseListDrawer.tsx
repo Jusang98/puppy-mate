@@ -1,46 +1,32 @@
 'use client';
-
-import { useState } from 'react';
-
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerPortal } from '@/components/ui/drawer';
 import CoursePostList from '@/app/components/post/CoursePostList';
-import useCoursePostStore from '@/store/useCoursePostStore';
+import useCoursesMapStore from '@/store/useCoursesMapStore';
+import { usePostQuery } from '@/queries/Post';
+interface CourseListDrawerProps {
+  snapPoints: number[];
+  snapPoint: number | string | null;
+  onSnapPointChange: (snapPoint: number | string | null) => void;
+}
 
-function CourseListDrawer() {
-  // Set snap points to 40% and 90% of screen height, with a minimum height option
-  const snapPoints = [0.3, 0.7, 1];
-  const [snap, setSnap] = useState<number | string | null>(snapPoints[0]);
-
-  // Control the open state of the drawer
-  const [isOpen, setIsOpen] = useState(true);
-
-  // Handle open state changes
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      // When trying to close, instead snap to the first point
-      setSnap(snapPoints[0]);
-    } else {
-      setIsOpen(open);
-    }
-  };
-
-  const { posts } = useCoursePostStore();
+function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseListDrawerProps) {
+  const { courseIds } = useCoursesMapStore();
+  const { posts } = usePostQuery(courseIds);
 
   return (
     <Drawer
-      open={isOpen}
-      onOpenChange={handleOpenChange}
+      open={true}
       modal={false}
       direction="bottom"
       snapPoints={snapPoints}
-      activeSnapPoint={snap}
-      setActiveSnapPoint={setSnap}>
+      activeSnapPoint={snapPoint}
+      setActiveSnapPoint={onSnapPointChange}>
       <DrawerPortal>
         <DrawerContent className="h-full">
           <DrawerHeader className="text-center">
             <DrawerTitle className="text-md font-medium">코스 {(posts || []).length}개</DrawerTitle>
           </DrawerHeader>
-          <CoursePostList />
+          <CoursePostList posts={posts} />
           {/* <div className="px-4 flex-1 overflow-y-auto">
             <div className="space-y-4">
               <div className="rounded-lg border p-3">

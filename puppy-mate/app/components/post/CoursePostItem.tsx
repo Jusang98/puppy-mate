@@ -3,24 +3,28 @@
 import { Heart, MapPin, Calendar } from 'lucide-react';
 
 interface CoursePostItemProps {
-  id: string;
-  title: string;
-  totalDistance: number;
-  duration?: number;
-  username: string;
-  createdAt: string;
+  id: number;
   likes: number;
-  onViewRoute?: (id: string) => void;
+  title: string;
+  createdAt: string;
+  content: string;
+  totalDistance: number;
+  duration: number;
+  username: string;
+  address: string;
+  onViewRoute?: (id: number) => void;
 }
 
 const CoursePostItem = ({
   id,
+  likes,
   title,
+  createdAt,
+  content,
   totalDistance,
   duration,
   username,
-  createdAt,
-  likes,
+  address,
   onViewRoute,
 }: CoursePostItemProps) => {
   const formattedDate = new Date(createdAt).toLocaleDateString('ko-KR', {

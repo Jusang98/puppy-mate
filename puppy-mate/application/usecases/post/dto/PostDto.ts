@@ -1,6 +1,8 @@
-import { Post } from '@/domain/entities/Post';
 import { CoordinateDto } from '../../course/dto/CoordinateDto';
 import { CourseCoordinate } from '@/domain/entities/CourseCoordinate';
+import { PostView } from '@/domain/entities/PostView';
+import { Post } from '@/domain/entities/Post';
+
 export class PostDto {
   userId: number;
   courseId: number;
@@ -9,6 +11,9 @@ export class PostDto {
   content?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  distance?: number;
+  duration?: number;
+  address?: string;
   coordinates: CoordinateDto[];
   images?: string[];
 
@@ -20,9 +25,7 @@ export class PostDto {
     this.content = post.content;
     this.createdAt = post.createdAt;
     this.updatedAt = post.updatedAt;
-    this.coordinates = coordinates.map(
-      coordinate => new CoordinateDto(coordinate.lat, coordinate.lng)
-    );
+    this.coordinates = coordinates.map((coordinate) => new CoordinateDto(coordinate.lat, coordinate.lng));
     this.images = images;
   }
 }

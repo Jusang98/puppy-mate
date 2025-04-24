@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import useCoursesMapStore from '@/store/useCoursesMapStore';
-
+import { Skeleton } from '@/components/ui/skeleton';
 interface CoursePostItemProps {
   id: number;
   likes: number;
@@ -92,6 +92,24 @@ const CoursePostItem = ({
         </Button>
       </CardFooter>
     </Card>
+  );
+};
+
+export const CoursePostItemSkeleton = () => {
+  return (
+    <div className="w-full p-4">
+      <div className="flex gap-4 justify-between">
+        <div className="flex-1 flex flex-col gap-1">
+          <Skeleton className="h-6 w-3/4 mb-1" />
+          <Skeleton className="h-4 w-1/2 mt-1" />
+          <Skeleton className="h-4 w-2/3" />
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-4 w-16" />
+        </div>
+        <Skeleton className="w-[110px] h-[110px] rounded-xl" />
+      </div>
+      <Skeleton className="h-9 w-full mt-4" />
+    </div>
   );
 };
 

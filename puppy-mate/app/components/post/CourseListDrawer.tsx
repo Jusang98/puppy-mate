@@ -14,7 +14,7 @@ interface CourseListDrawerProps {
 
 function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseListDrawerProps) {
   const { courseIds, courseCoordinates, clearCourseCoordinates } = useCoursesMapStore();
-  const { posts } = useCourseIdPostQuery(courseIds);
+  const { posts, isLoading, isError, errors } = useCourseIdPostQuery(courseIds);
 
   // 바텀 시트 바깥 클릭시 스냅 포인트 변경
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,7 @@ function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseLi
           <DrawerHeader className="text-center">
             <DrawerTitle className="text-md font-medium">코스 {(posts || []).length}개</DrawerTitle>
           </DrawerHeader>
-          <CoursePostList posts={posts} />
+          <CoursePostList posts={posts} isLoading={isLoading} isError={isError} errors={errors} />
         </DrawerContent>
       </DrawerPortal>
     </Drawer>

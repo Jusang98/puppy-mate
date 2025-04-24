@@ -86,7 +86,7 @@ export default function MapPage() {
         newCourseIds.push(courseId);
       }
     });
-    // Filter out duplicate courseIds
+
     const uniqueCourseIds = Array.from(new Set(newCourseIds));
     clearCourseIds();
     appendCourseIds(uniqueCourseIds);

@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import useCoursesMapStore from '@/store/useCoursesMapStore';
 
 interface CoursePostItemProps {
   id: number;
@@ -46,6 +47,13 @@ const CoursePostItem = ({
     router.push(`/post/${id}`);
   };
 
+  // 경로 상세보기 누를때 zustand Store에 좌표들 저장
+  const { setCourseCoordinates, clearCourseCoordinates } = useCoursesMapStore();
+  const handleRouteDetailClick = () => {
+    clearCourseCoordinates();
+    setCourseCoordinates(coordinates);
+  };
+
   return (
     <Card className="w-full p-4">
       <Tooltip>
@@ -79,7 +87,7 @@ const CoursePostItem = ({
         <TooltipContent>포스트 페이지 이동</TooltipContent>
       </Tooltip>
       <CardFooter className="p-0 m-0">
-        <Button variant="outline" className="w-full text-sm cursor-pointer" onClick={() => {}}>
+        <Button variant="outline" className="w-full text-sm cursor-pointer" onClick={handleRouteDetailClick}>
           경로 상세 보기
         </Button>
       </CardFooter>

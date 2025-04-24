@@ -15,9 +15,8 @@ export class PostCourseDto {
   duration?: number;
   address?: string;
   coordinates: CoordinateDto[];
-  images?: string[];
 
-  constructor(post: PostView, coordinates: CourseCoordinate[], images: string[]) {
+  constructor(post: PostView, coordinates: CourseCoordinate[]) {
     this.id = post.id;
     this.userId = post.userId;
     this.courseId = post.courseId;
@@ -29,6 +28,5 @@ export class PostCourseDto {
     this.duration = post.duration;
     this.address = post.address;
     this.coordinates = coordinates.map((coordinate) => new CoordinateDto(coordinate.lat, coordinate.lng));
-    this.images = images;
   }
 }

@@ -26,10 +26,18 @@ export default function MapPage() {
   // 현재 위치 가져오기
   const { location, error } = useCurrentLocation();
   // 맵 중앙 위치 설정
-  const [mapCenterPosition, setMapCenterPosition] = useState<Location>({ lat: 37.566535, lng: 126.977125 });
+  const [mapCenterPosition, setMapCenterPosition] = useState<Location>({
+    lat: 37.566535,
+    lng: 126.977125,
+  });
   const initialLocationSetRef = useRef(false);
 
-  const { isLoading: isCoursesLoading, data: courses, isError: isCoursesError, error: coursesError } = coursesQuery;
+  const {
+    isLoading: isCoursesLoading,
+    data: courses,
+    isError: isCoursesError,
+    error: coursesError,
+  } = coursesQuery;
   useKakaoLoader();
 
   // 초기 위치 설정
@@ -60,13 +68,18 @@ export default function MapPage() {
 
   // 클러스터 클릭혹은 바깥 클릭시 바텀 시트 스냅 포인트 변경
   const snapPoints = [0.3, 0.7, 1];
-  const [snapPoint, setSnapPoint] = useState<number | string | null>(snapPoints[0]);
+  const [snapPoint, setSnapPoint] = useState<number | string | null>(
+    snapPoints[0]
+  );
   const onSnapPointChange = (snapPoint: number | string | null) => {
     setSnapPoint(snapPoint);
   };
 
   // 클러스터 클릭시 바텀 시트에 표시될 게시물들의 코스 아이디 목록 설정
-  const onClusterclick = (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => {
+  const onClusterclick = (
+    target: kakao.maps.MarkerClusterer,
+    cluster: kakao.maps.Cluster
+  ) => {
     const markers = cluster.getMarkers();
     const newCourseIds: number[] = [];
     markers.forEach((marker) => {
@@ -82,9 +95,9 @@ export default function MapPage() {
   };
 
   return (
-    <div className="relative w-screen h-screen">
+    <div className='relative w-screen h-screen'>
       <>
-        <div className="flex items-center gap-2 absolute top-4 left-4 z-20">
+        <div className='flex items-center gap-2 absolute top-4 left-4 z-20'>
           <WalkStateToggle onToggle={handleToggleBtnClick} />
         </div>
         <Map
@@ -96,14 +109,24 @@ export default function MapPage() {
       </>
       <BottomGPSButton
         onClick={() => {
-          setMapCenterPosition({ lat: location?.lat || 0, lng: location?.lng || 0 });
+          setMapCenterPosition({
+            lat: location?.lat || 0,
+            lng: location?.lng || 0,
+          });
         }}
       />
       {/* Modal 컴포넌트 */}
-      <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
+      <SaveCourseModal
+        open={isCreateCourseModalOpen}
+        onOpenChange={onModalOpenChange}
+      />
       {/* Course List Drawer */}
       <div>
-        <CourseListDrawer snapPoints={snapPoints} snapPoint={snapPoint} onSnapPointChange={onSnapPointChange} />
+        <CourseListDrawer
+          snapPoints={snapPoints}
+          snapPoint={snapPoint}
+          onSnapPointChange={onSnapPointChange}
+        />
       </div>
     </div>
   );

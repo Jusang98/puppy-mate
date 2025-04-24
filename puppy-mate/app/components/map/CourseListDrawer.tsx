@@ -2,7 +2,7 @@
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerPortal } from '@/components/ui/drawer';
 import CoursePostList from '@/app/components/post/CoursePostList';
 import useCoursesMapStore from '@/store/useCoursesMapStore';
-import { usePostQuery } from '@/queries/Post';
+import { useCourseIdPostQuery } from '@/queries/CourseIdPost';
 interface CourseListDrawerProps {
   snapPoints: number[];
   snapPoint: number | string | null;
@@ -11,7 +11,7 @@ interface CourseListDrawerProps {
 
 function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseListDrawerProps) {
   const { courseIds } = useCoursesMapStore();
-  const { posts } = usePostQuery(courseIds);
+  const { posts } = useCourseIdPostQuery(courseIds);
 
   return (
     <Drawer

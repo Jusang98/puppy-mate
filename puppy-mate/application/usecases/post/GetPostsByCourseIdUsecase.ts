@@ -1,7 +1,8 @@
 import { PostRepository } from '@/domain/repositories/PostRepository';
-import { PostDto } from './dto/PostDto';
+
 import { CoordinateRepository } from '@/domain/repositories/CoordinateRepository';
 import { CourseRepository } from '@/domain/repositories/CourseRepository';
+import { PostCourseDto } from './dto/PostCourseDto';
 // 코스 아이디로 게시물 조회
 // 게시물의 정보와 코스의 좌표 정보를 함께 반환
 export default class GetPostsByCourseIdUsecase {
@@ -18,7 +19,7 @@ export default class GetPostsByCourseIdUsecase {
     this.coordinateRepository = coordinateRepository;
   }
 
-  async execute(id: number): Promise<PostDto[] | null> {
+  async execute(id: number): Promise<PostCourseDto[] | null> {
     const posts = await this.postRepository.findByCourseId(id);
     if (!posts) {
       return null;
@@ -41,9 +42,10 @@ export default class GetPostsByCourseIdUsecase {
           distance: course.distance,
           address: course.address,
           coordinates: coordinates,
-        } as PostDto;
+        } as PostCourseDto;
       })
     );
+
     return postDtos;
   }
 }

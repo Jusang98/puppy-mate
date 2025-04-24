@@ -53,16 +53,17 @@ export async function POST(request: NextRequest) {
     const content = formData.get('content') as string;
     const images = formData.getAll('images') as File[];
 
-    const createPostDto = new CreatePostDto(
-      userId,
-      courseId,
-      title,
-      content,
-      images
-    );
+    const createPostDto = new CreatePostDto(userId, courseId, title, content, images);
     const createPostUsecase = new CreatePostUsecase(
       new SbPostRepository(),
       new SbCourseRepository(),
       new SbPostImageRepository(),
       new SbStorageRepository()
     );
+    const newPostId = await createPostUsecase.execute(createPostDto);
+    return NextResponse.json({ message: '게시물 작성이 완료되었습니다.', newPostId }, { status: 201 });
+  } catch (error) {
+    console.log('Error create Post:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}

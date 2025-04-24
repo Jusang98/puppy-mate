@@ -15,7 +15,7 @@ import { BottomGPSButton } from '@/app/components/map/GPSIcon';
 import { WalkStateToggle } from '@/app/components/map/WalkStateToggle';
 
 // course list drawer
-import CourseListDrawer from '@/app/components/map/CourseListDrawer';
+import CourseListDrawer from '@/app/components/post/CourseListDrawer';
 
 // store
 import useCoursesMapStore from '@/store/useCoursesMapStore';

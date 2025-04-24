@@ -61,8 +61,12 @@ export default function MapPage() {
 
   const { appendCourseIds, clearCourseIds } = useCoursesMapStore();
 
+  // 경로 상세보기 코스 좌표들
+  const { courseCoordinates } = useCoursesMapStore();
+
   // 클러스터 클릭혹은 바깥 클릭시 바텀 시트 스냅 포인트 변경
-  const snapPoints = [0.3, 0.7, 1];
+  // 경로 상세보기 코스 좌표들이 있으면 바텀 시트 고정
+  const snapPoints = courseCoordinates.length > 0 ? [0.3, 0.3, 0.3] : [0.3, 0.7, 1];
   const [snapPoint, setSnapPoint] = useState<number | string | null>(snapPoints[0]);
 
   const onSnapPointChange = (snapPoint: number | string | null) => {
@@ -93,10 +97,13 @@ export default function MapPage() {
     setSnapPoint(snapPoints[1]);
   };
 
-  const { courseCoordinates } = useCoursesMapStore();
+  // 경로 상세보기 눌렀을때 바텀 시트 내리기
+  // 경로 상세보기 취소 했을때 바텀 시트 올리기
   useEffect(() => {
     if (courseCoordinates.length > 0) {
       setSnapPoint(snapPoints[0]);
+    } else {
+      setSnapPoint(snapPoints[1]);
     }
   }, [courseCoordinates]);
 

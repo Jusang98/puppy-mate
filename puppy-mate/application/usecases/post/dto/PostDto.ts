@@ -1,7 +1,6 @@
 import { CoordinateDto } from '../../course/dto/CoordinateDto';
 import { CourseCoordinate } from '@/domain/entities/CourseCoordinate';
 import { PostView } from '@/domain/entities/PostView';
-import { Post } from '@/domain/entities/Post';
 
 export class PostDto {
   userId: number;

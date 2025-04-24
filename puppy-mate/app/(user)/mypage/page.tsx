@@ -33,6 +33,9 @@ export default function MyPage() {
     logoutUser();
     router.push('/login'); // 로그아웃 후 로그인 페이지로 이동
   };
+  const handleBackMainPage = () => {
+    router.push('/'); // 메인 페이지로 이동
+  };
 
   if (loading) {
     return (
@@ -50,7 +53,7 @@ export default function MyPage() {
 
   return (
     <div className='p-6 space-y-6'>
-      {/* 상단: 프로필 + 로그아웃 버튼 */}
+      {/* 상단: 프로필 + 로그아웃/메인으로 버튼 */}
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-4'>
           <div className='relative w-24 h-24'>
@@ -63,12 +66,21 @@ export default function MyPage() {
           </div>
           <div className='text-xl font-semibold'>{profile?.nickname}</div>
         </div>
-        <button
-          onClick={handleLogout}
-          className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition'
-        >
-          로그아웃
-        </button>
+        {/* 오른쪽 버튼 2개를 flex로 묶기 */}
+        <div className='flex gap-2'>
+          <button
+            onClick={handleBackMainPage}
+            className='px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition'
+          >
+            {'← 메인으로'}
+          </button>
+          <button
+            onClick={handleLogout}
+            className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition'
+          >
+            로그아웃
+          </button>
+        </div>
       </div>
 
       {/* 관리 카드들: 한 줄에 하나씩(세로 배치) */}

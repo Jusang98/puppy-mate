@@ -8,6 +8,6 @@ export class Course {
     public id?: number,
     public isPublic?: boolean,
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: Date,
   ) {}
 }

@@ -12,7 +12,6 @@ export default function MyPage() {
   const [profile, setProfile] = useState<GetUserDto | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  console.log('dd', profile?.profileImage);
   useEffect(() => {
     async function fetchProfile() {
       try {

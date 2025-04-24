@@ -94,7 +94,7 @@ export default function MyPage() {
           </CardContent>
         </Card>
         <Card
-          onClick={() => router.push('/mypage/likes')}
+          onClick={() => router.push('/mypage/likeposts')}
           className='cursor-pointer hover:shadow-md transition'
         >
           <CardContent className='p-6 text-center text-lg font-medium'>

@@ -38,21 +38,3 @@ export async function getPublicCourses() {
 
   return response.data;
 }
-export async function getMyCourses() {
-  try {
-    const token = localStorage.getItem('authToken');
-    if (!token) throw new Error('No auth token found');
-
-    // /api/courses/my 엔드포인트 호출
-    const response = await axios.get(`${BASE_URL}/my`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.data; // 내 코스 리스트 배열 반환
-  } catch (error) {
-    console.error('Failed to fetch my courses:', error);
-    throw error;
-  }
-}

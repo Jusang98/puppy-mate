@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     if (!getUserDto) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
-    console.log('여기 확인', getUserDto.profileImage);
+
     // 4. 유저 정보 응답
     return NextResponse.json(getUserDto, { status: 200 });
   } catch (error) {

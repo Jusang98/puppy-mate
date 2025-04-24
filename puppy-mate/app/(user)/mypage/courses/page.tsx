@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getMyCourses } from '@/api/course';
+import { getMyCourses } from '@/api/mypage';
 import {
   Card,
   CardContent,
@@ -20,6 +20,7 @@ export default function MyCoursesPage() {
   const [courses, setCourses] = useState<GetMyCoursesDto[]>([]);
   const [loading, setLoading] = useState(true);
   useKakaoLoader();
+
   useEffect(() => {
     async function fetchCourses() {
       try {
@@ -33,6 +34,7 @@ export default function MyCoursesPage() {
     }
     fetchCourses();
   }, []);
+
   const handleBackMyPage = () => {
     router.push('/mypage');
   };
@@ -70,8 +72,6 @@ export default function MyCoursesPage() {
         <div className='text-center text-gray-500'>내 코스가 없습니다.</div>
       ) : (
         courses.map((course, idx) => {
-          console.log('코스 경로확인 :', course.coordinates);
-
           return (
             <Card key={idx}>
               <CardHeader>

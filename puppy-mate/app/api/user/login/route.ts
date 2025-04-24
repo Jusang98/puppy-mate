@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       process.env.JWT_SECRET!, // 시크릿 키 (환경 변수)
       { expiresIn: '3h' } // 토큰 만료 시간
     );
-    //usecase -> route -> api -> page(userId 체크 확인)
+
     return NextResponse.json({ userId: user.id, token }, { status: 200 });
   } catch (error) {
     console.error('Error processing POST request:', error);

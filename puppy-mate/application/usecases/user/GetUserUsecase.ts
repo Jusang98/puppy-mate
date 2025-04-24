@@ -12,7 +12,7 @@ export default class GetUserUsecase {
     // 1. User 도메인 객체 조회
     const user = await this.userRepository.findById(userId);
     if (!user) return null;
-    console.log('확인1', user);
+
     // 2. User → GetUserDto 변환 (객체 파라미터 방식에 맞게 수정)
     const getUserDto = new GetUserDto({
       email: user.email,
@@ -29,10 +29,8 @@ export default class GetUserUsecase {
         getUserDto.profileImage
       );
       getUserDto.profileImage = publicUrl;
-      
     }
 
-    console.log('확인2:', getUserDto);
     return getUserDto;
   }
 }

@@ -55,7 +55,7 @@ export async function getPostsByCourseId(courseId: number): Promise<CoursePost[]
 }
 
 export async function deletePost(
-  postId: number
+  postId: string
 ): Promise<{ isSuccess: boolean; message: string }> {
   try {
     const token = localStorage.getItem('authToken');

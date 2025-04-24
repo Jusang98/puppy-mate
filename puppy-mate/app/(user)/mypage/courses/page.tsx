@@ -13,8 +13,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { GetMyCoursesDto } from '@/application/usecases/course/dto/GetMyCoursesDto';
 import SnapShotMap from '@/app/components/map/SnapShotMap';
 import useKakaoLoader from '@/lib/use-kakao-loader';
+import { useRouter } from 'next/navigation';
 
 export default function MyCoursesPage() {
+  const router = useRouter();
   const [courses, setCourses] = useState<GetMyCoursesDto[]>([]);
   const [loading, setLoading] = useState(true);
   useKakaoLoader();
@@ -31,7 +33,9 @@ export default function MyCoursesPage() {
     }
     fetchCourses();
   }, []);
-
+  const handleBackMyPage = () => {
+    router.push('/mypage');
+  };
   if (loading) {
     // 로딩 시 Skeleton 카드 3개 표시
     return (
@@ -56,6 +60,12 @@ export default function MyCoursesPage() {
 
   return (
     <div className='space-y-4 p-4'>
+      <button
+        onClick={handleBackMyPage}
+        className='px-4 py-2 rounded bg-orange-600 text-white font-semibold shadow hover:bg-orange-700 transition'
+      >
+        {'←'}
+      </button>
       {courses.length === 0 ? (
         <div className='text-center text-gray-500'>내 코스가 없습니다.</div>
       ) : (

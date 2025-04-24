@@ -6,41 +6,23 @@ import { getDistance } from '@/utils/map/getDistance';
 import { CourseListIsPublicDto } from '@/application/usecases/course/dto/CourseListIsPublicDto';
 import { Location, CourseMarker } from '@/types/Map';
 import { CurrentLocationIcon } from '@/app/components/map/GPSIcon';
-
+import useCoursesMapStore from '@/store/useCoursesMapStore';
 export function Map({
   currentLocation,
   courses,
   onClusterclick,
+  onMarkerClick,
   mapCenterPosition,
 }: {
   currentLocation: Location | null;
   courses: CourseListIsPublicDto[] | undefined;
   onClusterclick: (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => void;
+  onMarkerClick: (courseId: number) => void;
   mapCenterPosition: Location;
 }) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { coordinates, addCoursePoint, isSavingCourse } = useMapStore();
-
-  // 테스트를 위한 더미 데이터
-  // const dummyPath = [
-  //   { lat: 37.56421035025637, lng: 127.00767976641002 },
-  //   { lat: 37.56431035025637, lng: 127.00777976641002 },
-  //   { lat: 37.56441035025637, lng: 127.00787976641002 },
-  //   { lat: 37.56451035025637, lng: 127.00797976641002 },
-  //   { lat: 37.56461035025637, lng: 127.00807976641002 },
-  //   { lat: 37.56471035025637, lng: 127.00817976641002 },
-  //   { lat: 37.56481035025637, lng: 127.00827976641002 },
-  //   { lat: 37.56491035025637, lng: 127.00837976641002 },
-  //   { lat: 37.56501035025637, lng: 127.00847976641002 },
-  //   { lat: 37.56511035025637, lng: 127.00857976641002 },
-  // ];
-  // dummyPath.forEach((point) => {
-  //   addCoursePoint(point);
-  // });
-
-  // useEffect(() => {
-  //   coordinates.push(...dummyPath);
-  // }, []);
+  const { addCourseId, clearCourseIds } = useCoursesMapStore();
 
   // 현재 위치 바뀔때 마다 맵 중심 위치 설정
   useEffect(() => {
@@ -113,6 +95,7 @@ export function Map({
                   lat: pos.startPoint.lat,
                   lng: pos.startPoint.lng,
                 }}
+                onClick={() => onMarkerClick(pos.id)}
                 onCreate={(marker) => {
                   (marker as CourseMarker).courseId = pos.id; // ✅ 각 marker 객체에 id 직접 부여
                 }}

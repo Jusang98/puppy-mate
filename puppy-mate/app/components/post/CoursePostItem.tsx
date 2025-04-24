@@ -51,7 +51,7 @@ const CoursePostItem = ({
         {duration && <span>· {duration}분</span>}
       </div>
 
-      <SnapShotMap coordinates={coordinates} size={300} />
+      <SnapShotMap coordinates={coordinates} size={100} />
 
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-2">

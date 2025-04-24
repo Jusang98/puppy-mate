@@ -64,12 +64,19 @@ export default function MapPage() {
   // 클러스터 클릭혹은 바깥 클릭시 바텀 시트 스냅 포인트 변경
   const snapPoints = [0.3, 0.7, 1];
   const [snapPoint, setSnapPoint] = useState<number | string | null>(snapPoints[0]);
+
   const onSnapPointChange = (snapPoint: number | string | null) => {
     setSnapPoint(snapPoint);
   };
 
+  const handleMarkerClick = (courseId: number) => {
+    clearCourseIds();
+    appendCourseIds([courseId]);
+    setSnapPoint(snapPoints[1]);
+  };
+
   // 클러스터 클릭시 바텀 시트에 표시될 게시물들의 코스 아이디 목록 설정
-  const onClusterclick = (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => {
+  const handleClusterclick = (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => {
     const markers = cluster.getMarkers();
     const newCourseIds: number[] = [];
     markers.forEach((marker) => {
@@ -95,7 +102,8 @@ export default function MapPage() {
         <Map
           currentLocation={location}
           courses={courses}
-          onClusterclick={onClusterclick}
+          onClusterclick={handleClusterclick}
+          onMarkerClick={handleMarkerClick}
           mapCenterPosition={mapCenterPosition}
         />
       </>

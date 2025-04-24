@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     const token = jwt.sign(
       { userId: user.id, email }, // payload
       process.env.JWT_SECRET!, // 시크릿 키 (환경 변수)
-      { expiresIn: '3h' } // 토큰 만료 시간
+      { expiresIn: '100h' } // 토큰 만료 시간
     );
 
     return NextResponse.json({ userId: user.id, token }, { status: 200 });

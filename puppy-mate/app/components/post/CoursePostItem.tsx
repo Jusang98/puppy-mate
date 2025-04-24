@@ -2,7 +2,12 @@
 
 import { Heart, MapPin, Calendar } from 'lucide-react';
 import SnapShotMap from '../map/SnapShotMap';
-import { LatLng } from 'leaflet';
+import { LatLng } from '@/types/Map';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+
 interface CoursePostItemProps {
   id: number;
   likes: number;
@@ -34,38 +39,51 @@ const CoursePostItem = ({
     day: 'numeric',
   });
 
+  // 카드 내용 클릭시 포스트 상세 보기 페이지 이동
+  const router = useRouter();
+
+  const handleCardContentClick = () => {
+    router.push(`/post/${id}`);
+  };
+
   return (
-    <div className="rounded-lg border p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium">{title}</h3>
-        <div className="flex items-center gap-1 text-sm">
-          <Heart size={16} className="text-gray-500" />
-          <span>{likes}</span>
-        </div>
-      </div>
-      <div className="flex gap-2 text-sm text-gray-600">
-        <div className="flex items-center gap-1">
-          <MapPin size={14} />
-          <span>{formattedDistance}km</span>
-        </div>
-        {duration && <span>· {duration}분</span>}
-      </div>
+    <Card className="w-full p-4">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <CardContent className="flex-1 flex flex-col gap-1 p-0 cursor-pointer" onClick={handleCardContentClick}>
+            <div className="flex gap-4 justify-between">
+              <div>
+                <div className="font-semibold text-lg text-ellipsis line-clamp-1">{title}</div>
+                {/* text-muted-foreground 는 shadcn 에서 설정한 secondary text 색상  (약간 어두운 회색)*/}
+                <div className="text-sm mt-1 text-muted-foreground">
+                  {username} • {formattedDate}
+                </div>
+                <div className="text-sm text-muted-foreground line-clamp-1">{address}</div>
 
-      <SnapShotMap coordinates={coordinates} size={100} />
-
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2">
-          <span className="font-medium">{username}</span>
-          <div className="flex items-center text-gray-500">
-            <Calendar size={14} className="mr-1" />
-            <span>{formattedDate}</span>
-          </div>
-        </div>
-        <button onClick={() => {}} className="px-3 py-1.5 bg-black text-white text-sm rounded-md">
-          경로 보기
-        </button>
-      </div>
-    </div>
+                <div className="text-muted-foreground text-sm">
+                  {formattedDistance} km • {Math.round(duration / 60)} 분
+                </div>
+                <div>
+                  <div className="flex items-center text-muted-foreground text-sm">
+                    <Heart className="w-3.5 h-3.5 mr-1 text-muted-foreground" />
+                    {likes}
+                  </div>
+                </div>
+              </div>
+              <div className="w-[110px] h-[110px] rounded-xl overflow-hidden shadow-md">
+                <SnapShotMap coordinates={coordinates} size={110} />
+              </div>
+            </div>
+          </CardContent>
+        </TooltipTrigger>
+        <TooltipContent>포스트 페이지 이동</TooltipContent>
+      </Tooltip>
+      <CardFooter className="p-0 m-0">
+        <Button variant="outline" className="w-full text-sm cursor-pointer" onClick={() => {}}>
+          경로 상세 보기
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

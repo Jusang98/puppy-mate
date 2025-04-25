@@ -26,7 +26,6 @@ import {
   FaShoePrints,
   FaRoute,
   FaMapMarkerAlt,
-  FaCalendarAlt,
   FaPen
 } from 'react-icons/fa';
 import Mypageheader from '../components/Mypageheader';
@@ -134,12 +133,11 @@ export default function MyCoursesPage() {
                     </div>
 
                     {course.coordinates &&
-                      <div className="flex-shrink-0 rounded-xl overflow-hidden border border-orange-100 shadow">
                         <SnapShotMap
                           coordinates={course.coordinates}
                           size={150}
                         />
-                      </div>}
+                    }
                   </div>
                 </CardContent>
 

@@ -49,7 +49,7 @@ export default function MapPage() {
     }
   }, [location]);
 
-  // 토긃버튼 클릭 상태 관리
+  // 토글버튼 클릭 상태 관리
   const { isSavingCourse, startRecordingCourse } = useRecordingMapStore();
   const handleToggleBtnClick = async () => {
     if (isSavingCourse) {

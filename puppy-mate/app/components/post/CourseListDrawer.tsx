@@ -46,6 +46,7 @@ function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseLi
                 className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border shadow-md"
                 onClick={() => {
                   clearCourseCoordinates();
+                  onSnapPointChange(0.7);
                 }}>
                 <X className="h-4 w-4" />
               </Button>

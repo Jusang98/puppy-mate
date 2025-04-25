@@ -126,12 +126,9 @@ export default function MapPage() {
   };
 
   // 경로 상세보기 눌렀을때 바텀 시트 내리기
-  // 경로 상세보기 취소 했을때 바텀 시트 올리기
   useEffect(() => {
     if (courseCoordinates.length > 0) {
       setSnapPoint(snapPoints[0]);
-    } else {
-      setSnapPoint(snapPoints[1]);
     }
   }, [courseCoordinates]);
 

@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation';
 import { getUserProfile, logoutUser } from '@/api/user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GetUserDto } from '@/application/usecases/user/dto/GetUserDto';
-import { IoChevronBackOutline, IoChevronForward } from 'react-icons/io5';
+import { IoChevronForward } from 'react-icons/io5';
 import { FaDog, FaRoute } from 'react-icons/fa';
 import { HiHeart } from 'react-icons/hi';
 import { Button } from '@/components/ui/button';
+import Mypageheader from './components/Mypageheader';
 
 export default function MyPage() {
   const [profile, setProfile] = useState<GetUserDto | null>(null);
@@ -30,10 +31,6 @@ export default function MyPage() {
 
     fetchProfile();
   }, []);
-
-  const handleBackBtnClick = () => {
-    router.back();
-  };
 
   const handleLogoutBtnClick = () => {
     logoutUser();
@@ -62,13 +59,7 @@ export default function MyPage() {
 
   return (
     <div className='flex flex-col h-full bg-gray-50'>
-      {/* 헤더 */}
-      <div className='p-4 bg-white flex items-center border-b'>
-        <button onClick={handleBackBtnClick} className='p-1'>
-          <IoChevronBackOutline size={24} />
-        </button>
-      </div>
-
+      <Mypageheader/>
       {/* 프로필 섹션 */}
       <div className='bg-white px-5 py-4 flex items-center justify-between'>
         <div className='flex items-center space-x-3'>

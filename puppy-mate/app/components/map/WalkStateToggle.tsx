@@ -8,7 +8,7 @@ export function WalkStateToggle({ onToggle }: { onToggle: () => void }) {
   return (
     <div
       className={`inline-flex items-center gap-3 ${
-        isSavingCourse ? 'bg-orange-50' : 'bg-white'
+        isSavingCourse ? 'bg-orange-50/90' : 'bg-white/90'
       } px-5 py-3 rounded-full shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"

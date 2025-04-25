@@ -137,6 +137,7 @@ export default function MapPage() {
       <>
         <div className='flex items-center gap-2 absolute top-4 left-4 z-20'>
           <WalkStateToggle onToggle={handleToggleBtnClick} />
+          <BottomGPSButton onClick={handleGPSButtonClick} />
         </div>
         <Map
           currentLocation={location}
@@ -146,7 +147,7 @@ export default function MapPage() {
           mapCenterPosition={mapCenterPosition}
         />
       </>
-      <BottomGPSButton onClick={handleGPSButtonClick} />
+
       {/* Modal 컴포넌트 */}
       <SaveCourseModal
         open={isCreateCourseModalOpen}

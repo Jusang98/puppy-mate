@@ -31,11 +31,13 @@ export default class GetMyCoursesUsecase {
       }));
 
       return new GetMyCoursesDto(
-        course.id!, // ← id 추가
+        course.id!,
         course.name,
         course.address,
         course.distance,
-        Math.floor(course.duration / 60),
+        course.duration,
+        // Math.round((course.distance / 1000) * 100) / 100,
+        // Math.floor(course.duration / 1000 / 60),
         coords,
         course.isPublic!,
         course.createdAt!

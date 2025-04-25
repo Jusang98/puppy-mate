@@ -72,4 +72,61 @@ export class SbPostLikeRepository implements PostLikeRepository {
       throw error;
     }
   }
+
+  async create(userId: number, postId: number): Promise<void> {
+    const supabase = await createClient();
+
+    try {
+      const { error } = await supabase
+        .from('post_likes')
+        .insert({
+          user_id: userId,
+          post_id: postId
+        })
+        .single();
+
+      if (error) {
+        console.error('Error creating post_like:', error);
+        throw new Error('Failed to create post_like.');
+      }
+    } catch (error) {
+      console.error('Error creating post_like:', error);
+      throw new Error('Failed to create post_like.');
+    }
+  }
+
+  async delete(userId: number, postId: number): Promise<boolean> {
+    const supabase = await createClient();
+
+    const { error } = await supabase
+      .from('post_likes')
+      .delete()
+      .eq('user_id', userId)
+      .eq('post_id', postId);
+
+    if (error) {
+      console.error('Error deleting post:', error);
+      return false;
+    }
+
+    return true;
+  }
+
+  async hasLiked(userId: number, postId: number): Promise<boolean> {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('post_likes')
+      .select('post_id')
+      .eq('user_id', userId)
+      .eq('post_id', postId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error checking like status:', error);
+      return false;
+    }
+
+    return !!data;
+  }
 }

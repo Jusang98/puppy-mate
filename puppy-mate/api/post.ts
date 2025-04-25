@@ -4,15 +4,12 @@ import { CoursePost } from '@/types/Post';
 const BASE_URL = 'http://localhost:3000/api/posts';
 
 export async function createPost(
-  userId: number,
   courseId: number,
   title: string,
   content: string,
   images: File[]
 ): Promise<number> {
   const formData = new FormData();
-
-  formData.append('userId', userId.toString());
   formData.append('courseId', courseId.toString());
   formData.append('title', title);
   formData.append('content', content);
@@ -22,9 +19,12 @@ export async function createPost(
     formData.append('images', image);
   });
 
+  const token = localStorage.getItem('authToken');
+  if (!token) throw new Error('No auth token found');
   const response = await axios.post<{ newPostId: number }>(BASE_URL, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data.newPostId;

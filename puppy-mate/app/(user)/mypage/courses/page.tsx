@@ -15,13 +15,21 @@ import SnapShotMap from '@/app/components/map/SnapShotMap';
 import useKakaoLoader from '@/lib/use-kakao-loader';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/utils/common';
+import { Button } from '@/components/ui/button';
+import useCoursesMapStore from '@/store/useCoursesMapStore';
+import { LatLng } from '@/types/Map';
 
 export default function MyCoursesPage() {
   const router = useRouter();
   const [courses, setCourses] = useState<GetMyCoursesDto[]>([]);
   const [loading, setLoading] = useState(true);
   useKakaoLoader();
-
+  const { setCourseCoordinates, clearCourseCoordinates } = useCoursesMapStore();
+  const handleFollowBtnClick = (coordinates: LatLng[]) => {
+    router.push('/');
+    clearCourseCoordinates();
+    setCourseCoordinates(coordinates);
+  };
   useEffect(() => {
     async function fetchCourses() {
       try {
@@ -110,6 +118,12 @@ export default function MyCoursesPage() {
                 </div>
 
                 {/* 게시글 작성 버튼 추가 */}
+                <Button
+                  onClick={() => handleFollowBtnClick(course.coordinates)}
+                  variant="outline"
+                >
+                  산책로 따라가기
+                </Button>
                 <div className="flex justify-end">
                   <button
                     onClick={() =>

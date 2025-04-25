@@ -13,7 +13,7 @@ export default function Mypageheader({ title }: MypageheaderProps) {
   };
 
   return (
-    <div className="relative p-4 bg-white flex items-center justify-center border-b">
+    <div className="h-[60px] relative p-4 bg-white flex items-center justify-center border-b">
       <button
         onClick={handleBackBtnClick}
         className="absolute left-4 p-1"

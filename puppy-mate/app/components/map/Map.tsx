@@ -25,15 +25,6 @@ export function Map({
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { coordinates, addCoursePoint, isSavingCourse } = useMapStore();
 
-  // 현재 위치 바뀔때 마다 맵 중심 위치 설정
-  useEffect(() => {
-    if (!mapRef.current) return;
-
-    if (currentLocation) {
-      mapRef.current.setCenter(new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
-    }
-  }, [currentLocation]);
-
   // mapCenterPosition 바뀔때 마다 맵 중심 위치 설정
   useEffect(() => {
     if (!mapRef.current) return;
@@ -43,23 +34,26 @@ export function Map({
     }
   }, [mapCenterPosition]);
 
-  // 현재 위치 바뀔때 마다 경로 추가
+  // 저장중에 현재 위치 바뀔때 마다 경로 추가, 맵 중심 위치 설정
   useEffect(() => {
     if (isSavingCourse && currentLocation) {
       const lastPosition = coordinates.at(-1);
       if (!lastPosition || getDistance(lastPosition, currentLocation) > 1) {
         addCoursePoint(currentLocation); // 경로 저장
       }
+
+      if (mapRef.current) {
+        mapRef.current.setCenter(new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
+      }
     }
   }, [currentLocation, isSavingCourse]);
 
-  // 경로 상세 보기 누를때 맵 중심 위치 설정
+  // 경로 상세 보기 좌표들 생겼을때 맵 중심 위치 설정
   const { courseCoordinates } = useCoursesMapStore();
   useEffect(() => {
-    if (!mapRef.current) return;
-
-    if (courseCoordinates.length > 0) {
-      const { center, level } = getCenterAndLevel(courseCoordinates);
+    if (courseCoordinates.length === 0) return;
+    const { center, level } = getCenterAndLevel(courseCoordinates);
+    if (mapRef.current) {
       mapRef.current.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
       mapRef.current.setLevel(level);
     }

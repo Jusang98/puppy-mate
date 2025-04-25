@@ -118,17 +118,17 @@ export default function MapPage() {
 
   // 초기 위치 설정
   useEffect(() => {
-    // 경로 상세보기 코스 좌표들이 있으면 중앙 위치 설정
-    if (courseCoordinates.length > 0 && !initialLocationSetRef.current) {
-      const { center, level } = getCenterAndLevel(courseCoordinates);
-      setMapCenterPosition({ lat: center.lat, lng: center.lng });
+    // 경로 상세보기 코스 좌표들이 있으면 경로 상세보기 코스 좌표들의 중심 위치 설정
+    if (courseCoordinates.length > 0) {
+      setMapCenterPosition(getCenterAndLevel(courseCoordinates).center);
       initialLocationSetRef.current = true;
-      // 현재 위치가 있으면 현재 위치 설정
-    } else if (location && !initialLocationSetRef.current) {
+    }
+    // 현재 위치가 있으면 현재 위치 설정
+    else if (location && !initialLocationSetRef.current) {
       setMapCenterPosition({ lat: location.lat, lng: location.lng });
       initialLocationSetRef.current = true;
     }
-  }, [location]);
+  }, [location, courseCoordinates]);
 
   return (
     <div className="relative w-screen h-screen">

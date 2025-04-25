@@ -85,37 +85,48 @@ export default function MyCoursesPage() {
                     <div>소요 시간: {course.duration} 분</div>
                     <div>
                       공개 여부:{' '}
-                      <span className={course.isPublic ? 'text-green-600' : 'text-gray-400'}>
+                      <span
+                        className={
+                          course.isPublic ? 'text-green-600' : 'text-gray-400'
+                        }
+                      >
                         {course.isPublic ? '공개' : '비공개'}
                       </span>
                     </div>
                   </div>
                   <div className='text-xs text-gray-400 mt-2'>
-                    생성일:{' '}
+                    산책날짜:{' '}
                     {course.createdAt
                       ? new Date(course.createdAt).toLocaleDateString()
                       : '-'}
                   </div>
                 </div>
                 {course.coordinates && (
-                  <div className='flex-shrink-0 flex items-center' style={{ height: 200 }}>
+                  <div
+                    className='flex-shrink-0 flex items-center'
+                    style={{ height: 200 }}
+                  >
                     <SnapShotMap coordinates={course.coordinates} size={200} />
                   </div>
                 )}
               </div>
-        
+
               {/* 게시글 작성 버튼 추가 */}
               <div className='flex justify-end'>
                 <button
-                  onClick={() => router.push(`/post/create?courseId=${course.id}`)}
+                  onClick={() =>
+                    router.push(`/post/create?courseId=${course.id}`)
+                  }
                   className='mt-2 px-3 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 transition'
                 >
                   게시글 작성
                 </button>
               </div>
             </CardContent>
-          </Card> 
-          )))};
+          </Card>
+        ))
+      )}
+      ;
     </div>
   );
 }

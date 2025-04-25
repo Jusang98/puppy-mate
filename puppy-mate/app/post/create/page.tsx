@@ -15,17 +15,18 @@ import { createPost } from '@/api/post';
 import { useCoordinatesQuery } from '@/queries/Coordinate';
 import SnapShotMap from '@/app/components/map/SnapShotMap';
 import useKakaoLoader from '@/lib/use-kakao-loader';
+import { useSearchParams } from 'next/navigation';
 
 export default function PostForm() {
+  const searchParams = useSearchParams();
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
-  const id = '29';
-  const { coordinatesQuery } = useCoordinatesQuery(id);
+  const courseId = parseInt(searchParams.get('courseId') ?? '0', 10);
+  const { coordinatesQuery } = useCoordinatesQuery(courseId);
   useKakaoLoader();;
   
-
   if (coordinatesQuery.isLoading) return <div>Loading...</div>;
   if (coordinatesQuery.error) return <div>Error loading coordinates</div>;
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,14 +38,7 @@ export default function PostForm() {
   };
 
   const handleSaveBtnClick = () => {
-    const userId = localStorage.getItem('userId')
-    if(!userId){
-      alert('로그인 후 이용해주세요.')
-      window.location.href ='/';
-      return;
-    }
-    
-    const postId = createPost(parseInt(userId), 29, title, content, images);
+    const postId = createPost(courseId, title, content, images);
     postId.then(id => {
       window.location.href = `/post/${id}`;
     }).catch(error => {

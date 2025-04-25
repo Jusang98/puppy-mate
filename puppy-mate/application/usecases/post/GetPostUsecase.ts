@@ -4,10 +4,12 @@ import { CoordinateRepository } from '@/domain/repositories/CoordinateRepository
 import { PostImageRepository } from '@/domain/repositories/PostImageRepository';
 import { StorageRepository } from '@/domain/repositories/StorageRepository';
 import { PostLikeRepository } from '@/domain/repositories/PostLikeRepository';
+import { CourseRepository } from '@/domain/repositories/CourseRepository';
 
 export default class GetPostUsecase {
   private readonly postRepository: PostRepository;
   private readonly coordinateRepository: CoordinateRepository;
+  private readonly courseRepository: CourseRepository;
   private readonly postImageRepository: PostImageRepository;
   private readonly storageRepository: StorageRepository;
   private readonly postLikeRepository: PostLikeRepository;
@@ -17,13 +19,15 @@ export default class GetPostUsecase {
     coordinateRepository: CoordinateRepository,
     postImageRepository: PostImageRepository,
     storageRepository: StorageRepository,
-    postLikeRepository: PostLikeRepository
+    postLikeRepository: PostLikeRepository,
+    courseRepository: CourseRepository
   ) {
     this.postRepository = postRepository;
     this.coordinateRepository = coordinateRepository;
     this.postImageRepository = postImageRepository;
     this.storageRepository = storageRepository;
     this.postLikeRepository = postLikeRepository;
+    this.courseRepository = courseRepository;
   }
 
   async execute(id: number, userId: number | null): Promise<PostDto | null> {
@@ -35,12 +39,13 @@ export default class GetPostUsecase {
     const coordinates = await this.coordinateRepository.findAllByCourseId(
       post.courseId
     );
-
+    const course = await this.courseRepository.findById(post.courseId);
     const images = await this.postImageRepository.findByPostId(id);
     let hasLiked = false;
     if (userId) {
       hasLiked = await this.postLikeRepository.hasLiked(userId, id);
     }
+
     // Get public URLs for all images
     const imagesWithUrls = await Promise.all(
       images.map(async image => ({
@@ -61,7 +66,9 @@ export default class GetPostUsecase {
       updatedAt: post.updatedAt,
       coordinates: coordinates,
       images: imageUrls,
-      hasLiked: hasLiked
+      hasLiked: hasLiked,
+      duration: course.duration,
+      distance: course.distance
     } as PostDto;
   }
 }

@@ -2,7 +2,7 @@ import { getCourseCoordinates } from '@/api/coordinate';
 import { CoordinateListDto } from '@/application/usecases/coordinate/dto/CoordinateListDto';
 import { useQuery } from '@tanstack/react-query';
 
-export const useCoordinatesQuery = (courseId: string) => {
+export const useCoordinatesQuery = (courseId: number) => {
   const coordinatesQuery = useQuery<CoordinateListDto>({
     queryKey: ['coordinate', courseId],
     queryFn: () => getCourseCoordinates(courseId),

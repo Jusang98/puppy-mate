@@ -8,6 +8,7 @@ import { SbPostImageRepository } from '@/infra/repositories/supabase/SbPostImage
 import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepository';
 import GetPostsByCourseIdUsecase from '@/application/usecases/post/GetPostsByCourseIdUsecase';
 import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordinatesRepository';
+import { getUserIdFromRequest } from '@/utils/auth';
 
 // 코스 아이디로 게시물 조회
 // 게시물의 정보와 코스의 좌표 정보를 함께 반환
@@ -17,7 +18,10 @@ export async function GET(request: NextRequest) {
     const courseIdParam = searchParams.get('courseId');
 
     if (!courseIdParam) {
-      return NextResponse.json({ error: 'Course ID is required' }, { status: 422 });
+      return NextResponse.json(
+        { error: 'Course ID is required' },
+        { status: 422 }
+      );
     }
 
     const courseId = parseInt(courseIdParam);
@@ -39,21 +43,32 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(posts, { status: 200 });
   } catch (error) {
     console.error('Error getting posts by course ID:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-
-    const userId = Number(formData.get('userId'));
+    const userId = getUserIdFromRequest(request);
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     const courseId = Number(formData.get('courseId'));
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
     const images = formData.getAll('images') as File[];
 
-    const createPostDto = new CreatePostDto(userId, courseId, title, content, images);
+    const createPostDto = new CreatePostDto(
+      userId,
+      courseId,
+      title,
+      content,
+      images
+    );
     const createPostUsecase = new CreatePostUsecase(
       new SbPostRepository(),
       new SbCourseRepository(),
@@ -61,9 +76,15 @@ export async function POST(request: NextRequest) {
       new SbStorageRepository()
     );
     const newPostId = await createPostUsecase.execute(createPostDto);
-    return NextResponse.json({ message: '게시물 작성이 완료되었습니다.', newPostId }, { status: 201 });
+    return NextResponse.json(
+      { message: '게시물 작성이 완료되었습니다.', newPostId },
+      { status: 201 }
+    );
   } catch (error) {
     console.log('Error create Post:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

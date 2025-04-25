@@ -12,12 +12,14 @@ export class PostDto {
   coordinates: CoordinateDto[];
   images?: string[];
   isWriter: boolean;
+  hasLiked: boolean;
 
   constructor(
     post: Post,
     coordinates: CourseCoordinate[],
     images: string[],
-    isWriter: boolean
+    isWriter: boolean,
+    hasLiked: boolean
   ) {
     this.id = post.id;
     this.userId = post.userId;
@@ -26,8 +28,11 @@ export class PostDto {
     this.content = post.content;
     this.createdAt = post.createdAt;
     this.updatedAt = post.updatedAt;
-    this.coordinates = coordinates.map((coordinate) => new CoordinateDto(coordinate.lat, coordinate.lng));
+    this.coordinates = coordinates.map(
+      coordinate => new CoordinateDto(coordinate.lat, coordinate.lng)
+    );
     this.images = images;
     this.isWriter = isWriter;
+    this.hasLiked = hasLiked;
   }
 }

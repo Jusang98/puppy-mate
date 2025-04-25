@@ -71,56 +71,51 @@ export default function MyCoursesPage() {
       {courses.length === 0 ? (
         <div className='text-center text-gray-500'>내 코스가 없습니다.</div>
       ) : (
-        courses.map((course, idx) => {
-          return (
-            <Card key={idx}>
-              <CardHeader>
-                <CardTitle>{course.name}</CardTitle>
-                <CardDescription>{course.address}</CardDescription>
-              </CardHeader>
-              <CardContent className='space-y-1'>
-                <div className='flex flex-row items-stretch gap-4'>
-                  {/* 왼쪽: 텍스트 정보 */}
-                  <div className='flex-1 flex flex-col justify-between py-2'>
+        courses.map((course, idx) => (
+          <Card key={idx}>
+            <CardHeader>
+              <CardTitle>{course.name}</CardTitle>
+              <CardDescription>{course.address}</CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-1'>
+              <div className='flex flex-row items-stretch gap-4'>
+                <div className='flex-1 flex flex-col justify-between py-2'>
+                  <div>
+                    <div>거리: {course.distance} km</div>
+                    <div>소요 시간: {course.duration} 분</div>
                     <div>
-                      <div>거리: {course.distance} km</div>
-                      <div>소요 시간: {course.duration} 분</div>
-                      <div>
-                        공개 여부:{' '}
-                        <span
-                          className={
-                            course.isPublic ? 'text-green-600' : 'text-gray-400'
-                          }
-                        >
-                          {course.isPublic ? '공개' : '비공개'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className='text-xs text-gray-400 mt-2'>
-                      생성일:{' '}
-                      {course.createdAt
-                        ? new Date(course.createdAt).toLocaleDateString()
-                        : '-'}
+                      공개 여부:{' '}
+                      <span className={course.isPublic ? 'text-green-600' : 'text-gray-400'}>
+                        {course.isPublic ? '공개' : '비공개'}
+                      </span>
                     </div>
                   </div>
-                  {/* 오른쪽: 지도 */}
-                  {course.coordinates && (
-                    <div
-                      className='flex-shrink-0 flex items-center'
-                      style={{ height: 200 }}
-                    >
-                      <SnapShotMap
-                        coordinates={course.coordinates}
-                        size={200}
-                      />
-                    </div>
-                  )}
+                  <div className='text-xs text-gray-400 mt-2'>
+                    생성일:{' '}
+                    {course.createdAt
+                      ? new Date(course.createdAt).toLocaleDateString()
+                      : '-'}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })
-      )}
+                {course.coordinates && (
+                  <div className='flex-shrink-0 flex items-center' style={{ height: 200 }}>
+                    <SnapShotMap coordinates={course.coordinates} size={200} />
+                  </div>
+                )}
+              </div>
+        
+              {/* 게시글 작성 버튼 추가 */}
+              <div className='flex justify-end'>
+                <button
+                  onClick={() => router.push(`/post/create?courseId=${course.id}`)}
+                  className='mt-2 px-3 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 transition'
+                >
+                  게시글 작성
+                </button>
+              </div>
+            </CardContent>
+          </Card> 
+          )))};
     </div>
   );
 }

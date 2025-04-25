@@ -20,31 +20,28 @@ export default class GetMyCoursesUsecase {
       userId
     );
 
-    // 각 코스별로 coordinates를 비동기로 조회해서 DTO로 변환
     const dtoPromises = myCourses.map(async (course) => {
-      // 좌표 배열 조회
       const coordinates = await this.coordinateRepository.findAllByCourseId(
         course.id || 0
       );
 
-      // {lat, lng} 형태로 변환 (필요하다면)
       const coords = coordinates.map((coord) => ({
         lat: coord.lat,
         lng: coord.lng,
       }));
 
       return new GetMyCoursesDto(
+        course.id!, // ← id 추가
         course.name,
         course.address,
         course.distance,
         Math.floor(course.duration / 60),
         coords,
-        course.isPublic,
-        course.createdAt
+        course.isPublic!,
+        course.createdAt!
       );
     });
 
-    // 모든 DTO 비동기 생성 결과를 병렬로 반환
     return Promise.all(dtoPromises);
   }
 }

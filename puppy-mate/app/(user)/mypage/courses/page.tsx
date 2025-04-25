@@ -91,16 +91,6 @@ export default function MyCoursesPage() {
                       <div>
                         소요 시간: {course.duration} 분
                       </div>
-                      <div>
-                        공개 여부:{' '}
-                        <span
-                          className={
-                            course.isPublic ? 'text-green-600' : 'text-gray-400'
-                          }
-                        >
-                          {course.isPublic ? '공개' : '비공개'}
-                        </span>
-                      </div>
                     </div>
                     <div className="text-xs text-gray-400 mt-2">
                       산책일:

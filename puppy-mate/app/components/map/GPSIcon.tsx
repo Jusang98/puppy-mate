@@ -4,7 +4,7 @@ import { CiLocationArrow1 } from 'react-icons/ci';
 function BottomGPSButton({ onClick }: { onClick: () => void }) {
   return (
     <button
-      className="absolute z-20 bottom-16 right-4 bg-white/80 rounded-full p-2 shadow-md cursor-pointer"
+      className="absolute z-20 bottom-50 right-4 bg-white/80 rounded-full p-2 shadow-md cursor-pointer"
       onClick={onClick}>
       <CiLocationArrow1 className="rotate-[heading] transition-transform text-2xl " />
     </button>

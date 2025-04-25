@@ -32,6 +32,12 @@ export default function MapPage() {
   });
   const initialLocationSetRef = useRef(false);
 
+  const handleGPSButtonClick = () => {
+    if (location) {
+      setMapCenterPosition({ lat: location.lat, lng: location.lng });
+    }
+  };
+
   const { isLoading: isCoursesLoading, data: courses, isError: isCoursesError, error: coursesError } = coursesQuery;
   useKakaoLoader();
 
@@ -121,14 +127,7 @@ export default function MapPage() {
           mapCenterPosition={mapCenterPosition}
         />
       </>
-      <BottomGPSButton
-        onClick={() => {
-          setMapCenterPosition({
-            lat: location?.lat || 0,
-            lng: location?.lng || 0,
-          });
-        }}
-      />
+      <BottomGPSButton onClick={handleGPSButtonClick} />
       {/* Modal 컴포넌트 */}
       <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
       {/* Course List Drawer */}

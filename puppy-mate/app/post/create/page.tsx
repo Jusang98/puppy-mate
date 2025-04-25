@@ -27,7 +27,6 @@ export default function PostForm() {
   const { coordinatesQuery } = useCoordinatesQuery(courseId);
   useKakaoLoader();;
   
-
   if (coordinatesQuery.isLoading) return <div>Loading...</div>;
   if (coordinatesQuery.error) return <div>Error loading coordinates</div>;
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

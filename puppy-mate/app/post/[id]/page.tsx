@@ -14,6 +14,9 @@ import { formatDate } from '@/utils/common';
 import { deletePost } from '@/api/post';
 import { HiHeart, HiOutlineHeart } from "react-icons/hi";
 import { likePost, unlikePost } from '@/api/postlike';
+import { LuTimer } from "react-icons/lu";
+import { FaShoePrints } from "react-icons/fa";
+
 
 export default function PostDetailPage() {
   const params = useParams();
@@ -73,6 +76,12 @@ export default function PostDetailPage() {
         <div className="flex justify-between text-gray-500 text-sm">
           <span>작성일: {post.createdAt ? formatDate(post.createdAt) : ''}</span>
         </div>
+      </div>
+      <div className="flex items-center gap-2 text-sm">
+        <LuTimer className="text-xl text-orange-500"/>
+        {post.duration}분
+        <FaShoePrints className="rotate-[-90deg] text-xl text-orange-500" />
+        {post.distance}km
       </div>
 
       {/* Map */}

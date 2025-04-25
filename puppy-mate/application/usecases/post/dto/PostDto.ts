@@ -13,13 +13,17 @@ export class PostDto {
   images?: string[];
   isWriter: boolean;
   hasLiked: boolean;
+  duration: number;
+  distance: number;
 
   constructor(
     post: Post,
     coordinates: CourseCoordinate[],
     images: string[],
     isWriter: boolean,
-    hasLiked: boolean
+    hasLiked: boolean,
+    duration: number,
+    distance: number
   ) {
     this.id = post.id;
     this.userId = post.userId;
@@ -34,5 +38,7 @@ export class PostDto {
     this.images = images;
     this.isWriter = isWriter;
     this.hasLiked = hasLiked;
+    this.duration = duration;
+    this.distance = distance;
   }
 }

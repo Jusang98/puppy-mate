@@ -80,7 +80,7 @@ export default function LikedPostsPage() {
 
   return (
     <>
-      <Mypageheader title='찜한 게시글' />
+      <Mypageheader title='찜 산책로' />
       <div className='space-y-4 p-4'>
         {likedPosts.length === 0 ? (
           <div className='flex flex-col items-center justify-center py-24 text-gray-500'>

@@ -7,9 +7,11 @@ export function WalkStateToggle({ onToggle }: { onToggle: () => void }) {
 
   return (
     <div
-      className={`inline-flex items-center gap-3 ${
-        isSavingCourse ? 'bg-orange-50/90' : 'bg-white/90'
-      } px-5 py-3 rounded-full shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg`}>
+      className={`inline-flex items-center gap-2 ${
+        isSavingCourse
+          ? 'bg-orange-100/90 border-orange-300 hover:bg-orange-200/90'
+          : 'bg-white/90 border-gray-100 hover:bg-gray-50'
+      } px-4 py-2 rounded-full shadow-md border transition-all duration-300`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18"
@@ -26,7 +28,7 @@ export function WalkStateToggle({ onToggle }: { onToggle: () => void }) {
       </svg>
       <span
         className={`font-medium text-sm ${
-          isSavingCourse ? 'text-orange-600' : 'text-gray-700'
+          isSavingCourse ? 'text-orange-700' : 'text-gray-700'
         } transition-colors duration-300`}>
         {isSavingCourse ? '기록 중...' : '기록하기'}
       </span>

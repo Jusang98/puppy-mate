@@ -15,14 +15,16 @@ import { createPost } from '@/api/post';
 import { useCoordinatesQuery } from '@/queries/Coordinate';
 import SnapShotMap from '@/app/components/map/SnapShotMap';
 import useKakaoLoader from '@/lib/use-kakao-loader';
+import { useSearchParams } from 'next/navigation';
 
 export default function PostForm() {
+  const searchParams = useSearchParams();
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
-  const id = '29';
-  const { coordinatesQuery } = useCoordinatesQuery(id);
+  const courseId = parseInt(searchParams.get('courseId') ?? '0', 10);
+  const { coordinatesQuery } = useCoordinatesQuery(courseId);
   useKakaoLoader();;
   
 
@@ -37,7 +39,7 @@ export default function PostForm() {
   };
 
   const handleSaveBtnClick = () => {
-    const postId = createPost(29, title, content, images);
+    const postId = createPost(courseId, title, content, images);
     postId.then(id => {
       window.location.href = `/post/${id}`;
     }).catch(error => {

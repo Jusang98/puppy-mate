@@ -1,7 +1,7 @@
 import axios from 'axios';
 const BASE_URL = 'http://localhost:3000/api/coordinates';
 
-export async function getCourseCoordinates(courseId: string) {
+export async function getCourseCoordinates(courseId: number) {
   try {
     const response = await axios.get(`${BASE_URL}/${courseId}`);
     console.log('API Response:', response.data);

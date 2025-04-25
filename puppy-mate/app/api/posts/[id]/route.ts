@@ -4,6 +4,7 @@ import GetPostUsecase from '@/application/usecases/post/GetPostUsecase';
 import UpdatePostUsecase from '@/application/usecases/post/UpdatePostUsecase';
 import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordinatesRepository';
 import { SbPostImageRepository } from '@/infra/repositories/supabase/SbPostImageRepository';
+import { SbPostLikeRepository } from '@/infra/repositories/supabase/SbPostLikeRepository';
 import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository';
 import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepository';
 import { getUserIdFromRequest } from '@/utils/auth';
@@ -24,13 +25,13 @@ export async function GET(
       new SbPostRepository(),
       new SbCoordinatesRepository(),
       new SbPostImageRepository(),
-      new SbStorageRepository()
+      new SbStorageRepository(),
+      new SbPostLikeRepository()
     );
-    const postDto = await getPostUsecase.execute(id);
+    const postDto = await getPostUsecase.execute(id, userId);
     if (!postDto) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
-    console.log(postDto.userId, 'reaquest', request, userId);
     if (userId && postDto.userId === userId) {
       isWriter = true;
     }

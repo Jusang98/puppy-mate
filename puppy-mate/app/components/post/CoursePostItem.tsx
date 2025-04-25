@@ -88,7 +88,7 @@ const CoursePostItem = ({
       </Tooltip>
       <CardFooter className="p-0 m-0">
         <Button variant="outline" className="w-full text-sm cursor-pointer" onClick={handleRouteDetailClick}>
-          경로 상세 보기
+          산책로 보기
         </Button>
       </CardFooter>
     </Card>

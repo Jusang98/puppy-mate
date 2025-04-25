@@ -16,7 +16,7 @@ export default function RootFooter() {
 
   const navItems = [
     {
-      href: '/mypage/likeposts',
+      href: '/mypage/courses',
       icon: <IoPawSharp size={24} />,
       label: '발자국남기기',
     },

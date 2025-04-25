@@ -147,8 +147,8 @@ export class SbCourseRepository implements CourseRepository {
           row.user_id, // userId
           row.name, // name
           row.address, // address
-          row.distance, // distance
-          row.duration, // duration
+          Math.round((row.distance / 1000) * 100) / 100,
+          Math.floor(row.duration / 1000 / 60),
           row.id, // id (optional)
           row.is_public, // isPublic (optional)
           row.created_at ? new Date(row.created_at) : undefined, // createdAt (optional)
@@ -195,7 +195,11 @@ export class SbCourseRepository implements CourseRepository {
   async updatePublic(id: number, flag: boolean): Promise<void> {
     const supabase = await createClient();
     try {
-      const { error } = await supabase.from('courses').update({ is_public: flag }).eq('id', id).select('id');
+      const { error } = await supabase
+        .from('courses')
+        .update({ is_public: flag })
+        .eq('id', id)
+        .select('id');
 
       if (error) {
         console.error('Error updating is_public flag in supabase:', error);

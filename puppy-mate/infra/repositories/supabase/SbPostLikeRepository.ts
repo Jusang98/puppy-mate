@@ -11,36 +11,35 @@ export class SbPostLikeRepository implements PostLikeRepository {
     const supabase = await createClient();
 
     try {
-      // Supabase의 nested select를 활용한 조인 쿼리
       const { data, error } = await supabase
         .from('post_likes')
         .select(
           `
-    post_id,
-    posts (
-      id,
-      title,
-      content,
-      course_id,
-      created_at,
-      courses (
-        id,
-        name,
-        address,
-        is_public,
-        distance,
-        duration,
-        created_at,
-        updated_at,
-        course_coordinates (
-          id,
-          lat,
-          lng,
-          point_order
-        )
-      )
-    )
-  `
+          post_id,
+          posts (
+            id,
+            title,
+            content,
+            course_id,
+            created_at,
+            courses (
+              id,
+              name,
+              address,
+              is_public,
+              distance,
+              duration,
+              created_at,
+              updated_at,
+              course_coordinates (
+                id,
+                lat,
+                lng,
+                point_order
+              )
+            )
+          )
+        `
         )
         .eq('user_id', userId);
 
@@ -54,17 +53,21 @@ export class SbPostLikeRepository implements PostLikeRepository {
       return data.map((item: any) => {
         const post = item.posts;
         const course = post?.courses;
+
         const coordinates =
           course?.course_coordinates?.map(
             (c: any) => new CoordinateDto(c.lat, c.lng)
           ) ?? [];
+
         return new GetLikedPostWithSnapshotDto(
           post.id,
           post.title,
           post.content,
           post.course_id,
           coordinates,
-          new Date(post.created_at)
+          new Date(post.created_at),
+          Math.round((course.distance / 1000) * 100) / 100,
+          Math.floor(course.duration / 1000 / 60)
         );
       });
     } catch (error) {
@@ -81,7 +84,7 @@ export class SbPostLikeRepository implements PostLikeRepository {
         .from('post_likes')
         .insert({
           user_id: userId,
-          post_id: postId
+          post_id: postId,
         })
         .single();
 

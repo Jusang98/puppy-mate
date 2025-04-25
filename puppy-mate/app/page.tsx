@@ -9,7 +9,7 @@ import SaveCourseModal from '@/app/components/map/SaveCourseModal';
 import useRecordingMapStore from '@/store/useRecordingMapStore';
 
 import { CourseMarker, Location } from '@/types/Map';
-
+import { useRouter } from 'next/navigation';
 // icons, buttons
 import { BottomGPSButton } from '@/app/components/map/GPSIcon';
 import { WalkStateToggle } from '@/app/components/map/WalkStateToggle';
@@ -25,6 +25,9 @@ export default function MapPage() {
   const { coursesQuery } = useCourseQuery();
   // 현재 위치 가져오기
   const { location, error } = useCurrentLocation();
+  const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
+
   // 맵 중앙 위치 설정
   const [mapCenterPosition, setMapCenterPosition] = useState<Location>({
     lat: 37.566535,
@@ -38,7 +41,12 @@ export default function MapPage() {
     }
   };
 
-  const { isLoading: isCoursesLoading, data: courses, isError: isCoursesError, error: coursesError } = coursesQuery;
+  const {
+    isLoading: isCoursesLoading,
+    data: courses,
+    isError: isCoursesError,
+    error: coursesError,
+  } = coursesQuery;
   useKakaoLoader();
 
   // 초기 위치 설정
@@ -48,10 +56,18 @@ export default function MapPage() {
       initialLocationSetRef.current = true;
     }
   }, [location]);
-
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setToken(localStorage.getItem('authToken'));
+    }
+  }, []);
   // 토글버튼 클릭 상태 관리
   const { isSavingCourse, startRecordingCourse } = useRecordingMapStore();
   const handleToggleBtnClick = async () => {
+    if (!token) {
+      router.push('/login'); // 토큰 없으면 로그인 페이지로 이동
+      return;
+    }
     if (isSavingCourse) {
       setIsCreateCourseModalOpen(true);
     } else {
@@ -72,8 +88,11 @@ export default function MapPage() {
 
   // 클러스터 클릭혹은 바깥 클릭시 바텀 시트 스냅 포인트 변경
   // 경로 상세보기 코스 좌표들이 있으면 바텀 시트 고정
-  const snapPoints = courseCoordinates.length > 0 ? [0.3, 0.3, 0.3] : [0.3, 0.7, 1];
-  const [snapPoint, setSnapPoint] = useState<number | string | null>(snapPoints[0]);
+  const snapPoints =
+    courseCoordinates.length > 0 ? [0.3, 0.3, 0.3] : [0.3, 0.7, 1];
+  const [snapPoint, setSnapPoint] = useState<number | string | null>(
+    snapPoints[0]
+  );
 
   const onSnapPointChange = (snapPoint: number | string | null) => {
     setSnapPoint(snapPoint);
@@ -86,7 +105,10 @@ export default function MapPage() {
   };
 
   // 클러스터 클릭시 바텀 시트에 표시될 게시물들의 코스 아이디 목록 설정
-  const handleClusterclick = (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => {
+  const handleClusterclick = (
+    target: kakao.maps.MarkerClusterer,
+    cluster: kakao.maps.Cluster
+  ) => {
     const markers = cluster.getMarkers();
     const newCourseIds: number[] = [];
     markers.forEach((marker) => {
@@ -114,9 +136,9 @@ export default function MapPage() {
   }, [courseCoordinates]);
 
   return (
-    <div className="relative w-screen h-screen">
+    <div className='relative w-screen h-screen'>
       <>
-        <div className="flex items-center gap-2 absolute top-4 left-4 z-20">
+        <div className='flex items-center gap-2 absolute top-4 left-4 z-20'>
           <WalkStateToggle onToggle={handleToggleBtnClick} />
         </div>
         <Map
@@ -129,9 +151,16 @@ export default function MapPage() {
       </>
       <BottomGPSButton onClick={handleGPSButtonClick} />
       {/* Modal 컴포넌트 */}
-      <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
+      <SaveCourseModal
+        open={isCreateCourseModalOpen}
+        onOpenChange={onModalOpenChange}
+      />
       {/* Course List Drawer */}
-      <CourseListDrawer snapPoints={snapPoints} snapPoint={snapPoint} onSnapPointChange={onSnapPointChange} />
+      <CourseListDrawer
+        snapPoints={snapPoints}
+        snapPoint={snapPoint}
+        onSnapPointChange={onSnapPointChange}
+      />
     </div>
   );
 }

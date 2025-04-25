@@ -59,7 +59,7 @@ export default function MyPage() {
 
   return (
     <div className='flex flex-col h-full bg-gray-50'>
-      <Mypageheader/>
+      <Mypageheader title='마이페이지'/>
       {/* 프로필 섹션 */}
       <div className='bg-white px-5 py-4 flex items-center justify-between'>
         <div className='flex items-center space-x-3'>

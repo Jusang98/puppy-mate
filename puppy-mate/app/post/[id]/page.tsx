@@ -12,11 +12,13 @@ import SnapShotMap from '@/app/components/map/SnapShotMap';
 import useKakaoLoader from '@/lib/use-kakao-loader';
 import { formatDate } from '@/utils/common';
 import { deletePost } from '@/api/post';
+import { HiHeart, HiOutlineHeart } from "react-icons/hi";
+import { likePost, unlikePost } from '@/api/postlike';
 
 export default function PostDetailPage() {
   const params = useParams();
   const postId = params?.id as string;
-  const { post, isLoading, error } = usePostQuery(postId);
+  const { post, isLoading, error, refetch } = usePostQuery(postId);
   useKakaoLoader();
   const router = useRouter();
 
@@ -41,12 +43,33 @@ export default function PostDetailPage() {
       router.push(`/post/${postId}/edit`); // 수정 페이지로 이동
     }
   };
-
+  const handleLikeBtnClick = async () => {
+    try {
+      const targetPostId = parseInt(postId)
+      if (post.hasLiked) {
+        await unlikePost(targetPostId);
+      } else {
+        await likePost(targetPostId);
+      }
+      refetch();
+      // 리렌더링 혹은 상태 업데이트 필요
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  
   return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-6">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold">{post.title}</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">{post.title}</h1>
+          {post.hasLiked ? (
+            <HiHeart onClick={handleLikeBtnClick} className="text-red-500" size={24} />
+          ) : (
+            <HiOutlineHeart onClick={handleLikeBtnClick} size={24} />
+          )}
+        </div>
         <div className="flex justify-between text-gray-500 text-sm">
           <span>작성일: {post.createdAt ? formatDate(post.createdAt) : ''}</span>
         </div>

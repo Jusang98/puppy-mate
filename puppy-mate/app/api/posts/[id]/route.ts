@@ -3,6 +3,7 @@ import { UpdatePostDto } from '@/application/usecases/post/dto/UpdatePostDto';
 import GetPostUsecase from '@/application/usecases/post/GetPostUsecase';
 import UpdatePostUsecase from '@/application/usecases/post/UpdatePostUsecase';
 import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordinatesRepository';
+import { SbCourseRepository } from '@/infra/repositories/supabase/SbCourseRepository';
 import { SbPostImageRepository } from '@/infra/repositories/supabase/SbPostImageRepository';
 import { SbPostLikeRepository } from '@/infra/repositories/supabase/SbPostLikeRepository';
 import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository';
@@ -26,7 +27,8 @@ export async function GET(
       new SbCoordinatesRepository(),
       new SbPostImageRepository(),
       new SbStorageRepository(),
-      new SbPostLikeRepository()
+      new SbPostLikeRepository(),
+      new SbCourseRepository()
     );
     const postDto = await getPostUsecase.execute(id, userId);
     if (!postDto) {

@@ -37,7 +37,7 @@ function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseLi
       activeSnapPoint={snapPoint}
       setActiveSnapPoint={onSnapPointChange}>
       <DrawerPortal>
-        <DrawerContent ref={drawerRef} className="h-full">
+        <DrawerContent ref={drawerRef} className="h-full -translate-y-5">
           {courseCoordinates.length > 0 && (
             <div className="absolute -top-11 left-1/2 transform -translate-x-1/2 z-10">
               <Button

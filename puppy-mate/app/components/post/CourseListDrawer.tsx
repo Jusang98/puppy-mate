@@ -37,7 +37,7 @@ function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseLi
       activeSnapPoint={snapPoint}
       setActiveSnapPoint={onSnapPointChange}>
       <DrawerPortal>
-        <DrawerContent ref={drawerRef} className="h-full -translate-y-5">
+        <DrawerContent ref={drawerRef} className="h-full -translate-y-15">
           {courseCoordinates.length > 0 && (
             <div className="absolute -top-11 left-1/2 transform -translate-x-1/2 z-10">
               <Button
@@ -53,7 +53,9 @@ function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseLi
             </div>
           )}
           <DrawerHeader className="text-center">
-            <DrawerTitle className="text-md font-medium">코스 {(posts || []).length}개</DrawerTitle>
+            <DrawerTitle className="text-md font-medium">
+              {posts.length > 0 ? '산책로 ' + posts.length + '개' : '🐾 를 클릭해서 탐색 하세요'}
+            </DrawerTitle>
           </DrawerHeader>
           <CoursePostList posts={posts} isLoading={isLoading} isError={isError} errors={errors} />
         </DrawerContent>

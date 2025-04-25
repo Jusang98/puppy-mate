@@ -69,7 +69,7 @@ const CoursePostItem = ({
                 <div className="text-sm text-muted-foreground line-clamp-1">{address}</div>
 
                 <div className="text-muted-foreground text-sm">
-                  {formattedDistance} km • {Math.round(duration / 60)} 분
+                  {formattedDistance} km • {duration} 분
                 </div>
                 <div>
                   <div className="flex items-center text-muted-foreground text-sm">

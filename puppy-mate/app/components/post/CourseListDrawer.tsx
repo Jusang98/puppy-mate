@@ -44,7 +44,7 @@ function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseLi
             <div className="absolute -top-11 left-1/2 transform -translate-x-1/2 z-10">
               <Badge
                 variant="outline"
-                className="flex items-center gap-2 px-4 py-2 bg-orange-100/90 border-orange-300 hover:bg-orange-200/90 shadow-md animate-pulse">
+                className="flex items-center gap-2 px-4 py-2 bg-orange-100/90 border-orange-300 hover:bg-orange-200/90 shadow-md rounded-full">
                 <span className="text-orange-700 font-medium">따라가는 중...</span>
                 <Button
                   variant="ghost"

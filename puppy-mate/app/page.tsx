@@ -19,6 +19,7 @@ import CourseListDrawer from '@/app/components/post/CourseListDrawer';
 
 // store
 import useCoursesMapStore from '@/store/useCoursesMapStore';
+import { getCenterAndLevel } from '@/utils/map/getCenterAndLevel';
 
 export default function MapPage() {
   // 마커, 클러스터 표시할 코스들 가져오기
@@ -41,26 +42,15 @@ export default function MapPage() {
     }
   };
 
-  const {
-    isLoading: isCoursesLoading,
-    data: courses,
-    isError: isCoursesError,
-    error: coursesError,
-  } = coursesQuery;
+  const { isLoading: isCoursesLoading, data: courses, isError: isCoursesError, error: coursesError } = coursesQuery;
   useKakaoLoader();
 
-  // 초기 위치 설정
-  useEffect(() => {
-    if (location && !initialLocationSetRef.current) {
-      setMapCenterPosition({ lat: location.lat, lng: location.lng });
-      initialLocationSetRef.current = true;
-    }
-  }, [location]);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setToken(localStorage.getItem('authToken'));
     }
   }, []);
+
   // 토글버튼 클릭 상태 관리
   const { isSavingCourse, startRecordingCourse } = useRecordingMapStore();
   const handleToggleBtnClick = async () => {
@@ -88,11 +78,8 @@ export default function MapPage() {
 
   // 클러스터 클릭혹은 바깥 클릭시 바텀 시트 스냅 포인트 변경
   // 경로 상세보기 코스 좌표들이 있으면 바텀 시트 고정
-  const snapPoints =
-    courseCoordinates.length > 0 ? [0.3, 0.3, 0.3] : [0.3, 0.7, 1];
-  const [snapPoint, setSnapPoint] = useState<number | string | null>(
-    snapPoints[0]
-  );
+  const snapPoints = courseCoordinates.length > 0 ? [0.3, 0.3, 0.3] : [0.3, 0.7, 1];
+  const [snapPoint, setSnapPoint] = useState<number | string | null>(snapPoints[0]);
 
   const onSnapPointChange = (snapPoint: number | string | null) => {
     setSnapPoint(snapPoint);
@@ -105,10 +92,7 @@ export default function MapPage() {
   };
 
   // 클러스터 클릭시 바텀 시트에 표시될 게시물들의 코스 아이디 목록 설정
-  const handleClusterclick = (
-    target: kakao.maps.MarkerClusterer,
-    cluster: kakao.maps.Cluster
-  ) => {
+  const handleClusterclick = (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => {
     const markers = cluster.getMarkers();
     const newCourseIds: number[] = [];
     markers.forEach((marker) => {
@@ -132,10 +116,22 @@ export default function MapPage() {
     }
   }, [courseCoordinates]);
 
+  // 초기 위치 설정
+  useEffect(() => {
+    if (courseCoordinates.length > 0 && !initialLocationSetRef.current) {
+      const { center, level } = getCenterAndLevel(courseCoordinates);
+      setMapCenterPosition({ lat: center.lat, lng: center.lng });
+      initialLocationSetRef.current = true;
+    } else if (location && !initialLocationSetRef.current) {
+      setMapCenterPosition({ lat: location.lat, lng: location.lng });
+      initialLocationSetRef.current = true;
+    }
+  }, [location]);
+
   return (
-    <div className='relative w-screen h-screen'>
+    <div className="relative w-screen h-screen">
       <>
-        <div className='flex items-center gap-2 absolute top-4 left-4 z-20'>
+        <div className="flex items-center gap-2 absolute top-4 left-4 z-20">
           <WalkStateToggle onToggle={handleToggleBtnClick} />
           <BottomGPSButton onClick={handleGPSButtonClick} />
         </div>
@@ -149,16 +145,9 @@ export default function MapPage() {
       </>
 
       {/* Modal 컴포넌트 */}
-      <SaveCourseModal
-        open={isCreateCourseModalOpen}
-        onOpenChange={onModalOpenChange}
-      />
+      <SaveCourseModal open={isCreateCourseModalOpen} onOpenChange={onModalOpenChange} />
       {/* Course List Drawer */}
-      <CourseListDrawer
-        snapPoints={snapPoints}
-        snapPoint={snapPoint}
-        onSnapPointChange={onSnapPointChange}
-      />
+      <CourseListDrawer snapPoints={snapPoints} snapPoint={snapPoint} onSnapPointChange={onSnapPointChange} />
     </div>
   );
 }

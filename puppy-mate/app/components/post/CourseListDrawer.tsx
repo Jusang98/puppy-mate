@@ -6,6 +6,8 @@ import CoursePostList from '@/app/components/post/CoursePostList';
 import useCoursesMapStore from '@/store/useCoursesMapStore';
 import { useCourseIdPostQuery } from '@/queries/CourseIdPost';
 import { useRef, useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
+
 interface CourseListDrawerProps {
   snapPoints: number[];
   snapPoint: number | string | null;
@@ -40,16 +42,21 @@ function CourseListDrawer({ snapPoints, snapPoint, onSnapPointChange }: CourseLi
         <DrawerContent ref={drawerRef} className="h-full -translate-y-15">
           {courseCoordinates.length > 0 && (
             <div className="absolute -top-11 left-1/2 transform -translate-x-1/2 z-10">
-              <Button
+              <Badge
                 variant="outline"
-                size="icon"
-                className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border shadow-md"
-                onClick={() => {
-                  clearCourseCoordinates();
-                  onSnapPointChange(0.7);
-                }}>
-                <X className="h-4 w-4" />
-              </Button>
+                className="flex items-center gap-2 px-4 py-2 bg-orange-100/90 border-orange-300 hover:bg-orange-200/90 shadow-md animate-pulse">
+                <span className="text-orange-700 font-medium">따라가는 중...</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 rounded-full bg-orange-50 hover:bg-orange-200 p-0"
+                  onClick={() => {
+                    clearCourseCoordinates();
+                    onSnapPointChange(0.7);
+                  }}>
+                  <X className="h-3 w-3 text-orange-700" />
+                </Button>
+              </Badge>
             </div>
           )}
           <DrawerHeader className="text-center">

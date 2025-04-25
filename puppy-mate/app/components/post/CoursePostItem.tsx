@@ -63,13 +63,13 @@ const CoursePostItem = ({
               <div>
                 <div className="font-semibold text-lg text-ellipsis line-clamp-1">{title}</div>
                 {/* text-muted-foreground 는 shadcn 에서 설정한 secondary text 색상  (약간 어두운 회색)*/}
-                <div className="text-sm mt-1 text-muted-foreground">
-                  {username} • {formattedDate}
-                </div>
-                <div className="text-sm text-muted-foreground line-clamp-1">{address}</div>
+                <div className="text-sm mt-1  text-muted-foreground line-clamp-1">{address}</div>
 
                 <div className="text-muted-foreground text-sm">
-                  {formattedDistance} km • {Math.round(duration / 60)} 분
+                  {formattedDistance} km • {duration} 분
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {username} • {formattedDate}
                 </div>
                 <div>
                   <div className="flex items-center text-muted-foreground text-sm">
@@ -88,7 +88,7 @@ const CoursePostItem = ({
       </Tooltip>
       <CardFooter className="p-0 m-0">
         <Button variant="outline" className="w-full text-sm cursor-pointer" onClick={handleRouteDetailClick}>
-          경로 상세 보기
+          산책로 보기
         </Button>
       </CardFooter>
     </Card>

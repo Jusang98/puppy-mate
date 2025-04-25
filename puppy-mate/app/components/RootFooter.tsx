@@ -27,12 +27,12 @@ export default function RootFooter() {
       ? {
           href: '/mypage/courses',
           icon: <IoPawSharp size={24} />,
-          label: '발자국남기기',
+          label: '산책로 공유',
         }
       : {
           href: '/login',
           icon: <IoPawSharp size={24} />,
-          label: '발자국남기기',
+          label: '산책로 공유',
         },
     { href: '/', icon: <BiSolidHomeHeart size={24} />, label: '홈' },
     token

@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import SnapShotMap from '@/app/components/map/SnapShotMap';
 import useKakaoLoader from '@/lib/use-kakao-loader';
 import { useRouter } from 'next/navigation';
-GetLikedPostWithSnapshotDto;
+
 export default function LikedPostsPage() {
   const router = useRouter();
   const [likedPosts, setLikedPosts] = useState<GetLikedPostWithSnapshotDto[]>(
@@ -33,6 +33,11 @@ export default function LikedPostsPage() {
 
   const handleBackMyPage = () => {
     router.push('/mypage');
+  };
+
+  // 카드 클릭 시 상세 페이지로 이동하는 함수
+  const handleCardClick = (postId: number) => {
+    router.push(`/post/${postId}`);
   };
 
   if (loading) {
@@ -67,7 +72,11 @@ export default function LikedPostsPage() {
         <div className='text-center text-gray-500'>찜한 게시글이 없습니다.</div>
       ) : (
         likedPosts.map((post) => (
-          <Card key={post.postId}>
+          <Card
+            key={post.postId}
+            className='cursor-pointer hover:shadow-lg transition'
+            onClick={() => handleCardClick(post.postId)}
+          >
             <CardHeader>
               <CardTitle>{post.title}</CardTitle>
             </CardHeader>
@@ -81,7 +90,6 @@ export default function LikedPostsPage() {
                     생성일: {new Date(post.createdAt).toLocaleDateString()}
                   </div>
                 </div>
-
                 {/* 오른쪽: 지도 */}
                 {post.coordinates?.length > 0 && (
                   <div className='flex-shrink-0' style={{ height: 200 }}>

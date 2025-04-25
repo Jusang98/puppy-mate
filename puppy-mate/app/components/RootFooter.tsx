@@ -1,10 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaUpload, FaUser } from 'react-icons/fa';
 import { GiDogHouse } from 'react-icons/gi';
 import { LuDog } from 'react-icons/lu';
 import { ImUpload } from 'react-icons/im';
+import { IoPawSharp } from 'react-icons/io5';
+import { TbHomeFilled } from 'react-icons/tb';
+import { BiSolidHomeHeart } from 'react-icons/bi';
+
 export default function RootFooter() {
   const pathname = usePathname();
   // 로그인, 회원가입 페이지는 푸터 숨김
@@ -12,8 +15,12 @@ export default function RootFooter() {
   if (hiddenPaths.includes(pathname)) return null;
 
   const navItems = [
-    { href: '/', icon: <GiDogHouse size={24} />, label: '홈' },
-    { href: '/upload', icon: <ImUpload size={24} />, label: '업로드' },
+    {
+      href: '/mypage/likeposts',
+      icon: <IoPawSharp size={24} />,
+      label: '발자국남기기',
+    },
+    { href: '/', icon: <BiSolidHomeHeart size={24} />, label: '홈' },
     { href: '/mypage', icon: <LuDog size={24} />, label: '내정보' },
   ];
 

@@ -6,41 +6,24 @@ import { getDistance } from '@/utils/map/getDistance';
 import { CourseListIsPublicDto } from '@/application/usecases/course/dto/CourseListIsPublicDto';
 import { Location, CourseMarker } from '@/types/Map';
 import { CurrentLocationIcon } from '@/app/components/map/GPSIcon';
+import useCoursesMapStore from '@/store/useCoursesMapStore';
+import { getCenterAndLevel } from '@/utils/map/getCenterAndLevel';
 
 export function Map({
   currentLocation,
   courses,
   onClusterclick,
+  onMarkerClick,
   mapCenterPosition,
 }: {
   currentLocation: Location | null;
   courses: CourseListIsPublicDto[] | undefined;
   onClusterclick: (target: kakao.maps.MarkerClusterer, cluster: kakao.maps.Cluster) => void;
+  onMarkerClick: (courseId: number) => void;
   mapCenterPosition: Location;
 }) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { coordinates, addCoursePoint, isSavingCourse } = useMapStore();
-
-  // 테스트를 위한 더미 데이터
-  // const dummyPath = [
-  //   { lat: 37.56421035025637, lng: 127.00767976641002 },
-  //   { lat: 37.56431035025637, lng: 127.00777976641002 },
-  //   { lat: 37.56441035025637, lng: 127.00787976641002 },
-  //   { lat: 37.56451035025637, lng: 127.00797976641002 },
-  //   { lat: 37.56461035025637, lng: 127.00807976641002 },
-  //   { lat: 37.56471035025637, lng: 127.00817976641002 },
-  //   { lat: 37.56481035025637, lng: 127.00827976641002 },
-  //   { lat: 37.56491035025637, lng: 127.00837976641002 },
-  //   { lat: 37.56501035025637, lng: 127.00847976641002 },
-  //   { lat: 37.56511035025637, lng: 127.00857976641002 },
-  // ];
-  // dummyPath.forEach((point) => {
-  //   addCoursePoint(point);
-  // });
-
-  // useEffect(() => {
-  //   coordinates.push(...dummyPath);
-  // }, []);
 
   // 현재 위치 바뀔때 마다 맵 중심 위치 설정
   useEffect(() => {
@@ -70,6 +53,18 @@ export function Map({
     }
   }, [currentLocation, isSavingCourse]);
 
+  // 경로 상세 보기 누를때 맵 중심 위치 설정
+  const { courseCoordinates } = useCoursesMapStore();
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    if (courseCoordinates.length > 0) {
+      const { center, level } = getCenterAndLevel(courseCoordinates);
+      mapRef.current.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
+      mapRef.current.setLevel(level);
+    }
+  }, [courseCoordinates]);
+
   return (
     <div className="absolute inset-0 z-0">
       <KakaoMap
@@ -95,6 +90,14 @@ export function Map({
                 strokeStyle="solid" // 선 스타일
               />
             )}
+            {courseCoordinates.length > 0 && (
+              <Polyline
+                path={courseCoordinates} // 폴리라인 경로
+                strokeWeight={5} // 선 두께
+                strokeColor="#4F46E5" // 선 색상 (인디고 색상으로 변경)
+                strokeOpacity={0.8} // 선 투명도
+              />
+            )}
           </>
         )}
         {courses && (
@@ -113,6 +116,7 @@ export function Map({
                   lat: pos.startPoint.lat,
                   lng: pos.startPoint.lng,
                 }}
+                onClick={() => onMarkerClick(pos.id)}
                 onCreate={(marker) => {
                   (marker as CourseMarker).courseId = pos.id; // ✅ 각 marker 객체에 id 직접 부여
                 }}

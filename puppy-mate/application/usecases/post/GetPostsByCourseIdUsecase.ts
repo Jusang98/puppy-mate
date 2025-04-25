@@ -3,6 +3,7 @@ import { PostRepository } from '@/domain/repositories/PostRepository';
 import { CoordinateRepository } from '@/domain/repositories/CoordinateRepository';
 import { CourseRepository } from '@/domain/repositories/CourseRepository';
 import { PostCourseDto } from './dto/PostCourseDto';
+
 // 코스 아이디로 게시물 조회
 // 게시물의 정보와 코스의 좌표 정보를 함께 반환
 export default class GetPostsByCourseIdUsecase {
@@ -30,19 +31,15 @@ export default class GetPostsByCourseIdUsecase {
         const course = await this.courseRepository.findById(post.courseId);
         const coordinates = await this.coordinateRepository.findAllByCourseId(post.courseId);
 
-        return {
-          userId: post.userId,
-          courseId: post.courseId,
-          title: post.title,
-          id: post.id,
-          content: post.content,
-          createdAt: post.createdAt,
-          updatedAt: post.updatedAt,
-          duration: course.duration,
+        // Create a PostView-compatible object
+        const postView = {
+          ...post,
           distance: course.distance,
+          duration: course.duration,
           address: course.address,
-          coordinates: coordinates,
-        } as PostCourseDto;
+        };
+
+        return new PostCourseDto(postView, coordinates);
       })
     );
 

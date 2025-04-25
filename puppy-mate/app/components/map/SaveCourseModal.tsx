@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useRecordingMapStore from '@/store/useRecordingMapStore';
-import SnapShotMap from '@/app/components/map/SnapShotMap';
+import SnapShotMap, { SnapShotMapSkeleton } from '@/app/components/map/SnapShotMap';
 import { saveCourse } from '@/lib/saveCourse';
 
 interface SaveCourseModalProps {
@@ -23,6 +23,7 @@ interface SaveCourseModalProps {
 
 export default function SaveCourseModal({ open, onOpenChange }: SaveCourseModalProps) {
   const [courseName, setCourseName] = useState('');
+
   const { clearCourse, stopRecordingCourse, coordinates } = useRecordingMapStore();
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +41,7 @@ export default function SaveCourseModal({ open, onOpenChange }: SaveCourseModalP
         <div className="space-y-3">
           <Input name="name" placeholder="코스 이름" onChange={handleNameInputChange} />
         </div>
-        {open && <SnapShotMap coordinates={coordinates} size={300} />}
+        {open ? <SnapShotMap coordinates={coordinates} size={300} /> : <SnapShotMapSkeleton size={300} />}
         <DialogFooter>
           <DialogClose asChild>
             <Button
@@ -55,10 +56,10 @@ export default function SaveCourseModal({ open, onOpenChange }: SaveCourseModalP
           </DialogClose>
           <Button
             onClick={async () => {
-              stopRecordingCourse();
               const courseId = await saveCourse(courseName);
               if (courseId) {
                 onOpenChange(false);
+                stopRecordingCourse();
               }
             }}>
             저장

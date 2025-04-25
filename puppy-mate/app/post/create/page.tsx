@@ -37,14 +37,7 @@ export default function PostForm() {
   };
 
   const handleSaveBtnClick = () => {
-    const userId = localStorage.getItem('userId')
-    if(!userId){
-      alert('로그인 후 이용해주세요.')
-      window.location.href ='/';
-      return;
-    }
-    
-    const postId = createPost(parseInt(userId), 29, title, content, images);
+    const postId = createPost(29, title, content, images);
     postId.then(id => {
       window.location.href = `/post/${id}`;
     }).catch(error => {

@@ -3,26 +3,30 @@ import { PostDto } from './dto/PostDto';
 import { CoordinateRepository } from '@/domain/repositories/CoordinateRepository';
 import { PostImageRepository } from '@/domain/repositories/PostImageRepository';
 import { StorageRepository } from '@/domain/repositories/StorageRepository';
+import { PostLikeRepository } from '@/domain/repositories/PostLikeRepository';
 
 export default class GetPostUsecase {
   private readonly postRepository: PostRepository;
   private readonly coordinateRepository: CoordinateRepository;
   private readonly postImageRepository: PostImageRepository;
   private readonly storageRepository: StorageRepository;
+  private readonly postLikeRepository: PostLikeRepository;
 
   constructor(
     postRepository: PostRepository,
     coordinateRepository: CoordinateRepository,
     postImageRepository: PostImageRepository,
-    storageRepository: StorageRepository
+    storageRepository: StorageRepository,
+    postLikeRepository: PostLikeRepository
   ) {
     this.postRepository = postRepository;
     this.coordinateRepository = coordinateRepository;
     this.postImageRepository = postImageRepository;
     this.storageRepository = storageRepository;
+    this.postLikeRepository = postLikeRepository;
   }
 
-  async execute(id: number): Promise<PostDto | null> {
+  async execute(id: number, userId: number | null): Promise<PostDto | null> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       return null;
@@ -33,7 +37,10 @@ export default class GetPostUsecase {
     );
 
     const images = await this.postImageRepository.findByPostId(id);
-    console.log(images);
+    let hasLiked = false;
+    if (userId) {
+      hasLiked = await this.postLikeRepository.hasLiked(userId, id);
+    }
     // Get public URLs for all images
     const imagesWithUrls = await Promise.all(
       images.map(async image => ({
@@ -53,7 +60,8 @@ export default class GetPostUsecase {
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       coordinates: coordinates,
-      images: imageUrls
+      images: imageUrls,
+      hasLiked: hasLiked
     } as PostDto;
   }
 }

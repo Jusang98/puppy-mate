@@ -1,5 +1,5 @@
 'use client';
-
+import { LatLng } from '@/types/Map';
 import { useEffect, useState } from 'react';
 import { getLikedPostsWithSnapshot } from '@/api/mypage';
 import {
@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter
+  CardFooter,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import SnapShotMap from '@/app/components/map/SnapShotMap';
@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { GetLikedPostWithSnapshotDto } from '@/application/usecases/postlike/dto/GetLikedPostWithSnapshotDto';
 import { formatDate } from '@/utils/common';
 import Mypageheader from '../components/Mypageheader';
-import { CiCalendar } from "react-icons/ci";
+import { CiCalendar } from 'react-icons/ci';
 import { IoLocationOutline } from 'react-icons/io5';
 import { LuTimer } from 'react-icons/lu';
 import { FaShoePrints, FaRegHeart, FaMapMarkerAlt } from 'react-icons/fa';
@@ -112,14 +112,16 @@ export default function LikedPostsPage() {
                   <div className='flex-1 space-y-2 text-sm text-gray-700 content-center'>
                     <div className='flex items-center gap-2'>
                       <FaShoePrints className='text-xl rotate-[-90deg] text-orange-400' />
-                      <span>거리: {Math.round(post.distance * 10) / 10} km</span>
+                      <span>
+                        거리: {Math.round(post.distance * 10) / 10} km
+                      </span>
                     </div>
                     <div className='flex items-center gap-2'>
                       <LuTimer className='text-xl text-orange-400' />
                       <span>소요 시간: {post.duration} 분</span>
                     </div>
                     <div className='flex items-center gap-2 text-xs text-gray-500 mt-1'>
-                      <CiCalendar className="text-xl text-orange-400" />
+                      <CiCalendar className='text-xl text-orange-400' />
                       <span>{formatDate(post.createdAt)}</span>
                     </div>
                   </div>

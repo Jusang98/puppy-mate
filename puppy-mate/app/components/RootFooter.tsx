@@ -49,7 +49,7 @@ export default function RootFooter() {
             <Link
               key={`${item.href}-${item.label}-${idx}`}
               href={item.href}
-              className={`flex flex-col items-center transition-colors duration-200 ${isActive
+              className={`w-[65px] flex flex-col items-center transition-colors duration-200 ${isActive
                 ? 'text-orange-500'
                 : 'text-gray-700'}`}
             >

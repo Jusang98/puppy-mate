@@ -38,3 +38,20 @@ export async function getLikedPostsWithSnapshot() {
     throw error;
   }
 }
+
+export async function getMyPosts() {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) throw new Error('No auth token found');
+
+    const response = await axios.get(`${BASE_URL}/posts`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data; // 내가 작성한 게시글 리스트 반환
+  } catch (error) {
+    console.error('Failed to fetch my posts:', error);
+    throw error;
+  }
+}

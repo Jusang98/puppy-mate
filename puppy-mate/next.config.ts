@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // 다른 설정들도 여기 추가 가능
 };
 

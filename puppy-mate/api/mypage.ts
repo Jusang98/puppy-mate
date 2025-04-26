@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000/api/mypage';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 export async function getMyCourses() {
   try {
@@ -26,7 +26,7 @@ export async function getLikedPostsWithSnapshot() {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('No auth token found');
 
-    const response = await axios.get(`${BASE_URL}/likeposts`, {
+    const response = await axios.get(`${BASE_URL}/api/mypage/likeposts`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

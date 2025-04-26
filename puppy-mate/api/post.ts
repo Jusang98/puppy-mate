@@ -1,7 +1,9 @@
 import { PostDto } from '@/application/usecases/post/dto/PostDto';
 import axios from 'axios';
 import { CoursePost } from '@/types/Post';
-const BASE_URL = 'http://localhost:3000/api/posts';
+
+// 환경변수에서 BASE_URL을 읽어옴. 없으면 localhost fallback
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 export async function createPost(
   courseId: number,
@@ -14,30 +16,38 @@ export async function createPost(
   formData.append('title', title);
   formData.append('content', content);
 
-  // 이미지 파일들을 FormData에 추가
   images.forEach((image) => {
     formData.append('images', image);
   });
 
   const token = localStorage.getItem('authToken');
   if (!token) throw new Error('No auth token found');
-  const response = await axios.post<{ newPostId: number }>(BASE_URL, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${token}`,
-    },
-  });
+
+  const response = await axios.post<{ newPostId: number }>(
+    `${BASE_URL}/api/posts`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return response.data.newPostId;
 }
 
-export async function getPost(postId: string) {
+export async function getPost(postId: string): Promise<PostDto> {
   try {
     const token = localStorage.getItem('authToken');
-    const response = await axios<{ data: PostDto }>(`${BASE_URL}/${postId}`, {
-      headers: {
-        Authorization: `Bearer ${token}` // 토큰을 Authorization 헤더에 추가
+    if (!token) throw new Error('No auth token found');
+    const response = await axios.get<{ data: PostDto }>(
+      `${BASE_URL}/api/posts/${postId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    });
+    );
     return response.data.data;
   } catch (error) {
     console.error('Failed to fetch post:', error);
@@ -45,13 +55,18 @@ export async function getPost(postId: string) {
   }
 }
 
-export async function getPostsByCourseId(courseId: number): Promise<CoursePost[]> {
-  const response = await axios.get<CoursePost[]>(`${BASE_URL}?courseId=${courseId}`).catch((error) => {
+export async function getPostsByCourseId(
+  courseId: number
+): Promise<CoursePost[]> {
+  try {
+    const response = await axios.get<CoursePost[]>(
+      `${BASE_URL}/api/posts?courseId=${courseId}`
+    );
+    return response.data;
+  } catch (error) {
     console.error('Failed to get posts by course id:', error);
     throw error;
-  });
-
-  return response.data;
+  }
 }
 
 export async function deletePost(
@@ -59,37 +74,41 @@ export async function deletePost(
 ): Promise<{ isSuccess: boolean; message: string }> {
   try {
     const token = localStorage.getItem('authToken');
-
-    const response = await axios.delete(`${BASE_URL}/${postId}`, {
+    if (!token) throw new Error('No auth token found');
+    const response = await axios.delete(`${BASE_URL}/api/posts/${postId}`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
-
     return response.data;
   } catch (error) {
     console.error('Failed to delete post:', error);
     throw error;
   }
 }
+
 export async function updatePost(
   postId: string,
-    title: string,
-    content: string,
+  title: string,
+  content: string
 ) {
   try {
     const token = localStorage.getItem('authToken');
-    const response = await axios.patch(`${BASE_URL}/${postId}`, {
-      id: postId,
-      title,
-      content,
-   }, {
-      headers: {
-        Authorization: `Bearer ${token}` // 토큰을 Authorization 헤더에 추가
+    if (!token) throw new Error('No auth token found');
+    const response = await axios.patch(
+      `${BASE_URL}/api/posts/${postId}`,
+      {
+        id: postId,
+        title,
+        content,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-   });
-
-    return response.data; 
+    );
+    return response.data;
   } catch (error: any) {
     console.error('게시글 수정 실패:', error);
     throw new Error(

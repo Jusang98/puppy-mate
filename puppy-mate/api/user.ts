@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000/api/user';
+// 환경변수에서 BASE_URL을 읽어옴 (없으면 localhost fallback)
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 // 새로운 사용자 생성
 export async function createUser(
@@ -19,7 +20,7 @@ export async function createUser(
 
   try {
     const response = await axios.post<{ userId: number }>(
-      `${BASE_URL}/signup`,
+      `${BASE_URL}/api/user/signup`,
       formData,
       {
         headers: {
@@ -41,7 +42,7 @@ export async function loginUser(
 ): Promise<{ userId: number; token: string }> {
   try {
     const response = await axios.post<{ userId: number; token: string }>(
-      `${BASE_URL}/login`,
+      `${BASE_URL}/api/user/login`,
       {
         email,
         password,
@@ -52,7 +53,6 @@ export async function loginUser(
     // JWT 토큰을 로컬 스토리지에 저장
     localStorage.setItem('authToken', token);
 
-    // userId와 token을 함께 반환
     return { userId, token };
   } catch (error) {
     console.error('Failed to login:', error);
@@ -60,21 +60,23 @@ export async function loginUser(
   }
 }
 
+// 로그아웃
 export function logoutUser() {
   localStorage.removeItem('authToken');
 }
 
+// 유저 프로필 조회
 export async function getUserProfile() {
   try {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('No auth token found');
 
-    const response = await axios.get(`${BASE_URL}/profile`, {
+    const response = await axios.get(`${BASE_URL}/api/user/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data; // 유저 정보 객체 반환
+    return response.data;
   } catch (error) {
     console.error('Failed to fetch user profile:', error);
     throw error;

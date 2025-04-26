@@ -1,7 +1,7 @@
 import { LatLng } from '@/types/Map';
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000/api/courses';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 interface CreateCourseResponse {
   id: number;
@@ -15,7 +15,7 @@ export async function createCourse(
   coordinates: LatLng[]
 ): Promise<number> {
   const response = await axios
-    .post<CreateCourseResponse>(BASE_URL, {
+    .post<CreateCourseResponse>(`${BASE_URL}/api/courses`, {
       name,
       address,
       distance,
@@ -31,7 +31,7 @@ export async function createCourse(
 }
 
 export async function getPublicCourses() {
-  const response = await axios.get(BASE_URL).catch((error) => {
+  const response = await axios.get(`${BASE_URL}/api/courses`).catch((error) => {
     console.error('Failed to fetch public courses:', error);
     throw error;
   });

@@ -1,13 +1,18 @@
 // api/postLikes.ts
 import axios from 'axios';
 
+// 환경변수에서 BASE_URL을 읽어옴. (없으면 localhost fallback)
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
 export async function likePost(postId: number): Promise<void> {
+  const token = localStorage.getItem('authToken');
+  if (!token) throw new Error('No auth token found');
+
   try {
-    const token = localStorage.getItem('authToken');
-    await axios.post(`/api/posts/${postId}/like`, null, {
+    await axios.post(`${BASE_URL}/api/posts/${postId}/like`, null, {
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
   } catch (error: any) {
     console.error('Failed to like post:', error);
@@ -17,12 +22,14 @@ export async function likePost(postId: number): Promise<void> {
 }
 
 export async function unlikePost(postId: number): Promise<void> {
+  const token = localStorage.getItem('authToken');
+  if (!token) throw new Error('No auth token found');
+
   try {
-    const token = localStorage.getItem('authToken');
-    await axios.delete(`/api/posts/${postId}/like`, {
+    await axios.delete(`${BASE_URL}/api/posts/${postId}/like`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
   } catch (error: any) {
     console.error('Failed to unlike post:', error);

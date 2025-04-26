@@ -8,7 +8,7 @@ export async function getMyCourses() {
     if (!token) throw new Error('No auth token found');
 
     // /api/courses/my 엔드포인트 호출
-    const response = await axios.get(`${BASE_URL}/api/courses`, {
+    const response = await axios.get(`${BASE_URL}/api/mypage/courses`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -44,7 +44,7 @@ export async function getMyPosts() {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('No auth token found');
 
-    const response = await axios.get(`${BASE_URL}/api/posts`, {
+    const response = await axios.get(`${BASE_URL}/api/mypage/posts`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

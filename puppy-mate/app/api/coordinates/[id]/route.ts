@@ -7,7 +7,8 @@ export async function GET(
   context: { params: { id: string } }
 ) {
   try {
-    const { id } = await context.params;
+    // await 제거
+    const { id } = context.params;
 
     if (!id) {
       return NextResponse.json(

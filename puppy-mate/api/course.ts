@@ -1,7 +1,7 @@
 import { LatLng } from '@/types/Map';
 import axios from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const BASE_URL = '';
 
 interface CreateCourseResponse {
   id: number;
@@ -26,7 +26,7 @@ export async function createCourse(
       console.error('Failed to save course:', error);
       throw error;
     });
-
+  console.log('찍히긴하냐?', BASE_URL);
   return response.data.id;
 }
 

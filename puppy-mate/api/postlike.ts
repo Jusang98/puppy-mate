@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // 환경변수에서 BASE_URL을 읽어옴. (없으면 localhost fallback)
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const BASE_URL = '';
 
 export async function likePost(postId: number): Promise<void> {
   const token = localStorage.getItem('authToken');

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getMyPosts } from '@/api/mypage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Post } from '@/domain/entities/Post'; // Post 타입 경로에 맞게 수정
+import { GetMyPostsDto } from '@/application/usecases/post/dto/GetMyPostsDto';
 import { Skeleton } from '@/components/ui/skeleton';
 import SnapShotMap from '@/app/components/map/SnapShotMap';
 import useKakaoLoader from '@/lib/use-kakao-loader';
@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 
 export default function MyPostsPage() {
   const router = useRouter();
-  const [myPosts, setMyPosts] = useState<Post[]>([]);
+  const [myPosts, setMyPosts] = useState<GetMyPostsDto[]>([]);
   const [loading, setLoading] = useState(true);
   useKakaoLoader();
 
@@ -33,6 +33,7 @@ export default function MyPostsPage() {
     router.push('/mypage');
   };
 
+  // 카드 클릭 시 상세 페이지로 이동
   const handleCardClick = (postId: number) => {
     router.push(`/post/${postId}`);
   };
@@ -70,15 +71,11 @@ export default function MyPostsPage() {
           작성한 게시글이 없습니다.
         </div>
       ) : (
-        myPosts.map((post) => (
+        myPosts.map((post, idx) => (
           <Card
-            key={post.id}
+            key={post.postId ?? `fallback-${idx}`}
             className='cursor-pointer hover:shadow-lg transition'
-            onClick={() => {
-              if (post.id !== undefined) {
-                handleCardClick(post.id);
-              }
-            }}
+            onClick={() => handleCardClick(post.postId)}
           >
             <CardHeader>
               <CardTitle>{post.title}</CardTitle>
@@ -89,21 +86,18 @@ export default function MyPostsPage() {
                 <div className='flex-1 space-y-1 text-sm text-gray-700'>
                   <div>코스 ID: {post.courseId}</div>
                   <div>내용: {post.content}</div>
+                  <div>거리: {Math.round(post.distance * 10) / 10} km</div>
+                  <div>소요 시간: {post.duration} 분</div>
                   <div className='text-xs text-gray-400'>
-                    생성일: {new Date(post.createdAt!).toLocaleDateString()}
+                    생성일: {new Date(post.createdAt).toLocaleDateString()}
                   </div>
                 </div>
-                {/* 오른쪽: 지도 (좌표 정보가 있다면 표시, 없다면 생략) */}
-                {/* post.coordinates가 있다면 SnapShotMap 사용 */}
-                {Array.isArray((post as any).coordinates) &&
-                  (post as any).coordinates.length > 0 && (
-                    <div className='flex-shrink-0' style={{ height: 200 }}>
-                      <SnapShotMap
-                        coordinates={(post as any).coordinates}
-                        size={200}
-                      />
-                    </div>
-                  )}
+                {/* 오른쪽: 지도 */}
+                {post.coordinates?.length > 0 && (
+                  <div className='flex-shrink-0' style={{ height: 200 }}>
+                    <SnapShotMap coordinates={post.coordinates} size={200} />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -1,5 +1,5 @@
 import { Post } from '../entities/Post';
-import { GetMyPostsDto } from '@/application/usecases/post/dto/GetMyPostDto';
+import { GetMyPostsDto } from '@/application/usecases/post/dto/GetMyPostsDto';
 export interface PostRepository {
   /**
    * 게시물 생성

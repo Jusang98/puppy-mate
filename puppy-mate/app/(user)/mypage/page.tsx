@@ -7,7 +7,7 @@ import { getUserProfile, logoutUser } from '@/api/user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GetUserDto } from '@/application/usecases/user/dto/GetUserDto';
 import { IoChevronForward } from 'react-icons/io5';
-import { FaDog, FaRoute } from 'react-icons/fa';
+import { FaDog, FaRoute, FaClipboardList  } from 'react-icons/fa';
 import { HiHeart } from 'react-icons/hi';
 import { Button } from '@/components/ui/button';
 import Mypageheader from './components/Mypageheader';
@@ -63,7 +63,7 @@ export default function MyPage() {
       {/* 프로필 섹션 */}
       <div className='bg-white px-5 py-4 flex items-center justify-between'>
         <div className='flex items-center space-x-3'>
-          <div className='relative w-12 h-12 shadow-md border-3 border-orange-400 rounded-full'>
+          <div className='relative w-[50px] h-[50px] shadow-md border-3 border-orange-400 rounded-full'>
             {profile?.profileImage ? (
               <Image
                 src={profile.profileImage}
@@ -78,7 +78,7 @@ export default function MyPage() {
             )}
           </div>
           <div>
-            <h2 className='font-semibold inline-block'>{profile?.nickname || '김멍멍'}</h2>님, 오늘도 즐거운 산책되세요!
+            <h2 className='font-semibold inline-block'>{profile?.nickname || '김멍멍'}</h2><span>님</span>
             <p className='text-xs text-gray-500'>기본 정보 보기</p>
           </div>
         </div>
@@ -116,27 +116,27 @@ export default function MyPage() {
             onClick={() => router.push('/mypage/likeposts')}
           >
             <div className='flex items-center'>
-              <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-md mr-3'>
+              <div className='flex items-center justify-center w-8 h-8 bg-pink-100 rounded-md mr-3'>
                 <span className='text-lg'><HiHeart className="text-red-500"/></span>
               </div>
-              <span>찜 산책로 관리</span>
+              <span>내가 찜한 산책로</span>
             </div>
             <IoChevronForward size={20} className='text-gray-400' />
           </div>
 
-          {/* 내 포스트 관리 */}
-          {/* <div 
+          {/* 내 게시물 */}
+          <div 
             className='flex items-center justify-between px-5 py-4'
             onClick={() => router.push('/mypage/posts')}
           >
             <div className='flex items-center'>
-              <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-md mr-3'>
-                <span className='text-lg'>📝</span>
+              <div className='flex items-center justify-center w-8 h-8 bg-green-100 rounded-md mr-3'>
+              <FaClipboardList className='text-l text-green-700' />
               </div>
-              <span>내 포스트 관리</span>
+              <span>내 게시물 관리</span>
             </div>
             <IoChevronForward size={20} className='text-gray-400' />
-          </div> */}
+          </div>
         </div>
       </div>
 

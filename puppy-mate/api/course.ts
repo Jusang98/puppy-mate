@@ -1,8 +1,10 @@
 import { LatLng } from '@/types/Map';
 import axios from 'axios';
 
+
 // 환경변수가 있으면 사용, 없으면 빈 문자열로 설정
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || '';
+
 
 interface CreateCourseResponse {
   id: number;
@@ -27,7 +29,7 @@ export async function createCourse(
       console.error('Failed to save course:', error);
       throw error;
     });
-  console.log('BASE_URL:', BASE_URL); // 실제 사용되는 URL 확인용
+
   return response.data.id;
 }
 

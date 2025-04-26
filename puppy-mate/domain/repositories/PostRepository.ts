@@ -1,5 +1,5 @@
 import { Post } from '../entities/Post';
-
+import { GetMyPostsDto } from '@/application/usecases/post/dto/GetMyPostDto';
 export interface PostRepository {
   /**
    * 게시물 생성
@@ -42,4 +42,5 @@ export interface PostRepository {
    * @returns 삭제 성공 여부
    */
   delete(id: number): Promise<boolean>;
+  findMyPostsWithSnapshot(userId: number): Promise<GetMyPostsDto[]>;
 }

@@ -81,78 +81,79 @@ export default function PostDetailPage() {
   const handleBackClick = () => {
     window.history.back();
   };
-  
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg space-y-6">
-      {/* Header */}
-      <div className="mb-5">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-orange-600 mb-1">{post.title}</h1>
-          <div className="flex items-center gap-1">
-            {post.hasLiked ? (
-              <HiHeart onClick={handleLikeBtnClick} className="text-red-500 cursor-pointer" size={24} />
-            ) : (
-              <HiOutlineHeart onClick={handleLikeBtnClick} className="text-gray-500 cursor-pointer hover:text-red-500 transition-colors" size={24} />
-            )}
+    <div className="flex flex-col w-full max-w-md mx-auto p-6 bg-white">
+      {/* Content 영역 */}
+      <div className="flex flex-col space-y-6 pb-20">
+        {/* Header */}
+        <div className="mb-5">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold text-orange-600 mb-1">{post.title}</h1>
+            <div className="flex items-center gap-1">
+              {post.hasLiked ? (
+                <HiHeart onClick={handleLikeBtnClick} className="text-red-500 cursor-pointer" size={24} />
+              ) : (
+                <HiOutlineHeart onClick={handleLikeBtnClick} className="text-gray-500 cursor-pointer hover:text-red-500 transition-colors" size={24} />
+              )}
+            </div>
           </div>
+          <p className="text-gray-500 text-xs">작성일: {post.createdAt ? formatDate(post.createdAt) : ''}</p>
         </div>
-        <p className="text-gray-500 text-xs">작성일: {post.createdAt ? formatDate(post.createdAt) : ''}</p>
-      </div>
-
-      {/* Map */}
-      {post.coordinates && (
-        <div className="flex flex-col items-start mx-auto" style={{ width: 300 }}>
-        <div className="flex w-fit p-2 gap-4 bg-orange-50 rounded-t-lg text-orange-600">
-          <div className="flex items-center gap-1">
-            <LuTimer className="text-l text-orange-500" />
-            <span className="text-gray-700 text-sm">{post.duration}분</span>
+  
+        {/* Map */}
+        {post.coordinates && (
+          <div className="flex flex-col items-start mx-auto" style={{ width: 300 }}>
+            <div className="flex w-fit p-2 gap-4 bg-orange-50 rounded-t-lg text-orange-600">
+              <div className="flex items-center gap-1">
+                <LuTimer className="text-l text-orange-500" />
+                <span className="text-gray-700 text-sm">{post.duration}분</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaShoePrints className="rotate-[-90deg] text-l text-orange-500" />
+                <span className="text-gray-700 text-sm">{post.distance}km</span>
+              </div>
+            </div>
+  
+            <SnapShotMap coordinates={post.coordinates} size={300} />
           </div>
-          <div className="flex items-center gap-1">
-            <FaShoePrints className="rotate-[-90deg] text-l text-orange-500" />
-            <span className="text-gray-700 text-sm">{post.distance}km</span>
-          </div>
-        </div>
-      
-        <SnapShotMap coordinates={post.coordinates} size={300} />
-      </div>
-      
-      )}
-
-      {/* Image Carousel */}
-      {post.images && post.images.length > 0 && (
-        <div className="relative">
-          <Carousel className="w-full">
-            <CarouselContent>
-              {post.images.map((image, index) => (
-                <CarouselItem key={index} className="basis-1/3 sm:basis-1/3 md:basis-1/3">
-                  <div className="relative p-1">
-                    <div className="aspect-square relative rounded-lg overflow-hidden border-2 border-orange-100">
-                      <Image
-                        src={image}
-                        alt={`Post image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
+        )}
+  
+        {/* Image Carousel */}
+        {post.images && post.images.length > 0 && (
+          <div className="relative">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {post.images.map((image, index) => (
+                  <CarouselItem key={index} className="basis-1/3 sm:basis-1/3 md:basis-1/3">
+                    <div className="relative p-1">
+                      <div className="aspect-square relative rounded-lg overflow-hidden border-2 border-orange-100">
+                        <Image
+                          src={image}
+                          alt={`Post image ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            {post.images.length > 3 && (
-              <>
-                <CarouselPrevious className="left-0 bg-white/80 hover:bg-white text-orange-500 hover:text-orange-700 border-orange-200" />
-                <CarouselNext className="right-0 bg-white/80 hover:bg-white text-orange-500 hover:text-orange-700 border-orange-200" />
-              </>
-            )}
-          </Carousel>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {post.images.length > 3 && (
+                <>
+                  <CarouselPrevious className="left-0 bg-white/80 hover:bg-white text-orange-500 hover:text-orange-700 border-orange-200" />
+                  <CarouselNext className="right-0 bg-white/80 hover:bg-white text-orange-500 hover:text-orange-700 border-orange-200" />
+                </>
+              )}
+            </Carousel>
+          </div>
+        )}
+  
+        {/* Content */}
+        <div className="bg-orange-50/50 p-4 rounded-lg border-2 border-orange-100">
+          <p className="whitespace-pre-wrap text-gray-700">{post.content}</p>
         </div>
-      )}
-
-      {/* Content */}
-      <div className="bg-orange-50/50 p-4 rounded-lg border-2 border-orange-100">
-        <p className="whitespace-pre-wrap text-gray-700">{post.content}</p>
       </div>
-
+  
       {/* Action Buttons */}
       <div className="flex justify-between items-center pt-4 border-t border-gray-100">
         <Button 
@@ -163,7 +164,7 @@ export default function PostDetailPage() {
           <IoMdArrowRoundBack />
           <span className="ml-1">뒤로가기</span>
         </Button>
-        
+  
         {post.isWriter && (
           <div className="flex gap-2">
             <Button 
@@ -187,4 +188,6 @@ export default function PostDetailPage() {
       </div>
     </div>
   );
+  
+  
 }

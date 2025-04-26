@@ -15,7 +15,7 @@ const CoursePostList = ({
   errors: (Error | null)[];
 }) => {
   return (
-    <div className="space-y-4 overflow-y-auto">
+    <div className="space-y-4 overflow-y-auto px-4">
       {isLoading ? (
         // Show skeleton loading UI when data is loading
         <>

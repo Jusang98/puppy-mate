@@ -27,31 +27,31 @@ export default function RootFooter() {
       ? {
           href: '/mypage/courses',
           icon: <IoPawSharp size={24} />,
-          label: '산책로 공유',
+          label: '산책로 공유'
         }
       : {
           href: '/login',
           icon: <IoPawSharp size={24} />,
-          label: '산책로 공유',
+          label: '산책로 공유'
         },
     { href: '/', icon: <BiSolidHomeHeart size={24} />, label: '홈' },
     token
-      ? { href: '/mypage', icon: <LuDog size={24} />, label: '내정보' }
-      : { href: '/login', icon: <LuDog size={24} />, label: '로그인' },
+      ? { href: '/mypage', icon: <LuDog size={24} />, label: '마이페이지' }
+      : { href: '/login', icon: <LuDog size={24} />, label: '로그인' }
   ];
 
   return (
-    <footer className='fixed bottom-0 left-0 w-full bg-white border-t z-[9999]'>
-      <nav className='flex justify-around items-center h-16'>
+    <footer className="fixed bottom-0 left-0 w-full bg-white border-t z-[9999]">
+      <nav className="flex justify-around items-center h-16">
         {navItems.map((item, idx) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={`${item.href}-${item.label}-${idx}`}
               href={item.href}
-              className={`flex flex-col items-center transition-colors duration-200 ${
-                isActive ? 'text-orange-500' : 'text-gray-700'
-              }`}
+              className={`w-[65px] flex flex-col items-center transition-colors duration-200 ${isActive
+                ? 'text-orange-500'
+                : 'text-gray-700'}`}
             >
               {item.icon}
               <span className={`text-xs mt-1 ${isActive ? 'font-bold' : ''}`}>

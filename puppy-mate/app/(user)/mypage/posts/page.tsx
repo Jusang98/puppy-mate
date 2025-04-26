@@ -74,7 +74,11 @@ export default function MyPostsPage() {
           <Card
             key={post.id}
             className='cursor-pointer hover:shadow-lg transition'
-            onClick={() => handleCardClick(post.id!)}
+            onClick={() => {
+              if (post.id !== undefined) {
+                handleCardClick(post.id);
+              }
+            }}
           >
             <CardHeader>
               <CardTitle>{post.title}</CardTitle>

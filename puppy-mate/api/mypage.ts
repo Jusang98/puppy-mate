@@ -13,7 +13,7 @@ export async function getMyCourses() {
         Authorization: `Bearer ${token}`,
       },
     });
-
+    console.log(response.data);
     return response.data; // 내 코스 리스트 배열 반환
   } catch (error) {
     console.error('Failed to fetch my courses:', error);

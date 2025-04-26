@@ -1,7 +1,11 @@
 import { PostDto } from '@/application/usecases/post/dto/PostDto';
 import axios from 'axios';
 import { CoursePost } from '@/types/Post';
-const BASE_URL = 'http://localhost:3000/api/posts';
+
+// 환경변수 사용, 없으면 상대경로
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+  ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`
+  : '/api/posts';
 
 export async function createPost(
   courseId: number,
@@ -14,7 +18,6 @@ export async function createPost(
   formData.append('title', title);
   formData.append('content', content);
 
-  // 이미지 파일들을 FormData에 추가
   images.forEach((image) => {
     formData.append('images', image);
   });
@@ -35,8 +38,8 @@ export async function getPost(postId: string) {
     const token = localStorage.getItem('authToken');
     const response = await axios<{ data: PostDto }>(`${BASE_URL}/${postId}`, {
       headers: {
-        Authorization: `Bearer ${token}` // 토큰을 Authorization 헤더에 추가
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data.data;
   } catch (error) {
@@ -45,11 +48,15 @@ export async function getPost(postId: string) {
   }
 }
 
-export async function getPostsByCourseId(courseId: number): Promise<CoursePost[]> {
-  const response = await axios.get<CoursePost[]>(`${BASE_URL}?courseId=${courseId}`).catch((error) => {
-    console.error('Failed to get posts by course id:', error);
-    throw error;
-  });
+export async function getPostsByCourseId(
+  courseId: number
+): Promise<CoursePost[]> {
+  const response = await axios
+    .get<CoursePost[]>(`${BASE_URL}?courseId=${courseId}`)
+    .catch((error) => {
+      console.error('Failed to get posts by course id:', error);
+      throw error;
+    });
 
   return response.data;
 }
@@ -62,8 +69,8 @@ export async function deletePost(
 
     const response = await axios.delete(`${BASE_URL}/${postId}`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     return response.data;
@@ -72,24 +79,29 @@ export async function deletePost(
     throw error;
   }
 }
+
 export async function updatePost(
   postId: string,
-    title: string,
-    content: string,
+  title: string,
+  content: string
 ) {
   try {
     const token = localStorage.getItem('authToken');
-    const response = await axios.patch(`${BASE_URL}/${postId}`, {
-      id: postId,
-      title,
-      content,
-   }, {
-      headers: {
-        Authorization: `Bearer ${token}` // 토큰을 Authorization 헤더에 추가
+    const response = await axios.patch(
+      `${BASE_URL}/${postId}`,
+      {
+        id: postId,
+        title,
+        content,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-   });
+    );
 
-    return response.data; 
+    return response.data;
   } catch (error: any) {
     console.error('게시글 수정 실패:', error);
     throw new Error(

@@ -1,7 +1,8 @@
 import { LatLng } from '@/types/Map';
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000/api/courses';
+// 환경변수가 있으면 사용, 없으면 빈 문자열로 설정
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || '';
 
 interface CreateCourseResponse {
   id: number;
@@ -15,7 +16,7 @@ export async function createCourse(
   coordinates: LatLng[]
 ): Promise<number> {
   const response = await axios
-    .post<CreateCourseResponse>(BASE_URL, {
+    .post<CreateCourseResponse>(`${BASE_URL}/api/courses`, {
       name,
       address,
       distance,
@@ -26,12 +27,12 @@ export async function createCourse(
       console.error('Failed to save course:', error);
       throw error;
     });
-
+  console.log('BASE_URL:', BASE_URL); // 실제 사용되는 URL 확인용
   return response.data.id;
 }
 
 export async function getPublicCourses() {
-  const response = await axios.get(BASE_URL).catch((error) => {
+  const response = await axios.get(`${BASE_URL}/api/courses`).catch((error) => {
     console.error('Failed to fetch public courses:', error);
     throw error;
   });

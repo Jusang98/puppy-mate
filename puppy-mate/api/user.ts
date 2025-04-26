@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000/api/user';
+// 환경변수에 BASE_URL이 있으면 사용, 없으면 상대경로
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+  ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/user`
+  : '/api/user';
 
 // 새로운 사용자 생성
 export async function createUser(

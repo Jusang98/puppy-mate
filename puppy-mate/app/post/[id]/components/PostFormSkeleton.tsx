@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-// 게시물 등록, 수정 스켈레톤톤
+// 게시물 등록, 수정 스켈레톤
 export function PostFormSkeleton() {
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg space-y-6">

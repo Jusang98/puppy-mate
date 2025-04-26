@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: number }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;

@@ -5,11 +5,12 @@ import { NextRequest, NextResponse } from 'next/server';
 const postLikeRepository = new SbPostLikeRepository();
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const userId = getUserIdFromRequest(request);
-    const postId = parseInt(params.id);
+    const postId = parseInt(id);
 
     if (!userId || !postId) {
       return NextResponse.json(

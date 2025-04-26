@@ -1,5 +1,5 @@
 import { PostRepository } from '@/domain/repositories/PostRepository';
-import { GetMyPostsDto } from './dto/GetMyPostDto';
+import { GetMyPostsDto } from './dto/GetMyPostsDto';
 
 export default class GetMyPostsUsecase {
   private readonly postRepository: PostRepository;

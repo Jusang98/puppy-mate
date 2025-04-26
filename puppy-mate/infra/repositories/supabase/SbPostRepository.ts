@@ -1,7 +1,8 @@
 import { Post } from '@/domain/entities/Post';
 import { PostRepository } from '@/domain/repositories/PostRepository';
 import { createClient } from '@/utils/supabase/server';
-
+import { CoordinateDto } from '@/application/usecases/course/dto/CoordinateDto';
+import { GetMyPostsDto } from '@/application/usecases/post/dto/GetMyPostDto';
 export class SbPostRepository implements PostRepository {
   async create(post: Post): Promise<number> {
     const supabase = await createClient();
@@ -70,7 +71,10 @@ export class SbPostRepository implements PostRepository {
   async findByCourseId(courseId: number): Promise<Post[]> {
     const supabase = await createClient();
 
-    const { data, error } = await supabase.from('posts').select('*').eq('course_id', courseId);
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('course_id', courseId);
 
     if (error) {
       console.error('Error finding posts by course ID:', error);
@@ -189,5 +193,61 @@ export class SbPostRepository implements PostRepository {
     }
 
     return true;
+  }
+  async findMyPostsWithSnapshot(userId: number): Promise<GetMyPostsDto[]> {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('posts')
+      .select(
+        `
+        id,
+        title,
+        content,
+        course_id,
+        created_at,
+        courses (
+          distance,
+          duration,
+          course_coordinates (
+            lat,
+            lng
+          )
+        )
+      `
+      )
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching my posts with snapshot:', error);
+      throw new Error('Failed to fetch my posts with snapshot');
+    }
+
+    if (!data) return [];
+
+    return data.map((row: any) => {
+      const course = row.courses;
+      const coordinates =
+        course?.course_coordinates?.map(
+          (c: any) => new CoordinateDto(c.lat, c.lng)
+        ) ?? [];
+
+      // 거리: m → km, 소요시간: ms → 분 변환
+      const distance = course
+        ? Math.round((course.distance / 1000) * 100) / 100
+        : 0;
+      const duration = course ? Math.floor(course.duration / 1000 / 60) : 0;
+
+      return new GetMyPostsDto(
+        row.id,
+        row.title,
+        row.content,
+        row.course_id,
+        coordinates,
+        new Date(row.created_at),
+        distance,
+        duration
+      );
+    });
   }
 }

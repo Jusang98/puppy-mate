@@ -2,8 +2,10 @@ import { PostDto } from '@/application/usecases/post/dto/PostDto';
 import axios from 'axios';
 import { CoursePost } from '@/types/Post';
 
-// 환경변수에서 BASE_URL을 읽어옴. 없으면 localhost fallback
-const BASE_URL = '';
+// 환경변수 사용, 없으면 상대경로
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+  ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`
+  : '/api/posts';
 
 export async function createPost(
   courseId: number,
@@ -22,32 +24,23 @@ export async function createPost(
 
   const token = localStorage.getItem('authToken');
   if (!token) throw new Error('No auth token found');
-
-  const response = await axios.post<{ newPostId: number }>(
-    `${BASE_URL}/api/posts`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await axios.post<{ newPostId: number }>(BASE_URL, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data.newPostId;
 }
 
-export async function getPost(postId: string): Promise<PostDto> {
+export async function getPost(postId: string) {
   try {
     const token = localStorage.getItem('authToken');
-    if (!token) throw new Error('No auth token found');
-    const response = await axios.get<{ data: PostDto }>(
-      `${BASE_URL}/api/posts/${postId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios<{ data: PostDto }>(`${BASE_URL}/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data.data;
   } catch (error) {
     console.error('Failed to fetch post:', error);
@@ -58,15 +51,14 @@ export async function getPost(postId: string): Promise<PostDto> {
 export async function getPostsByCourseId(
   courseId: number
 ): Promise<CoursePost[]> {
-  try {
-    const response = await axios.get<CoursePost[]>(
-      `${BASE_URL}/api/posts?courseId=${courseId}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Failed to get posts by course id:', error);
-    throw error;
-  }
+  const response = await axios
+    .get<CoursePost[]>(`${BASE_URL}?courseId=${courseId}`)
+    .catch((error) => {
+      console.error('Failed to get posts by course id:', error);
+      throw error;
+    });
+
+  return response.data;
 }
 
 export async function deletePost(
@@ -74,12 +66,13 @@ export async function deletePost(
 ): Promise<{ isSuccess: boolean; message: string }> {
   try {
     const token = localStorage.getItem('authToken');
-    if (!token) throw new Error('No auth token found');
-    const response = await axios.delete(`${BASE_URL}/api/posts/${postId}`, {
+
+    const response = await axios.delete(`${BASE_URL}/${postId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+
     return response.data;
   } catch (error) {
     console.error('Failed to delete post:', error);
@@ -94,9 +87,8 @@ export async function updatePost(
 ) {
   try {
     const token = localStorage.getItem('authToken');
-    if (!token) throw new Error('No auth token found');
     const response = await axios.patch(
-      `${BASE_URL}/api/posts/${postId}`,
+      `${BASE_URL}/${postId}`,
       {
         id: postId,
         title,
@@ -108,6 +100,7 @@ export async function updatePost(
         },
       }
     );
+
     return response.data;
   } catch (error: any) {
     console.error('게시글 수정 실패:', error);

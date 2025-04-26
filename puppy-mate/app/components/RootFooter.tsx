@@ -36,7 +36,7 @@ export default function RootFooter() {
         },
     { href: '/', icon: <BiSolidHomeHeart size={24} />, label: '홈' },
     token
-      ? { href: '/mypage', icon: <LuDog size={24} />, label: '내정보' }
+      ? { href: '/mypage', icon: <LuDog size={24} />, label: '마이페이지' }
       : { href: '/login', icon: <LuDog size={24} />, label: '로그인' },
   ];
 
@@ -49,10 +49,10 @@ export default function RootFooter() {
             <Link
               key={`${item.href}-${item.label}-${idx}`}
               href={item.href}
-              className={`flex flex-col items-center transition-colors duration-200 ${
+              className={`w-[65px] flex flex-col items-center transition-colors duration-200 ${
                 isActive ? 'text-orange-500' : 'text-gray-700'
               }`}
-              tabIndex={0} // 명시적 포커스 허용 (기본값이 0이지만 확실히)
+              tabIndex={0}
             >
               {item.icon}
               <span className={`text-xs mt-1 ${isActive ? 'font-bold' : ''}`}>

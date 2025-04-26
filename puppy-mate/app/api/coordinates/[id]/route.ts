@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    // await 제거
+    const { id } = context.params;
 
     if (!id) {
       return NextResponse.json(

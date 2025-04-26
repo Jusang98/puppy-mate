@@ -3,15 +3,13 @@ import { getUserIdFromRequest } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 const postLikeRepository = new SbPostLikeRepository();
-
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
     const userId = getUserIdFromRequest(request);
-    const postId = parseInt(id);
+    const postId = parseInt(params.id);
 
     if (!userId || !postId) {
       return NextResponse.json(
@@ -37,12 +35,11 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
     const userId = getUserIdFromRequest(request);
-    const postId = parseInt(id);
+    const postId = parseInt(params.id);
 
     if (!userId || !postId) {
       return NextResponse.json(

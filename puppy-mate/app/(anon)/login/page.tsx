@@ -17,7 +17,7 @@ export default function LoginPage() {
     try {
       // 로그인 API 호출
       const user = await loginUser(email, password);
-      console.log('토큰값과 아이디', user); 
+      console.log('토큰값과 아이디', user);
       if (user) {
         // 로그인 성공 시 홈 페이지로 리다이렉트
         router.push('/');
@@ -31,42 +31,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen'>
-      <h2 className='text-2xl font-bold mb-4'>Login</h2>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h2 className="text-2xl font-bold mb-4">로그인</h2>
 
-      <div className='w-80 space-y-4'>
-        <form onSubmit={handleLogin}>
+      <div className="w-80 space-y-4">
+        <form onSubmit={handleLogin} className=" flex gap-3 flex-col">
           {/* 이메일 입력 */}
           <Input
-            type='email'
-            placeholder='Email'
-            className='w-full'
+            type="email"
+            placeholder="Email"
+            className="w-full"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             required
           />
 
           {/* 비밀번호 입력 */}
           <Input
-            type='password'
-            placeholder='Password'
-            className='w-full'
+            type="password"
+            placeholder="Password"
+            className="w-full"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             required
           />
 
           {/* 로그인 버튼 */}
-          <Button type='submit' className='w-full'>
-            Login
+          <Button type="submit" className="w-full">
+            로그인
           </Button>
         </form>
 
         {/* 회원가입 페이지로 이동하는 버튼 */}
-        <div className='text-center'>
-          <Link href='/signup' passHref>
-            <Button className='w-full' variant='outline'>
-              Don't have an account? Sign up here
+        <div className="text-center">
+          <Link href="/signup" passHref>
+            <Button className="w-full" variant="outline">
+              회원가입
             </Button>
           </Link>
         </div>

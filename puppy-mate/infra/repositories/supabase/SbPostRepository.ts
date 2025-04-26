@@ -2,7 +2,7 @@ import { Post } from '@/domain/entities/Post';
 import { PostRepository } from '@/domain/repositories/PostRepository';
 import { createClient } from '@/utils/supabase/server';
 import { CoordinateDto } from '@/application/usecases/course/dto/CoordinateDto';
-import { GetMyPostsDto } from '@/application/usecases/post/dto/GetMyPostDto';
+import { GetMyPostsDto } from '@/application/usecases/post/dto/GetMyPostsDto';
 export class SbPostRepository implements PostRepository {
   async create(post: Post): Promise<number> {
     const supabase = await createClient();

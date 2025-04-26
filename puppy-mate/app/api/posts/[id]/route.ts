@@ -10,15 +10,18 @@ import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository
 import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepository';
 import { getUserIdFromRequest } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
+
+// GET: 게시글 조회
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id } = await params;
+    const postId = parseInt(id);
     const userId = getUserIdFromRequest(request);
     let isWriter = false;
-    if (!id) {
+    if (!postId) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
 
@@ -30,7 +33,7 @@ export async function GET(
       new SbPostLikeRepository(),
       new SbCourseRepository()
     );
-    const postDto = await getPostUsecase.execute(id, userId);
+    const postDto = await getPostUsecase.execute(postId, userId);
     if (!postDto) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
@@ -51,6 +54,7 @@ export async function GET(
   }
 }
 
+// PATCH: 게시글 수정 (params 필요 없음)
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
@@ -70,7 +74,7 @@ export async function PATCH(request: NextRequest) {
       {
         message: '게시물이 수정되었습니다.',
         postId: postId,
-        isSuccess: isSuccess
+        isSuccess: isSuccess,
       },
       { status: 200 }
     );
@@ -83,21 +87,23 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
+// DELETE: 게시글 삭제
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
-    if (!id) {
+    const { id } = await params;
+    const postId = parseInt(id);
+    if (!postId) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
     const deletePostUsecase = new DeletePostUsecase(new SbPostRepository());
-    const { isSuccess } = await deletePostUsecase.execute(id);
+    const { isSuccess } = await deletePostUsecase.execute(postId);
     return NextResponse.json(
       {
         message: '게시물이 삭제되었습니다.',
-        isSuccess: isSuccess
+        isSuccess: isSuccess,
       },
       { status: 200 }
     );

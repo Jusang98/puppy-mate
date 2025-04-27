@@ -2,6 +2,8 @@ import CoordinateListUsecase from '@/application/usecases/coordinate/CoordinateL
 import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordinatesRepository';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

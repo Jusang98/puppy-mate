@@ -9,7 +9,7 @@ import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepo
 import GetPostsByCourseIdUsecase from '@/application/usecases/post/GetPostsByCourseIdUsecase';
 import { SbCoordinatesRepository } from '@/infra/repositories/supabase/SbCoordinatesRepository';
 import { getUserIdFromRequest } from '@/utils/auth';
-
+export const dynamic = 'force-dynamic';
 // 코스 아이디로 게시물 조회
 // 게시물의 정보와 코스의 좌표 정보를 함께 반환
 export async function GET(request: NextRequest) {

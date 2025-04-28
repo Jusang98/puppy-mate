@@ -15,10 +15,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = context.params;
+    const { id } = await params;
     const postId = parseInt(id);
     const userId = getUserIdFromRequest(request);
     let isWriter = false;
@@ -36,9 +36,11 @@ export async function GET(
       new SbCourseRepository()
     );
     const postDto = await getPostUsecase.execute(postId, userId);
+
     if (!postDto) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
+
     if (userId && postDto.userId === userId) {
       isWriter = true;
     }
@@ -48,7 +50,7 @@ export async function GET(
       { status: 200 }
     );
   } catch (error) {
-    console.log('Error read Post:', error);
+    console.error('Error read Post:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -58,16 +60,16 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = context.params;
+    const { id } = await params;
     const body = await request.json();
     const { title, content } = body;
     const userId = getUserIdFromRequest(request);
 
     if (!userId || !id || !title) {
-      console.log(userId, id, title);
+      console.log('Invalid PATCH request params:', { userId, id, title });
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
 
@@ -87,7 +89,7 @@ export async function PATCH(
       { status: 200 }
     );
   } catch (error) {
-    console.log('Error update Post:', error);
+    console.error('Error update Post:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -97,10 +99,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = context.params;
+    const { id } = await params;
     const postId = parseInt(id);
 
     if (!postId) {
@@ -118,7 +120,7 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.log('Error delete Post:', error);
+    console.error('Error delete Post:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

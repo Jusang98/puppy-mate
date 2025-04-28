@@ -10,16 +10,19 @@ import { SbPostRepository } from '@/infra/repositories/supabase/SbPostRepository
 import { SbStorageRepository } from '@/infra/repositories/supabase/SbStorageRepository';
 import { getUserIdFromRequest } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
+
 export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const postId = parseInt(id);
     const userId = getUserIdFromRequest(request);
     let isWriter = false;
+
     if (!postId) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
@@ -55,23 +58,26 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const body = await request.json();
     const { title, content } = body;
     const userId = getUserIdFromRequest(request);
+
     if (!userId || !id || !title) {
       console.log(userId, id, title);
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
+
     const updatePostDto = new UpdatePostDto(title, content);
     const updatePostUsecase = new UpdatePostUsecase(new SbPostRepository());
     const { postId, isSuccess } = await updatePostUsecase.execute(
       parseInt(id),
       updatePostDto
     );
+
     return NextResponse.json(
       {
         message: '게시물이 수정되었습니다.',
@@ -91,16 +97,19 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const postId = parseInt(id);
+
     if (!postId) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 422 });
     }
+
     const deletePostUsecase = new DeletePostUsecase(new SbPostRepository());
     const { isSuccess } = await deletePostUsecase.execute(postId);
+
     return NextResponse.json(
       {
         message: '게시물이 삭제되었습니다.',

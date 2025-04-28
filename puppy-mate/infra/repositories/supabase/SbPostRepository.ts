@@ -204,10 +204,10 @@ export class SbPostRepository implements PostRepository {
         id,
         title,
         content,
-        address,
         course_id,
         created_at,
         courses (
+          address,
           distance,
           duration,
           course_coordinates (
@@ -217,7 +217,8 @@ export class SbPostRepository implements PostRepository {
         )
       `
       )
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false }); // 최신순 정렬 추가!
 
     if (error) {
       console.error('Error fetching my posts with snapshot:', error);
@@ -243,7 +244,7 @@ export class SbPostRepository implements PostRepository {
         row.id,
         row.title,
         row.content,
-        row.address, // <-- 이 부분!
+        course?.address || '', // courses.address 사용
         row.course_id,
         coordinates,
         new Date(row.created_at),

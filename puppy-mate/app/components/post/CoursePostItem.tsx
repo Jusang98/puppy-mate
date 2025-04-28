@@ -48,7 +48,7 @@ const CoursePostItem = ({
   const router = useRouter();
 
   const handleCardContentClick = () => {
-    router.push(`/post/${id}`);
+    router.push(`/posts/${id}`);
   };
 
   // 경로 상세보기 누를때 zustand Store에 좌표들 저장

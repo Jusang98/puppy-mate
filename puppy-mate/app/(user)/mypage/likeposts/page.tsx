@@ -61,7 +61,7 @@ export default function LikedPostsPage() {
   };
 
   const handleCardClick = (postId: number) => {
-    router.push(`/post/${postId}`);
+    router.push(`/posts/${postId}`);
   };
 
   if (loading) {

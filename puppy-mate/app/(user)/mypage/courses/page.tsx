@@ -40,7 +40,11 @@ export default function MyCoursesPage() {
     async function fetchCourses() {
       try {
         const data = await getMyCourses();
-        setCourses(data);
+        const sortedData = data.sort(
+          (a: GetMyCoursesDto, b: GetMyCoursesDto) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setCourses(sortedData);
       } catch (error) {
         // 에러 처리 (필요시)
       } finally {

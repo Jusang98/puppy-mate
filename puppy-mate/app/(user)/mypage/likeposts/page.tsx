@@ -39,7 +39,11 @@ export default function LikedPostsPage() {
     async function fetchLikedPosts() {
       try {
         const data = await getLikedPostsWithSnapshot();
-        setLikedPosts(data);
+        const sortedData = data.sort(
+          (a: GetLikedPostWithSnapshotDto, b: GetLikedPostWithSnapshotDto) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setLikedPosts(sortedData);
       } catch (error) {
         console.error(error);
       } finally {

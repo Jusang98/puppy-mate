@@ -109,7 +109,7 @@ export default function MyCoursesPage() {
                       className={
                         course.isPublic
                           ? 'inline-block w-3 h-3 rounded-full bg-green-500'
-                          : 'inline-block w-3 h-3 rounded-full bg-gray-400'
+                          : ''
                       }
                     />
                     <span

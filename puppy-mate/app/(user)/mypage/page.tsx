@@ -1,160 +1,138 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { getUserProfile, logoutUser } from '@/api/user';
+import { getMyPosts } from '@/api/mypage';
+import { GetMyPostsDto } from '@/application/usecases/post/dto/GetMyPostsDto';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { GetUserDto } from '@/application/usecases/user/dto/GetUserDto';
-import { IoChevronForward } from 'react-icons/io5';
-import { FaDog, FaRoute, FaClipboardList  } from 'react-icons/fa';
-import { HiHeart } from 'react-icons/hi';
+import SnapShotMap from '@/app/components/map/SnapShotMap';
+import useKakaoLoader from '@/lib/use-kakao-loader';
 import { Button } from '@/components/ui/button';
+import { CiCalendar } from 'react-icons/ci';
+import { IoLocationOutline } from 'react-icons/io5';
+import { LuTimer } from 'react-icons/lu';
+import { FaShoePrints, FaRegHeart } from 'react-icons/fa';
 import Mypageheader from './components/Mypageheader';
+import { formatDate } from '@/utils/common';
 
-export default function MyPage() {
-  const [profile, setProfile] = useState<GetUserDto | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function MyPostsPage() {
   const router = useRouter();
+  const [myPosts, setMyPosts] = useState<GetMyPostsDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  useKakaoLoader();
 
   useEffect(() => {
-    async function fetchProfile() {
+    async function fetchMyPosts() {
       try {
-        const data = await getUserProfile();
-        setProfile(data);
+        const data = await getMyPosts();
+        setMyPosts(data);
       } catch (error) {
-        console.error('Failed to fetch profile:', error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
     }
-
-    fetchProfile();
+    fetchMyPosts();
   }, []);
 
-  const handleLogoutBtnClick = () => {
-    logoutUser();
-    router.push('/login');
+  const handleCardClick = (postId: number) => {
+    router.push(`/post/${postId}`);
   };
 
   if (loading) {
     return (
-      <div className='p-4 space-y-4'>
-        <Skeleton className='w-full h-12' />
-        <div className="mt-2 flex items-center">
-          <Skeleton className="w-16 h-16 rounded-full inline-block" />
-          <div className="ml-4 flex flex-col justify-center">
-            <Skeleton className="w-32 h-5 mb-2" />
-            <Skeleton className="w-32 h-5" />
-          </div>
-        </div>
-        <div className='space-y-3 mt-6'>
-          <Skeleton className='h-12' />
-          <Skeleton className='h-12' />
-          <Skeleton className='h-12' />
-        </div>
+      <div className='space-y-4 p-4'>
+        <Skeleton className='h-4 w-24 mb-1' />
+        {[...Array(3)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader>
+              <Skeleton className='h-6 w-32 mb-2' />
+              <Skeleton className='h-4 w-48' />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className='h-4 w-24 mb-1' />
+              <Skeleton className='h-4 w-24 mb-1' />
+              <Skeleton className='h-4 w-16' />
+              <Skeleton className='h-40 w-full mt-2' />
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }
 
   return (
-    <div className='flex flex-col h-full bg-gray-50'>
-      <Mypageheader title='마이페이지'/>
-      {/* 프로필 섹션 */}
-      <div className='bg-white px-5 py-4 flex items-center justify-between'>
-        <div className='flex items-center space-x-3'>
-          <div className='relative w-[50px] h-[50px] shadow-md border-3 border-orange-400 rounded-full'>
-            {profile?.profileImage ? (
-              <Image
-                src={profile.profileImage}
-                alt='Profile'
-                fill
-                className='rounded-full object-cover'
-              />
-            ) : (
-              <div className='w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center'>
-                <FaDog className='text-gray-400' size={24} />
-              </div>
-            )}
+    <>
+      <Mypageheader title='내 게시물' />
+      <div className='space-y-4 p-4'>
+        {myPosts.length === 0 ? (
+          <div className='flex flex-col items-center justify-center py-24 text-gray-500'>
+            <FaRegHeart size={52} className='text-orange-300 mb-4' />
+            <p className='text-center text-lg font-medium'>
+              작성한 게시글이 없습니다
+            </p>
+            <p className='text-sm mt-1'>산책로를 등록해보세요</p>
           </div>
-          <div>
-            <h2 className='font-semibold inline-block'>{profile?.nickname || '김멍멍'}</h2><span>님</span>
-            <p className='text-xs text-gray-500'>기본 정보 보기</p>
-          </div>
-        </div>
-        <Button
-          onClick={handleLogoutBtnClick}
-          variant="outline"
-        >
-          로그아웃
-        </Button>
+        ) : (
+          myPosts.map((post) => (
+            <Card
+              key={post.postId}
+              className='overflow-hidden rounded-2xl py-0 shadow-sm border border-orange-200 transition-all hover:shadow-md bg-white cursor-pointer'
+              onClick={() => handleCardClick(post.postId)}
+            >
+              <CardHeader className='bg-gradient-to-r py-4 from-orange-50 to-orange-100 pb-3'>
+                <CardTitle className='text-lg font-semibold text-orange-700'>
+                  {post.title}
+                </CardTitle>
+                <CardDescription className='text-sm text-gray-600 flex items-center gap-1'>
+                  <IoLocationOutline size={16} />
+                  {post.address || '주소 정보 없음'}
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className='p-4'>
+                <div className='flex flex-col md:flex-row gap-4'>
+                  <div className='flex-1 space-y-2 text-sm text-gray-700 content-center'>
+                    <div className='flex items-center gap-2'>
+                      <FaShoePrints className='text-xl rotate-[-90deg] text-orange-400' />
+                      <span>
+                        거리: {Math.round(post.distance * 10) / 10} km
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <LuTimer className='text-xl text-orange-400' />
+                      <span>소요 시간: {post.duration} 분</span>
+                    </div>
+                    <div className='flex items-center gap-2 text-xs text-gray-500 mt-1'>
+                      {post.content
+                        ? post.content.length > 40
+                          ? `${post.content.slice(0, 40)}...`
+                          : post.content
+                        : '내용 없음'}
+                    </div>
+                    <div className='flex items-center gap-2 text-xs text-gray-500 mt-1'>
+                      <CiCalendar className='text-xl text-orange-400' />
+                      <span>{formatDate(post.createdAt)}</span>
+                    </div>
+                  </div>
+
+                  {post.coordinates?.length > 0 && (
+                    <SnapShotMap coordinates={post.coordinates} size={150} />
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
-
-      {/* 메뉴 섹션 - 산책로 관리 */}
-      <div className='mt-2 bg-white'>
-        <h3 className='px-5 pb-4 pt-4 text-sm font-medium text-gray-600'>산책로 관리</h3>
-        <div>
-          {/* 내 산책로 관리 */}
-          <div 
-            className='flex items-center justify-between px-5 py-4 border-b'
-            onClick={() => router.push('/mypage/courses')}
-          >
-            <div className='flex items-center'>
-              <div className='flex items-center justify-center w-8 h-8 bg-yellow-100 rounded-md mr-3'>
-                <span className='text-yellow-500 text-lg'><FaRoute/></span>
-              </div>
-              <span>내 산책로 관리</span>
-            </div>
-            <div className='flex items-center'>
-              <IoChevronForward size={20} className='text-gray-400' />
-            </div>
-          </div>
-
-          {/* 찜 산책로 관리 */}
-          <div 
-            className='flex items-center justify-between px-5 py-4 border-b'
-            onClick={() => router.push('/mypage/likeposts')}
-          >
-            <div className='flex items-center'>
-              <div className='flex items-center justify-center w-8 h-8 bg-pink-100 rounded-md mr-3'>
-                <span className='text-lg'><HiHeart className="text-red-500"/></span>
-              </div>
-              <span>내가 찜한 산책로</span>
-            </div>
-            <IoChevronForward size={20} className='text-gray-400' />
-          </div>
-
-          {/* 내 게시물 */}
-          <div 
-            className='flex items-center justify-between px-5 py-4'
-            onClick={() => router.push('/mypage/posts')}
-          >
-            <div className='flex items-center'>
-              <div className='flex items-center justify-center w-8 h-8 bg-green-100 rounded-md mr-3'>
-              <FaClipboardList className='text-l text-green-700' />
-              </div>
-              <span>내 게시물 관리</span>
-            </div>
-            <IoChevronForward size={20} className='text-gray-400' />
-          </div>
-        </div>
-      </div>
-
-      {/* 서비스 섹션 */}
-      {/* <div className='mt-4'>
-        <h3 className='px-5 py-2 text-sm font-medium text-gray-600'>서비스</h3>
-        <div className='bg-white'>
-          <div className='flex items-center justify-between px-5 py-4'>
-            <div className='flex items-center'>
-              <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-md mr-3'>
-                <span className='text-lg'>📍</span>
-              </div>
-              <span>GPS</span>
-            </div>
-            <Switch />
-          </div>
-        </div>
-      </div> */}
-    </div>
+    </>
   );
 }

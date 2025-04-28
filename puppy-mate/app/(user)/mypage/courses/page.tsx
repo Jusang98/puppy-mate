@@ -165,7 +165,7 @@ export default function MyCoursesPage() {
                 {!course.isPublic && (
                   <Button
                     onClick={() =>
-                      router.push(`/posts/create?courseId=${course.id}`)
+                      router.push(`/post/create?courseId=${course.id}`)
                     }
                     className='w-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center gap-2 rounded-xl'
                   >

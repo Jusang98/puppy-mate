@@ -44,7 +44,7 @@ export default function MyPostsPage() {
   }, []);
 
   const handleCardClick = (postId: number) => {
-    router.push(`/posts/${postId}`);
+    router.push(`/post/${postId}`);
   };
 
   if (loading) {

@@ -73,8 +73,9 @@ export default function SaveCourseModal({
             onClick={async () => {
               const courseId = await saveCourse(courseName);
               if (courseId) {
-                onOpenChange(false);
+                clearCourse();
                 stopRecordingCourse();
+                onOpenChange(false);
               }
             }}
             className='bg-orange-400'

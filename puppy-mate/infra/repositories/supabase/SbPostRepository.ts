@@ -204,6 +204,7 @@ export class SbPostRepository implements PostRepository {
         id,
         title,
         content,
+        address,
         course_id,
         created_at,
         courses (
@@ -242,6 +243,7 @@ export class SbPostRepository implements PostRepository {
         row.id,
         row.title,
         row.content,
+        row.address, // <-- 이 부분!
         row.course_id,
         coordinates,
         new Date(row.created_at),

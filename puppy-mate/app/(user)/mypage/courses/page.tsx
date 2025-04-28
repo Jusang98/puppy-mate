@@ -102,8 +102,26 @@ export default function MyCoursesPage() {
               className='overflow-hidden rounded-2xl py-0 shadow-sm border border-orange-200 transition-all hover:shadow-md bg-white'
             >
               <CardHeader className='bg-gradient-to-r py-4 from-orange-50 to-orange-100 pb-3'>
-                <CardTitle className='text-lg font-semibold text-orange-700 flex items-center gap-1'>
-                  {course.name}
+                <CardTitle className='text-lg font-semibold text-orange-700 flex items-center gap-2 justify-between'>
+                  <span>{course.name}</span>
+                  <span className='flex items-center gap-1 text-xs'>
+                    <span
+                      className={
+                        course.isPublic
+                          ? 'inline-block w-3 h-3 rounded-full bg-green-500'
+                          : 'inline-block w-3 h-3 rounded-full bg-gray-400'
+                      }
+                    />
+                    <span
+                      className={
+                        course.isPublic
+                          ? 'text-green-600 font-semibold'
+                          : 'text-gray-500 font-semibold'
+                      }
+                    >
+                      {course.isPublic ? '공유 중' : '비공유 중'}
+                    </span>
+                  </span>
                 </CardTitle>
                 <CardDescription className='text-sm text-gray-600 flex items-center gap-1'>
                   <IoLocationOutline size={16} />
@@ -122,6 +140,7 @@ export default function MyCoursesPage() {
                       <LuTimer className='text-xl text-orange-400' />
                       <span>산책 시간: {course.duration} 분</span>
                     </div>
+
                     <div className='flex items-center gap-2 text-xs text-gray-500 mt-1'>
                       <CiCalendar className='text-xl text-orange-400' />
                       <span>{formatDate(course.createdAt)}</span>
@@ -153,7 +172,7 @@ export default function MyCoursesPage() {
                     className='w-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center gap-2 rounded-xl'
                   >
                     <FaPen size={14} />
-                    게시글 작성하기
+                    산책로 공유하기
                   </Button>
                 )}
               </CardFooter>

@@ -114,12 +114,10 @@ export default function MyCoursesPage() {
                     />
                     <span
                       className={
-                        course.isPublic
-                          ? 'text-green-600 font-semibold'
-                          : 'text-gray-500 font-semibold'
+                        course.isPublic ? 'text-green-600 font-semibold' : ''
                       }
                     >
-                      {course.isPublic ? '공유 중' : '비공유 중'}
+                      {course.isPublic ? '공유 중' : ''}
                     </span>
                   </span>
                 </CardTitle>

@@ -94,20 +94,19 @@ export default function PostDetailPage() {
               {post.title}
             </h1>
             <div className='flex items-center gap-1'>
-              {!post.isWriter &&
-                (post.hasLiked ? (
-                  <HiHeart
-                    onClick={handleLikeBtnClick}
-                    className='text-red-500 cursor-pointer'
-                    size={24}
-                  />
-                ) : (
-                  <HiOutlineHeart
-                    onClick={handleLikeBtnClick}
-                    className='text-gray-500 cursor-pointer hover:text-red-500 transition-colors'
-                    size={24}
-                  />
-                ))}
+              {post.hasLiked ? (
+                <HiHeart
+                  onClick={handleLikeBtnClick}
+                  className='text-red-500 cursor-pointer'
+                  size={24}
+                />
+              ) : (
+                <HiOutlineHeart
+                  onClick={handleLikeBtnClick}
+                  className='text-gray-500 cursor-pointer hover:text-red-500 transition-colors'
+                  size={24}
+                />
+              )}
             </div>
           </div>
           <p className='text-gray-500 text-xs'>
